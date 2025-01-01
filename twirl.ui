@@ -118,7 +118,7 @@
                                 <property name="visible">true</property>
                                 <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
                                 <child>
-                                  <object class="GtkCheckButton"
+                                  <object class="GtkToggleButton"
                                     id="selectButton">
                                     <property name="visible">true</property>
                                     <property name="label"
@@ -129,7 +129,7 @@
 
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton"
+                                  <object class="GtkToggleButton"
                                     id="placeButton">
                                     <property name="visible">true</property>
                                     <property name="label" translatable="1">Place</property>
@@ -137,13 +137,11 @@
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton"
+                                  <object class="GtkToggleButton"
                                     id="transitionButton">
                                     <property name="visible">true</property>
-                                    <property name="label"
-                                      translatable="1">Action</property>
-                                    <property name="group">
-                                      selectButton</property>
+                                    <property name="label" translatable="1">Action</property>
+                                    <property name="group">selectButton</property>
                                   </object>
                                 </child>
                                 <child>

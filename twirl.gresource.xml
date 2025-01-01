@@ -2,5 +2,8 @@
 <gresources>
   <gresource prefix="/brittliff/org/twirl">
     <file>twirl.ui</file>
+    <file>images/place.png</file>
+    <file>images/transition.png</file>
+     <file>images/select.png</file>
   </gresource>
 </gresources>
