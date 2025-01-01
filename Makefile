@@ -11,7 +11,7 @@ COMPILE_RESOURCES = glib-compile-resources
 CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4)
 LIBS = $(shell $(PKGCONFIG)  --libs gtk4)
 
-SRC = application.c main.c
+SRC = controller.c main.c
 BUILT_SRC = resource.c
 
 OBJS = $(BUILT_SRC:.c=.o) $(SRC:.c=.o)

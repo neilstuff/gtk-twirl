@@ -5,13 +5,13 @@
 #include <cairo.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "application.h"
+#include "controller.h"
 
-APPLICATION * application;
+CONTROLLER * contoller;
 
 static void on_activate(GtkApplication *app, gpointer user_data)
 {
-    application = application_create(app, "/brittliff/org/twirl/twirl.ui");
+    contoller = create_controller(app, "/brittliff/org/twirl/twirl.ui");
 }
 
 static void on_open (GtkApplication *app, GFile **files, gint n_files, gchar *hint, gpointer user_data) {

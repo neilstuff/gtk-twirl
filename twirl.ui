@@ -12,93 +12,89 @@
         <child>
           <object class="GtkGrid">
             <child>
-              <object class="GtkBox">
-                <property name="hexpand">1</property>
-                <child>
-                  <object class="GtkMenuButton" id="newToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">document-new</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="openToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">document-open</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="saveToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">document-save</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="saveAsToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">document-save-as</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="printToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">document-print</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="undoToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">edit-undo</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="redoToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">edit-redo</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="cutToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">edit-cut</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="copyToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">edit-copy</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="pasteToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">edit-paste</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="deleteToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">edit-clear</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="playToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">system-run</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="stopToolbarButton">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">process-stop</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="aboutToolbarItem">
-                    <property name="visible">TRUE</property>
-                    <property name="icon-name">help-about</property>
-                  </object>
-                </child>
+              <object class="GtkMenuButton" id="newToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">document-new</property>
               </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="openToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">document-open</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="saveToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">document-save</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="saveAsToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">document-save-as</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="printToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">document-print</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="undoToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">edit-undo</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="redoToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">edit-redo</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="cutToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">edit-cut</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="copyToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">edit-copy</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="pasteToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">edit-paste</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="deleteToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">edit-clear</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="playToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">system-run</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="stopToolbarButton">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">process-stop</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuButton" id="aboutToolbarItem">
+                <property name="visible">TRUE</property>
+                <property name="icon-name">help-about</property>
+              </object>
+
             </child>
 
             <child>
@@ -120,34 +116,80 @@
                                 <property name="hexpand">1</property>
                                 <property name="width-request">54</property>
                                 <property name="visible">TRUE</property>
-                                <property name="orientation">vertical</property>
+                                <property name="orientation">
+                                  vertical</property>
                                 <child>
-                                  <object class="GtkCheckButton" id="selectButton">
-                                    <property name="visible">TRUE</property>
-                                    <property name="label" translatable="1">Select</property>
-                                    <property name="group">placeButton</property>
+                                  <object class="GtkCheckButton"
+                                    id="selectButton">
+                                    <property name="visible">
+                                      TRUE</property>
+                                    <property name="label"
+                                      translatable="1">Select</property>
+                                    <property name="group">
+                                      placeButton</property>
                                   </object>
 
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="placeButton">
-                                    <property name="visible">TRUE</property>
-                                    <property name="label" translatable="1">Place</property>
-                                    <property name="group">selectButton</property>
+                                  <object class="GtkCheckButton"
+                                    id="placeButton">
+                                    <property name="visible">
+                                      TRUE</property>
+                                    <property name="label"
+                                      translatable="1">Place</property>
+                                    <property name="group">
+                                      selectButton</property>
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="transitionButton">
-                                    <property name="visible">TRUE</property>
-                                    <property name="label" translatable="1">Action</property>
-                                    <property name="group">selectButton</property>
+                                  <object class="GtkCheckButton"
+                                    id="transitionButton">
+                                    <property name="visible">
+                                      TRUE</property>
+                                    <property name="label"
+                                      translatable="1">Action</property>
+                                    <property name="group">
+                                      selectButton</property>
                                   </object>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="label1">
-                                    <property name="visible">TRUE</property>
-                                    <property name="label" translatable="1">&lt;b&gt;Tools&lt;/b&gt;</property>
-                                    <property name="use_markup">TRUE</property>
+                                  <object class="GtkLabel"
+                                    id="label1">
+                                    <property name="visible">
+                                      TRUE</property>
+                                    <property name="label"
+                                      translatable="1">
+                                      &lt;b&gt;Tools&lt;/b&gt;</property>
+                                    <property name="use_markup">
+                                      TRUE</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+
+                        <child>
+                          <object class="GtkScrolledWindow"
+                            id="scrolledwindow">
+                            <property name="visible">TRUE</property>
+                            <property name="can_focus">TRUE</property>
+                            <property name="hscrollbar_policy">
+                              automatic</property>
+                            <property name="vscrollbar_policy">
+                              automatic</property>
+                            <child>
+                              <object class="GtkViewport"
+                                id="viewport1">
+                                <property name="visible">
+                                  TRUE</property>
+                                <child>
+                                  <object
+                                    class="GtkDrawingArea"
+                                    id="drawingArea">
+                                    <property
+                                      name="visible">
+                                      TRUE</property>
                                   </object>
                                 </child>
                               </object>
@@ -155,78 +197,69 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkFrame" id="frame2">
+                          <object class="GtkLabel" id="label2">
                             <property name="visible">TRUE</property>
-                            <property name="label_xalign">0.5</property>
-                            <child>
-                              <object class="GtkScrolledWindow" id="scrolledwindow">
-                                <property name="visible">TRUE</property>
-                                <property name="can_focus">TRUE</property>
-                                <property name="hscrollbar_policy">automatic</property>
-                                <property name="vscrollbar_policy">automatic</property>
-                                <child>
-                                  <object class="GtkViewport" id="viewport1">
-                                    <property name="visible">TRUE</property>
-                                    <child>
-                                      <object class="GtkDrawingArea" id="drawingArea">
-                                        <property name="visible">TRUE</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label2">
-                                <property name="visible">TRUE</property>
-                                <property name="label" translatable="1">&lt;b&gt;Net&lt;/b&gt;</property>
-                                <property name="use_markup">TRUE</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkFrame" id="frame3">
-                            <property name="visible">TRUE</property>
-                            <property name="label_xalign">0.5</property>
-                            <child>
-                              <object class="GtkScrolledWindow" id="scrolledwindow1">
-                                <property name="width_request">98</property>
-                                <property name="visible">TRUE</property>
-                                <property name="can_focus">TRUE</property>
-                                <property name="hscrollbar_policy">automatic</property>
-                                <property name="vscrollbar_policy">automatic</property>
-                                <child>
-                                  <object class="GtkIconView" id="pageview">
-                                    <property name="width_request">130</property>
-                                    <property name="visible">TRUE</property>
-                                    <property name="can_focus">TRUE</property>
-                                    <property name="selection_mode">browse</property>
-                                    <property name="columns">1</property>
-                                    <property name="reorderable">TRUE</property>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="label3">
-                                <property name="visible">TRUE</property>
-                                <property name="label" translatable="1">&lt;b&gt;Pages&lt;/b&gt;</property>
-                                <property name="use_markup">TRUE</property>
-                                <property name="justify">center</property>
-                              </object>
-                            </child>
+                            <property name="label"
+                              translatable="1">
+                              &lt;b&gt;Net&lt;/b&gt;</property>
+                            <property name="use_markup">TRUE</property>
                           </object>
                         </child>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkStatusbar" id="statusbar1">
+                      <object class="GtkFrame" id="frame3">
                         <property name="visible">TRUE</property>
+                        <property name="label_xalign">0.5</property>
+                        <child>
+                          <object class="GtkScrolledWindow"
+                            id="scrolledwindow1">
+                            <property name="width_request">98</property>
+                            <property name="visible">TRUE</property>
+                            <property name="can_focus">TRUE</property>
+                            <property name="hscrollbar_policy">
+                              automatic</property>
+                            <property name="vscrollbar_policy">
+                              automatic</property>
+                            <child>
+                              <object class="GtkIconView"
+                                id="pageview">
+                                <property
+                                  name="width_request">130</property>
+                                <property name="visible">
+                                  TRUE</property>
+                                <property name="can_focus">
+                                  TRUE</property>
+                                <property
+                                  name="selection_mode">
+                                  browse</property>
+                                <property name="columns">1</property>
+                                <property name="reorderable">
+                                  TRUE</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label3">
+                            <property name="visible">TRUE</property>
+                            <property name="label"
+                              translatable="1">
+                              &lt;b&gt;Pages&lt;/b&gt;</property>
+                            <property name="use_markup">TRUE</property>
+                            <property name="justify">center</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
                 </child>
+                <child>
+                  <object class="GtkStatusbar" id="statusbar1">
+                    <property name="visible">TRUE</property>
+                  </object>
+                </child>
+
               </object>
               <object class="GtkDialog" id="dialogRename">
                 <property name="height_request">150</property>
@@ -254,7 +287,8 @@
                         <child>
                           <object class="GtkLabel" id="label7">
                             <property name="visible">TRUE</property>
-                            <property name="label" translatable="1">&lt;b&gt;Name: &lt;/b&gt;</property>
+                            <property name="label" translatable="1">&lt;b&gt;Name:
+                              &lt;/b&gt;</property>
                             <property name="use_markup">TRUE</property>
                           </object>
                         </child>
@@ -272,8 +306,10 @@
                         <property name="visible">TRUE</property>
                         <property name="visible">TRUE</property>
                         <child>
-                          <object class="GtkButton" id="buttonRenameCancel">
-                            <property name="label" translatable="1">Cancel</property>
+                          <object class="GtkButton"
+                            id="buttonRenameCancel">
+                            <property name="label" translatable="1">
+                              Cancel</property>
                             <property name="visible">TRUE</property>
                             <property name="can_focus">TRUE</property>
                             <property name="receives_default">TRUE</property>
@@ -316,13 +352,17 @@
                             <child>
                               <object class="GtkImage" id="image2">
                                 <property name="visible">TRUE</property>
-                                <property name="icon-name">dialog-question</property>
+                                <property name="icon-name">
+                                  dialog-question</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="labelDescription">
+                              <object class="GtkLabel"
+                                id="labelDescription">
                                 <property name="visible">TRUE</property>
-                                <property name="label" translatable="1">&lt;b&gt;Select the
+                                <property name="label"
+                                  translatable="1">&lt;b&gt;Select
+                                  the
                                   Value&lt;/b&gt;</property>
                                 <property name="use_markup">TRUE</property>
                               </object>
@@ -342,8 +382,10 @@
                         <property name="orientation">horizontal</property>
                         <property name="visible">TRUE</property>
                         <child>
-                          <object class="GtkButton" id="buttonWeightCancel">
-                            <property name="label" translatable="1">Cancel</property>
+                          <object class="GtkButton"
+                            id="buttonWeightCancel">
+                            <property name="label" translatable="1">
+                              Cancel</property>
                             <property name="visible">TRUE</property>
                             <property name="can_focus">TRUE</property>
                             <property name="receives_default">TRUE</property>
@@ -386,13 +428,17 @@
                             <child>
                               <object class="GtkImage" id="image4">
                                 <property name="visible">TRUE</property>
-                                <property name="icon-name">dialog-question</property>
+                                <property name="icon-name">
+                                  dialog-question</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="labelDescription2">
+                              <object class="GtkLabel"
+                                id="labelDescription2">
                                 <property name="visible">TRUE</property>
-                                <property name="label" translatable="1">&lt;b&gt;Select the
+                                <property name="label"
+                                  translatable="1">&lt;b&gt;Select
+                                  the
                                   Value&lt;/b&gt;</property>
                                 <property name="use_markup">TRUE</property>
                               </object>
@@ -413,8 +459,10 @@
                         <property name="orientation">horizontal</property>
                         <property name="visible">TRUE</property>
                         <child>
-                          <object class="GtkButton" id="buttonWeightCancel2">
-                            <property name="label" translatable="1">Cancel</property>
+                          <object class="GtkButton"
+                            id="buttonWeightCancel2">
+                            <property name="label" translatable="1">
+                              Cancel</property>
                             <property name="visible">TRUE</property>
                             <property name="can_focus">TRUE</property>
                             <property name="receives_default">TRUE</property>
@@ -457,14 +505,18 @@
                             <child>
                               <object class="GtkImage" id="image5">
                                 <property name="visible">TRUE</property>
-                                <property name="icon-name">dialog-question</property>
+                                <property name="icon-name">
+                                  dialog-question</property>
                               </object>
 
                             </child>
                             <child>
-                              <object class="GtkLabel" id="labelDescription3">
+                              <object class="GtkLabel"
+                                id="labelDescription3">
                                 <property name="visible">TRUE</property>
-                                <property name="label" translatable="1">&lt;b&gt;Network Run
+                                <property name="label"
+                                  translatable="1">&lt;b&gt;Network
+                                  Run
                                   Settings&lt;/b&gt;</property>
                                 <property name="use_markup">TRUE</property>
                               </object>
@@ -478,29 +530,39 @@
                             <property name="orientation">vertical</property>
                             <property name="visible">TRUE</property>
                             <child>
-                              <object class="GtkCheckButton" id="checkbuttonTimed">
-                                <property name="label" translatable="1">Honor Times</property>
+                              <object class="GtkCheckButton"
+                                id="checkbuttonTimed">
+                                <property name="label"
+                                  translatable="1">Honor Times</property>
                                 <property name="visible">TRUE</property>
                                 <property name="can_focus">TRUE</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">
+                                  False</property>
                               </object>
 
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="checkbuttonWeighted">
-                                <property name="label" translatable="1">Honor Weights</property>
+                              <object class="GtkCheckButton"
+                                id="checkbuttonWeighted">
+                                <property name="label"
+                                  translatable="1">Honor Weights</property>
                                 <property name="visible">TRUE</property>
                                 <property name="can_focus">TRUE</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">
+                                  False</property>
                               </object>
 
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="checkbuttonStochastic">
-                                <property name="label" translatable="1">Honor Stochastic Behaviour</property>
+                              <object class="GtkCheckButton"
+                                id="checkbuttonStochastic">
+                                <property name="label"
+                                  translatable="1">Honor
+                                  Stochastic Behaviour</property>
                                 <property name="visible">TRUE</property>
                                 <property name="can_focus">TRUE</property>
-                                <property name="receives_default">False</property>
+                                <property name="receives_default">
+                                  False</property>
                               </object>
 
                             </child>
