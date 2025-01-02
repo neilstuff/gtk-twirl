@@ -9,101 +9,107 @@
       <object class="GtkGrid">
         <child>
           <object class="GtkBox" id="vbox1">
-            <property name="visible">true</property>
             <layout>
               <property name="column">0</property>
               <property name="row">0</property>
               <property name="row-span">1</property>
               <property name="column-span">4</property>
             </layout>
+            <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+            <property name="hexpand">1</property>
             <child>
-              <object class="GtkBox">
-                <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
-                <property name="hexpand">1</property>
-                <child>
-                  <object class="GtkMenuButton" id="newToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">document-new</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="openToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">document-open</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="saveToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">document-save</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="saveAsToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">document-save-as</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="printToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">document-print</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="undoToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">edit-undo</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="redoToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">edit-redo</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="cutToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">edit-cut</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="copyToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">edit-copy</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="pasteToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">edit-paste</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="deleteToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">edit-clear</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="playToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">system-run</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="stopToolbarButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">process-stop</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuButton" id="aboutToolbarItem">
-                    <property name="visible">true</property>
-                    <property name="icon-name">help-about</property>
-                  </object>
-                </child>
+              <object class="GtkButton" id="newToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="icon-name">document-new</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="openToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="icon-name">document-open</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="saveToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">document-save</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="saveAsToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">document-save-as</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="printToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">document-print</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="undoToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">edit-undo</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="redoToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">edit-redo</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="cutToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">edit-cut</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="copyToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">edit-copy</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="pasteToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">edit-paste</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="deleteToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">edit-clear</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="playToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">system-run</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="stopToolbarButton">
+                <property name="has_frame">false</property>
+                <property name="sensitive">false</property>
+                <property name="icon-name">process-stop</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="aboutToolbarItem">
+                <property name="has_frame">false</property>
+                <property name="icon-name">help-about</property>
               </object>
             </child>
           </object>
@@ -126,10 +132,8 @@
                 <child>
                   <object
                     class="GtkToggleButton" id="selectButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">insert-link</property>
-                    <property name="group">placeButton
-                    </property>
+                    <property name="has_frame">false</property>
+                    <property name="icon-name">document-edit-symbolic</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="row">0</property>
@@ -139,9 +143,8 @@
                 <child>
                   <object
                     class="GtkToggleButton" id="placeButton">
-                    <property name="visible">true</property>
-                    <property name="icon-name">network-offline</property>
-                    <property name="group">selectButton</property>
+                    <property name="has_frame">false</property>
+                    <property name="icon-name">media-record-symbolic</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="row">1</property>
@@ -149,13 +152,9 @@
                   </object>
                 </child>
                 <child>
-                  <object
-                    class="GtkToggleButton"
-                    id="transitionButton">
-                    <property
-                      name="visible">true</property>
-                    <property name="group">selectButton</property>
-                    <property name="icon-name">network-offline</property>
+                  <object class="GtkToggleButton" id="transitionButton">
+                    <property name="has_frame">false</property>
+                    <property name="icon-name">media-playback-stop-symbolic</property>
                     <layout>
                       <property name="column">0</property>
                       <property name="row">2</property>
@@ -171,7 +170,8 @@
                 <property name="has_frame">true</property>
                 <property name="vexpand">1</property>
                 <property name="hexpand">1</property>
- 
+                <property name="margin_end">14</property>
+
                 <child>
                   <object class="GtkViewport" id="viewport1">
                     <property name="visible">true</property>
@@ -184,6 +184,20 @@
                 </child>
               </object>
             </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="statusBar">
+            <property name="hexpand">1</property>
+            <property name="margin_top">2</property>
+            <property name="margin_bottom">2</property>
+            <property name="label">Twirl - V1.0.0 - The Sour Orange</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="row">2</property>
+              <property name="row-span">1</property>
+              <property name="column-span">4</property>
+            </layout>
           </object>
         </child>
       </object>
