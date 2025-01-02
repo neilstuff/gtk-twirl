@@ -1,3 +1,4 @@
+twirl.exe
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
@@ -16,7 +17,5 @@ build
 resource.c
 *.o
 debug.log
-twirl.exe
 .vscode
 twirl.ui.bak.1
-twirl.exe
