@@ -21,6 +21,10 @@ CONTROLLER * create_controller(GtkApplication * gtkAppication, char * resourceUR
 
     gtk_window_set_application(GTK_WINDOW (controller->window), GTK_APPLICATION (gtkAppication));
 
+    controller->selectButton = GTK_WIDGET(gtk_builder_get_object (builder, "selectButton"));
+    controller->placeButton = GTK_WIDGET(gtk_builder_get_object (builder, "placeButton"));
+    controller->transitionButton = GTK_WIDGET(gtk_builder_get_object (builder, "transitionButton"));
+
     g_object_unref(builder);
 
     gtk_window_present(GTK_WINDOW (controller->window));

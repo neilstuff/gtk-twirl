@@ -25,7 +25,7 @@ resource.c: twirl.gresource.xml twirl.ui
 	$(CC) -c -o $(@F) $(CFLAGS) $<
 
 twirl: $(OBJS)
-	$(CC) -o $(@F) $(OBJS) $(LIBS)
+	$(CC) -o $(@F) $(OBJS) -mwindows $(LIBS)
 
 clean:
 	$(DELETE) $(OBJS)
