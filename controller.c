@@ -3,7 +3,15 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-#include "CONTROLLER.h"
+#include "handler.h"
+#include "controller.h"
+#include "net.h"
+
+NET * controller_create_net(CONTROLLER * controller) 
+{
+
+
+}
 
 /**
  * Create and initialise the Controller
@@ -11,7 +19,7 @@
  * @return an initialised Controller
  *
  */
-CONTROLLER * create_controller(GtkApplication * gtkAppication, char * resourceURL)
+CONTROLLER * controller_create(GtkApplication * gtkAppication, char * resourceURL)
 {
     CONTROLLER *controller = g_malloc(sizeof(CONTROLLER));
 
@@ -25,6 +33,8 @@ CONTROLLER * create_controller(GtkApplication * gtkAppication, char * resourceUR
     controller->placeButton = GTK_WIDGET(gtk_builder_get_object (builder, "placeButton"));
     controller->transitionButton = GTK_WIDGET(gtk_builder_get_object (builder, "transitionButton"));
 
+    controller->processors = g_ptr_array_new ();
+
     g_object_unref(builder);
 
     gtk_window_present(GTK_WINDOW (controller->window));
@@ -33,7 +43,12 @@ CONTROLLER * create_controller(GtkApplication * gtkAppication, char * resourceUR
 
 }
 
-void destroy_controller(CONTROLLER  * controller) 
+/**
+ * @brief Reealse a Controller and free any resources
+ * 
+ * @param controller the Controller to release
+ */
+void controller_release(CONTROLLER  * controller) 
 {
 
     g_free(controller);
