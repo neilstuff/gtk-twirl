@@ -14,9 +14,9 @@
 
 typedef struct _HANDLER {
 
-    int (*onSelectButtonPressed)(struct _EVENT * EVENT);
-    int (*onPlaceButtonPressed)(struct _EVENT * EVENT);
-    int (*onTransitionButtonPressed)(struct _EVENT * EVENT);
+    int (*onButtonPressed)(struct _EVENT * EVENT);
+
+    void (*release) (struct _HANDLER * handler);
 
 } HANDLER, * HANDLER_P;
 

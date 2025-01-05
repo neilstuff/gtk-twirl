@@ -9,7 +9,7 @@
 #include "net.h"
 
 /**
- * Net - implementation
+ * @brief Net - implementation
  *
  * @author Neil Brittliff
  *
@@ -18,7 +18,7 @@
  */
 
 /**
- * Invalidate a Drawing Area
+ * @brief Invalidate a Drawing Area
  *
  * @param net the active Net
  * @param area the Area to invalidate
@@ -29,7 +29,7 @@
  }
 
 /**
- * Invalidate the entire window
+ * @brief Invalidate the entire window
  *
  * @param net the active Net
  *
@@ -39,7 +39,7 @@
  }
 
 /**
- * Get the Current Cursor
+ * @brief Get the Current Cursor
  *
  * @param net the Net
  *
@@ -51,7 +51,7 @@ GdkCursor * net_get_current_cursor (NET * net)
 }
 
 /**
- * Create an empty Net
+ * @brief Create an empty Net
  *
  * @param net the Net
  *
@@ -61,7 +61,7 @@ void create_empty_net (NET * net)
 }
 
 /**
- * Play the NET
+ * @brief Play the NET
  *
  * @param net the NET
  *
@@ -73,7 +73,7 @@ gint net_play(struct _NET * net)
 }
 
 /**
- * Stop the NET
+ * @brief Stop the NET
  *
  * @param net the NET
  *
@@ -88,7 +88,18 @@ gint net_stop(struct _NET * net)
 }
 
 /**
- * Initialise the Net
+ * @brief Reealse a Net and free any resources
+ * 
+ * @param controller the Net to release
+ */
+extern void net_release(NET  * net) {
+    
+    g_free(net);
+
+}
+
+/**
+ * @brief Initialise the Net
  *
  * @return an initialised NET
  *
@@ -99,22 +110,12 @@ NET * create_net (CONTROLLER * controller)
 
     net->invalidateBounds = net_invalidate_bounds;
     net->invalidate = net_invalidate;
+    net->release = net_release;
 
     net->places = g_ptr_array_new ();
     net->transitions = g_ptr_array_new ();
     net->arcs = g_ptr_array_new ();
 
     return net;
-
-}
-
-/**
- * @brief Reealse a Net and free any resources
- * 
- * @param controller the Net to release
- */
-extern void release_net(NET  * net) {
-    
-    g_free(net);
 
 }

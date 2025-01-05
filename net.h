@@ -14,9 +14,6 @@
 
 typedef struct _NET {
 
-    void (*invalidateBounds)(struct _NET * net, GdkRectangle * bounds);
-    void (*invalidate)(struct _NET * net);
-
    
     GPtrArray * places;
     GPtrArray * transitions;
@@ -24,9 +21,12 @@ typedef struct _NET {
 
     int position;
 
+    void (*invalidateBounds)(struct _NET * net, GdkRectangle * bounds);
+    void (*invalidate)(struct _NET * net);
+    void (*release) (struct _NET * net);
+
 } NET, * NET_P;
 
 extern NET * net_create(CONTROLLER * controller);
-extern void net_release(CONTROLLER  * controller);
 
 #endif // NET_H_INCLUDED

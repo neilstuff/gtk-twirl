@@ -11,10 +11,12 @@ typedef struct _CONTROLLER
     GtkWidget *transitionButton;
 
     GPtrArray * processors;
+
+   void (*registerHandler)(struct _CONTROLLER * controller, HANDLER * handler);
+   void (*release) (struct _CONTROLLER * controller);
     
 } CONTROLLER, * CONTROLLER_P;
 
 extern CONTROLLER * controller_create(GtkApplication * gtkAppication, char * resourceURL);
-extern void release_controller(CONTROLLER  * controller);
 
 #endif // CONTROLLER_H_INCLUDED
