@@ -1,6 +1,10 @@
 #ifndef CONTROLLER_H_INCLUDED
 #define CONTROLLER_H_INCLUDED
 
+#include "handler.h"
+
+#define TO_CONTROLLER(controller) ((CONTROLLER*)(controller))
+
 typedef struct _CONTROLLER 
 {
 
@@ -10,7 +14,7 @@ typedef struct _CONTROLLER
     GtkWidget *placeButton;
     GtkWidget *transitionButton;
 
-    GPtrArray * processors;
+    GPtrArray * handlers;
 
    void (*registerHandler)(struct _CONTROLLER * controller, HANDLER * handler);
    void (*release) (struct _CONTROLLER * controller);

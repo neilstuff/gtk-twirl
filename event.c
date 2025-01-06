@@ -17,19 +17,37 @@ void event_release(EVENT  * event)
 }
 
 /**
- * Create and initialise the Event
- *
- *  @param tool the tool selected by the user
+ * @brief Create new net
  * 
  * @return an initialised event
  *
  */
-EVENT * event_create_tool_selected(int tool)
+EVENT * event_new_net()
+{
+    EVENT *event = g_malloc(sizeof(EVENT));
+    event->release = event_release;
+
+    event->notification = NEW_NET;
+
+    return event;
+
+}
+
+/**
+ * @brief Create and initialise the Event
+ *
+ * @param tool the tool selected by the user
+ * 
+ * @return an initialised event
+ *
+ */
+EVENT * event_create_tool_selected(enum TOOL tool)
 {
     EVENT *event = g_malloc(sizeof(EVENT));
 
     event->release = event_release;
 
+    event->notification = TOOL_SELECTED;
     event->events.button_event.tool = tool;
 
     return event;

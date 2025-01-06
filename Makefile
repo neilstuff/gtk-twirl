@@ -7,6 +7,13 @@ else
 	DELETE = rm
 endif
 
+
+ifdef DEPLOY 
+	WINDOWS=-mwindows
+else
+	WINDOWS=
+endif
+
 COMPILE_RESOURCES = glib-compile-resources
 CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4)
 LIBS = $(shell $(PKGCONFIG)  --libs gtk4)
@@ -27,7 +34,7 @@ resource.c: twirl.gresource.xml twirl.ui
 	$(CC) -c -o $(@F) $(CFLAGS) $<
 
 twirl: $(OBJS)
-	$(CC) -o $(@F) $(OBJS) $(LIBS)
+	$(CC) -o $(@F) $(WINDOWS) $(OBJS) $(LIBS)
 
 clean:
 	$(DELETE) $(OBJS)

@@ -3,6 +3,8 @@
 
 #include "event.h"
 
+#define TO_HANDLER(handler) ((HANDLER*)(handler))
+
 /**
  * HANDLER - prototype
  *
@@ -14,10 +16,12 @@
 
 typedef struct _HANDLER {
 
-    int (*onButtonPressed)(struct _EVENT * EVENT);
+    void (*notify)(EVENT * EVENT);
 
     void (*release) (struct _HANDLER * handler);
 
 } HANDLER, * HANDLER_P;
+
+extern HANDLER * handler_create();
 
 #endif // HANDLER_H_INCLUDED

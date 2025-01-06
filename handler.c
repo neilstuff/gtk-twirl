@@ -5,6 +5,15 @@
 #include "handler.h"
 
 /**
+ * @brief Notify the handler of an event
+ * 
+ * @param event the event
+ */
+void handler_notify(EVENT * event)
+{
+}
+
+/**
  * @brief Release the Handler and free any associated resources
  * 
  * @param handler the Handler to release
@@ -27,6 +36,7 @@ HANDLER * handler_create()
     HANDLER *handler = g_malloc(sizeof(HANDLER));
 
     handler->release = handler_release;
+    handler->notify = handler_notify;
 
     return handler;
 
