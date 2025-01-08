@@ -1,14 +1,13 @@
 #ifndef CONTROLLER_H_INCLUDED
 #define CONTROLLER_H_INCLUDED
 
-#include "handler.h"
-
 #define TO_CONTROLLER(controller) ((CONTROLLER*)(controller))
 
 typedef struct _CONTROLLER 
 {
 
     GtkWidget *window;
+    GtkWidget *scrolledWindow;
 
     GtkWidget *selectButton;
     GtkWidget *placeButton;
@@ -16,11 +15,11 @@ typedef struct _CONTROLLER
 
     GPtrArray * handlers;
 
-   void (*registerHandler)(struct _CONTROLLER * controller, HANDLER * handler);
+   void (*monitor) (struct _CONTROLLER * controller, void * net);
    void (*release) (struct _CONTROLLER * controller);
     
 } CONTROLLER, * CONTROLLER_P;
 
-extern CONTROLLER * controller_create(GtkApplication * gtkAppication, char * resourceURL);
+extern CONTROLLER * create_controller(GtkApplication * gtkAppication, char * resourceURL);
 
 #endif // CONTROLLER_H_INCLUDED

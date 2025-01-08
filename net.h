@@ -13,17 +13,18 @@
 #define TO_NET(net) ((NET*)(net))
 
 typedef struct _NET {
-
-   
     GPtrArray * places;
     GPtrArray * transitions;
     GPtrArray * arcs;
 
-    int position;
+    enum TOOL tool;
+
+    void (*release) (struct _NET * net);
+    void (*notify) (struct _NET * net, EVENT * event);
 
     void (*invalidateBounds)(struct _NET * net, GdkRectangle * bounds);
     void (*invalidate)(struct _NET * net);
-    void (*release) (struct _NET * net);
+
 
 } NET, * NET_P;
 

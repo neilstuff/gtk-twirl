@@ -166,7 +166,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkScrolledWindow" id="scrolledwindow">
+              <object class="GtkScrolledWindow" id="scrolledWindow">
                 <property name="visible">true</property>
                 <property name="can_focus">true</property>
                 <property name="has_frame">true</property>
@@ -175,7 +175,7 @@
                 <property name="margin_end">14</property>
 
                 <child>
-                  <object class="GtkViewport" id="viewport1">
+                  <object class="GtkViewport" id="viewport">
                     <property name="visible">true</property>
                     <child>
                       <object class="GtkDrawingArea" id="drawingArea">

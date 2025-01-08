@@ -10,45 +10,36 @@
  *
  */
 
-#define TO_EVENT(event) ((EVENT*)(event))
+#define TO_EVENT(event) ((EVENT *)(event))
 
-enum NOTIFICATION {
-    NEW_NET,
-    OPEN_NET,
-    CLOSE_NET,
-    TOOL_SELECTED
-};
+enum NOTIFICATION { NEW_NET, OPEN_NET, CLOSE_NET, TOOL_SELECTED };
 
-enum TOOL {
-    SELECT_TOOL,
-    PLACE_TOOL,
-    TRANSITION_TOOL
-};
+enum TOOL { SELECT_TOOL, PLACE_TOOL, TRANSITION_TOOL };
 
 typedef struct _EVENT {
 
-    void (*release) (struct _EVENT * event);
+  void (*release)(struct _EVENT *event);
 
-    enum NOTIFICATION notification;
+  enum NOTIFICATION notification;
 
-    union {
-        struct {
-            
-            enum TOOL tool;
+  union {
+    struct {
 
-        } button_event;
+      enum TOOL tool;
 
-        struct {
-            
-            int x;
-            int y;
+    } button_event;
 
-        } mouse_down;
+    struct {
 
-    } events;
-        
-} EVENT, * EVENT_P;
+      int x;
+      int y;
 
-extern EVENT * event_create_tool_selected(enum TOOL);
+    } mouse_down;
+
+  } events;
+
+} EVENT, *EVENT_P;
+
+extern EVENT *create_tool_selected_event(enum TOOL);
 
 #endif // EVENT_H_INCLUDED
