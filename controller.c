@@ -130,4 +130,5 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
   gtk_window_present(GTK_WINDOW(controller->window));
 
   return controller;
+  
 }
