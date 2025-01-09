@@ -12,24 +12,48 @@
 
 #define TO_EVENT(event) ((EVENT *)(event))
 
-enum NOTIFICATION { NEW_NET, OPEN_NET, CLOSE_NET, TOOL_SELECTED };
+enum NOTIFICATION
+{
+  NEW_NET,
+  OPEN_NET,
+  CLOSE_NET,
+  TOOL_SELECTED,
+  DRAW_REQUESTED
+};
 
-enum TOOL { SELECT_TOOL, PLACE_TOOL, TRANSITION_TOOL };
+enum TOOL
+{
+  SELECT_TOOL,
+  PLACE_TOOL,
+  TRANSITION_TOOL
+};
 
-typedef struct _EVENT {
+typedef struct _EVENT
+{
 
   void (*release)(struct _EVENT *event);
 
   enum NOTIFICATION notification;
 
-  union {
-    struct {
+  union
+  {
+    struct
+    {
 
       enum TOOL tool;
 
     } button_event;
 
-    struct {
+    struct
+    {
+
+     cairo_t *cr;
+
+    } draw_event;
+
+
+    struct
+    {
 
       int x;
       int y;
@@ -41,5 +65,6 @@ typedef struct _EVENT {
 } EVENT, *EVENT_P;
 
 extern EVENT *create_tool_selected_event(enum TOOL);
+extern EVENT *create_draw_event(cairo_t *cr, int width, int height);
 
 #endif // EVENT_H_INCLUDED

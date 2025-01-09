@@ -13,6 +13,7 @@
 #define TO_NET(net) ((NET*)(net))
 
 typedef struct _NET {
+    CONTROLLER * controller;
     GPtrArray * places;
     GPtrArray * transitions;
     GPtrArray * arcs;

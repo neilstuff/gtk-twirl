@@ -12,11 +12,9 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-
 #include "controller.h"
 #include "event.h"
 #include "net.h"
-
 
 /**
  * @brief Invalidate a Drawing Area
@@ -76,10 +74,21 @@ gint net_stop(struct _NET *net) { return TRUE; }
 /**
  * @brief Notify the handler of an event
  *
- * @param net the Net to release
+ * @param net the Net
  * @param event the event
  */
-void net_notify(NET *net, EVENT *event) {}
+void net_notify(NET *net, EVENT *event)
+{
+
+    switch (event->notification)
+    {
+
+    case TOOL_SELECTED:
+        net->tool = event->events.button_event.tool;
+        break;
+    }
+
+}
 
 /**
  * @brief Reealse a Net and free any resources
@@ -94,17 +103,20 @@ extern void net_release(NET *net) { g_free(net); }
  * @return an initialised NET
  *
  */
-NET *net_create(CONTROLLER *controller) {
-  NET *net = g_malloc(sizeof(NET));
+NET *net_create(CONTROLLER *controller)
+{
+    NET *net = g_malloc(sizeof(NET));
 
-  net->notify = net_notify;
-  net->invalidateBounds = net_invalidate_bounds;
-  net->invalidate = net_invalidate;
-  net->release = net_release;
+    net->controller = controller;
 
-  net->places = g_ptr_array_new();
-  net->transitions = g_ptr_array_new();
-  net->arcs = g_ptr_array_new();
+    net->notify = net_notify;
+    net->invalidateBounds = net_invalidate_bounds;
+    net->invalidate = net_invalidate;
+    net->release = net_release;
 
-  return net;
+    net->places = g_ptr_array_new();
+    net->transitions = g_ptr_array_new();
+    net->arcs = g_ptr_array_new();
+
+    return net;
 }

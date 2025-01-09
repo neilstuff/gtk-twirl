@@ -1,5 +1,3 @@
-#ifndef NODE_H_INCLUDED
-#define NODE_H_INCLUDED
 
 /**
  * Node - prototype
@@ -10,9 +8,12 @@
  *
  */
 
-#define TO_NODE(node) ((NODE*)(node))
-#define TO_PLACE(node) ((NODE*)(node))->place
-#define TO_TRANSITION(node) ((NODE*)(node))->transition
+#ifndef NODE_H_INCLUDED
+#define NODE_H_INCLUDED
+
+#define TO_NODE(node) ((NODE *)(node))
+#define TO_PLACE(node) ((NODE *)(node))->place
+#define TO_TRANSITION(node) ((NODE *)(node))->transition
 
 #define DEFAULT_CHAR_LENGTH 10
 
@@ -32,51 +33,57 @@
  * @author Neil Brittliff
  */
 
-enum {
-        PLACE_NODE,
-        TRANSITION_NODE
+enum
+{
+    PLACE_NODE,
+    TRANSITION_NODE
 } TYPE;
 
-enum {
-        ACTIVE,
-        INACTIVE
+enum
+{
+    ACTIVE,
+    INACTIVE
 } STATE;
 
-typedef struct {
+typedef struct
+{
 
     int marked;
     int occupied;
 
 } PLACE;
 
-typedef struct {
+typedef struct
+{
 
     int duration;
 
 } TRANSITION;
 
-typedef struct {
+typedef struct
+{
 
     int x;
     int y;
 
 } POINT;
 
-typedef struct _NODE {
+typedef struct _NODE
+{
 
-    void (*destroy)(struct _NODE * node);
-    void (*setPosition)(struct _NODE *, gdouble  x, gdouble  y);
-    gint (*isTransition)(struct _NODE * node);
-    int (*isPlace)(struct _NODE * node);
-    void(*setName)(struct _NODE * node, gchar  * name);
-    void(*setDefaultName)(struct _NODE * node);
+    void (*destroy)(struct _NODE *node);
+    void (*setPosition)(struct _NODE *, gdouble x, gdouble y);
+    gint (*isTransition)(struct _NODE *node);
+    int (*isPlace)(struct _NODE *node);
+    void (*setName)(struct _NODE *node, gchar *name);
+    void (*setDefaultName)(struct _NODE *node);
 
-    void (*getBounds)(struct _NODE * node, GdkRectangle * bounds);
-    gint (*isNodeAtPoint)(struct _NODE * node, gdouble x, gdouble y);
+    void (*getBounds)(struct _NODE *node, GdkRectangle *bounds);
+    gint (*isNodeAtPoint)(struct _NODE *node, gdouble x, gdouble y);
 
     gint type;
     gint id;
-    GString * name;
+    GString *name;
 
     POINT position;
     int selected;
@@ -86,16 +93,15 @@ typedef struct _NODE {
 
     GdkRectangle bounds;
 
-    union {
+    union
+    {
 
         PLACE place;
         TRANSITION transition;
-
     };
 
+} NODE, *NODE_P;
 
-} NODE, * NODE_P;
-
-extern NODE * create_node(int type);
+extern NODE *create_node(int type);
 
 #endif // NODE_H_INCLUDED

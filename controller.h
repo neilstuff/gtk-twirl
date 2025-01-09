@@ -8,6 +8,7 @@ typedef struct _CONTROLLER
 
     GtkWidget *window;
     GtkWidget *scrolledWindow;
+    GtkWidget *drawingArea;
 
     GtkWidget *selectButton;
     GtkWidget *placeButton;
