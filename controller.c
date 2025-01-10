@@ -21,12 +21,12 @@ void controller_handler_iterator(gpointer net, gpointer event)
  * @param height the height of the drawing Area
  */
 static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int height,
-                     gpointer user_data)
+                            gpointer user_data)
 {
     EVENT *event = create_draw_event(cr, width, height);
 
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                           controller_handler_iterator, event);
+                        controller_handler_iterator, event);
 }
 
 /**
@@ -79,6 +79,25 @@ void controller_transition_clicked(GtkButton *button, gpointer user_data)
 
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
                         controller_handler_iterator, event);
+}
+
+/**
+ * @brief Release gesture processing
+ *
+ * @param gesture The release gesture
+ * @param n_press what button was pressed
+ * @param x the 'x' coordinate
+ * @param y the 'y' coordinate
+ * @param user_data the Controller
+ */
+void controller_gesture_released(GtkGestureClick *gesture,
+                                 int n_press,
+                                 double x,
+                                 double y,
+                                 gpointer user_data)
+{
+
+    printf("Pressed %d, %f, %f - %s\n", n_press, x, y, user_data == NULL ? "NULL" : "OK");
 }
 
 /**
@@ -151,8 +170,13 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 
     gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(controller->drawingArea), controller_draw, controller,
                                    NULL);
+    controller->gesture = gtk_gesture_click_new();
 
-    g_object_unref(builder);
+    g_signal_connect(controller->gesture, "released",
+                     G_CALLBACK(controller_gesture_released),
+                     controller);
+
+    gtk_widget_add_controller(controller->drawingArea, GTK_EVENT_CONTROLLER(controller->gesture));
 
     controller->monitor(controller, net_create(controller));
 

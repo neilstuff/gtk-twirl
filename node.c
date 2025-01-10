@@ -7,7 +7,6 @@
  *
  */
 
-
 #include <math.h>
 
 #include <glib.h>
@@ -23,17 +22,16 @@
  * @param node the Node to destroy
  *
  */
-void destroy_node (NODE * node)
+void destroy_node(NODE *node)
 {
 
-    if (node->name != NULL) {
+    if (node->name != NULL)
+    {
 
         g_string_free(node->name, TRUE);
-
     }
 
-    g_free (node);
-
+    g_free(node);
 }
 
 /**
@@ -44,11 +42,10 @@ void destroy_node (NODE * node)
  * @return TRUE if it is a transition, FALSE otherwise
  *
  */
-gint is_transition (NODE * node)
+gint is_transition(NODE *node)
 {
 
     return (node->type == 1) ? 1 : 0;
-
 }
 
 /**
@@ -59,11 +56,10 @@ gint is_transition (NODE * node)
  * @return TRUE if it is a place, FALSE otherwise
  *
  */
-gint is_place (NODE * node)
+gint is_place(NODE *node)
 {
 
     return (node->type == 0) ? 1 : 0;
-
 }
 
 /**
@@ -74,7 +70,7 @@ gint is_place (NODE * node)
  * @param y the 'y' coordinate
  *
  */
-void set_position (NODE * node, gdouble  x, gdouble  y)
+void set_position(NODE *node, gdouble x, gdouble y)
 {
 
     node->position.x = x;
@@ -85,7 +81,6 @@ void set_position (NODE * node, gdouble  x, gdouble  y)
 
     node->bounds.width = 30;
     node->bounds.height = 30;
-
 }
 
 /**
@@ -95,12 +90,11 @@ void set_position (NODE * node, gdouble  x, gdouble  y)
  * @param name the Name of the Node
  *
  */
-void set_name (NODE * node, gchar * name)
+void set_name(NODE *node, gchar *name)
 {
 
     node->name = g_string_new(name);
     node->textLength = node->name->len * DEFAULT_CHAR_LENGTH;
-
 }
 
 /**
@@ -109,16 +103,15 @@ void set_name (NODE * node, gchar * name)
  * @param node the Node
  *
  */
-void set_default_name (NODE * node)
+void set_default_name(NODE *node)
 {
-    GString * name = g_string_new("");
+    GString *name = g_string_new("");
 
     g_string_printf(name, "%c-%d", node->type == TRANSITION_NODE ? 't' : 'p', node->id);
 
     node->setName(node, name->str);
 
     g_string_free(name, TRUE);
-
 }
 
 /**
@@ -128,14 +121,13 @@ void set_default_name (NODE * node)
  * @param bounds receives the nodes bounds
  *
  */
-void get_bounds (NODE * node, GdkRectangle * bounds)
+void get_bounds(NODE *node, GdkRectangle *bounds)
 {
 
     bounds->x = node->bounds.x;
     bounds->y = node->bounds.y;
     bounds->width = node->bounds.width + node->textLength;
     bounds->height = node->bounds.height;
-
 }
 
 /**
@@ -146,11 +138,13 @@ void get_bounds (NODE * node, GdkRectangle * bounds)
  * @param y the 'Y' location
  *
  */
-gint is_node_at_point (NODE * node, gdouble x, gdouble y)
+gint is_node_at_point(NODE *node, gdouble x, gdouble y)
 {
 
     return ((x >= node->bounds.x) && (x <= node->bounds.x + node->bounds.width) &&
-            (y >= node->bounds.y) && (y <= node->bounds.y + node->bounds.height)) ? 1 : 0;
+            (y >= node->bounds.y) && (y <= node->bounds.y + node->bounds.height))
+               ? 1
+               : 0;
 }
 
 /**
@@ -161,9 +155,9 @@ gint is_node_at_point (NODE * node, gdouble x, gdouble y)
  *
  * @return a Node
  */
-NODE * new_node ()
+NODE *new_node()
 {
-    NODE * node = g_malloc(sizeof(NODE));
+    NODE *node = g_malloc(sizeof(NODE));
 
     node->destroy = destroy_node;
     node->setPosition = set_position;
@@ -185,7 +179,6 @@ NODE * new_node ()
     node->name = NULL;
 
     return node;
-
 }
 
 /**
@@ -195,9 +188,9 @@ NODE * new_node ()
  *
  * @return a 'PLACE' Node
  */
-NODE * new_place ()
+NODE *new_place()
 {
-    NODE * node = new_node ();
+    NODE *node = new_node();
 
     node->place.marked = 0;
     node->place.occupied = FALSE;
@@ -206,7 +199,6 @@ NODE * new_place ()
     node->type = PLACE_NODE;
 
     return node;
-
 }
 
 /**
@@ -216,10 +208,9 @@ NODE * new_place ()
  *
  * @return a 'TRANSITION' Node
  */
-NODE * new_transition ()
+NODE *new_transition()
 {
-    NODE * node = new_node ();
-
+    NODE *node = new_node();
 
     node->transition.duration = 0;
     node->enabled = 0;
@@ -228,7 +219,6 @@ NODE * new_transition ()
     node->type = TRANSITION_NODE;
 
     return node;
-
 }
 
 /**
@@ -239,9 +229,8 @@ NODE * new_transition ()
  * @return a newly created Node
  *
  */
-NODE * create_node (int type)
+NODE *create_node(int type)
 {
 
-    return type == PLACE_NODE ? new_place () : new_transition ();
-
+    return type == PLACE_NODE ? new_place() : new_transition();
 }
