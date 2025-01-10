@@ -9,6 +9,7 @@ typedef struct _CONTROLLER
     GtkWidget *window;
     GtkWidget *scrolledWindow;
     GtkWidget *drawingArea;
+    GtkGesture *gesture;
 
     GtkWidget *selectButton;
     GtkWidget *placeButton;
