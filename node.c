@@ -233,4 +233,6 @@ NODE *create_node(int type)
 {
 
     return type == PLACE_NODE ? new_place() : new_transition();
+    
+
 }

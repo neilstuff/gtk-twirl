@@ -20,6 +20,9 @@ typedef struct _NET {
 
     enum TOOL tool;
 
+    
+    void (*processors[END_NOTIFICATION]) (struct _NET *net, EVENT * event);
+
     void (*release) (struct _NET * net);
     void (*notify) (struct _NET * net, EVENT * event);
 

@@ -98,6 +98,7 @@ void controller_gesture_released(GtkGestureClick *gesture,
 {
 
     printf("Pressed %d, %f, %f - %s\n", n_press, x, y, user_data == NULL ? "NULL" : "OK");
+
 }
 
 /**
@@ -110,6 +111,7 @@ void controller_monitor(CONTROLLER *controller, void *net)
 {
 
     g_ptr_array_add(controller->handlers, net);
+
 }
 
 /**

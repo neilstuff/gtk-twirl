@@ -14,6 +14,7 @@
 
 #include "controller.h"
 #include "event.h"
+#include "node.h"
 #include "net.h"
 
 /**
@@ -80,14 +81,33 @@ gint net_stop(struct _NET *net) { return TRUE; }
 void net_notify(NET *net, EVENT *event)
 {
 
-    switch (event->notification)
-    {
+    printf("Notification Received: %d\n", event->notification);
 
-    case TOOL_SELECTED:
-        net->tool = event->events.button_event.tool;
-        break;
-    }
+    net->processors[event->notification](net, event);
 
+}
+
+/**
+ * @brief Notify the net a new tool has been selected
+ *
+ * @param net the net
+ * @param event the tool selection event
+ */
+void net_tool_event_processor(NET *net, EVENT *event)
+{
+
+    net->tool = event->events.button_event.tool;
+
+}
+
+/**
+ * @brief Notify the net must be redrawn
+ *
+ * @param net the net
+ * @param event the tool selection event
+ */
+void net_draw_event_processor(NET *net, EVENT *event)
+{    
 }
 
 /**
@@ -95,7 +115,11 @@ void net_notify(NET *net, EVENT *event)
  *
  * @param net the Net to release
  */
-extern void net_release(NET *net) { g_free(net); }
+void net_release(NET *net)
+{
+
+    g_free(net);
+}
 
 /**
  * @brief Initialise the Net
@@ -109,6 +133,9 @@ NET *net_create(CONTROLLER *controller)
 
     net->controller = controller;
 
+    net->processors[DRAW_REQUESTED] = net_draw_event_processor;
+    net->processors[TOOL_SELECTED] = net_tool_event_processor;
+
     net->notify = net_notify;
     net->invalidateBounds = net_invalidate_bounds;
     net->invalidate = net_invalidate;
@@ -117,6 +144,7 @@ NET *net_create(CONTROLLER *controller)
     net->places = g_ptr_array_new();
     net->transitions = g_ptr_array_new();
     net->arcs = g_ptr_array_new();
-
+ 
     return net;
+
 }

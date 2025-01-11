@@ -33,17 +33,18 @@
  * @author Neil Brittliff
  */
 
-enum
+enum TYPE
 {
     PLACE_NODE,
     TRANSITION_NODE
-} TYPE;
 
-enum
+};
+
+enum STATE
 {
     ACTIVE,
     INACTIVE
-} STATE;
+};
 
 typedef struct
 {
