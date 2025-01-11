@@ -58,10 +58,11 @@ typedef struct _EVENT
         struct
         {
 
-            int x;
-            int y;
+            int n_times;
+            double x;
+            double y;
 
-        } mouse_down;
+        } create_node;
 
     } events;
 
@@ -69,5 +70,7 @@ typedef struct _EVENT
 
 extern EVENT *create_tool_selected_event(enum TOOL);
 extern EVENT *create_draw_event(cairo_t *cr, int width, int height);
+extern EVENT *create_node_event(int n_press, double x, double y);
+
 
 #endif // EVENT_H_INCLUDED

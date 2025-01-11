@@ -17,7 +17,9 @@ typedef struct _CONTROLLER
 
     GPtrArray * handlers;
 
-   void (*monitor) (struct _CONTROLLER * controller, void * net);
+   void (*monitor) (struct _CONTROLLER * controller, void * net);  
+   void (*redraw) (struct _CONTROLLER * controller);
+
    void (*release) (struct _CONTROLLER * controller);
     
 } CONTROLLER, * CONTROLLER_P;

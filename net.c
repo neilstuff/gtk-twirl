@@ -14,35 +14,8 @@
 
 #include "controller.h"
 #include "event.h"
-#include "node.h"
 #include "net.h"
-
-/**
- * @brief Invalidate a Drawing Area
- *
- * @param net the active Net
- * @param area the Area to invalidate
- *
- */
-void net_invalidate_bounds(NET *net, GdkRectangle *area) {}
-
-/**
- * @brief Invalidate the entire window
- *
- * @param net the active Net
- *
- */
-void net_invalidate(NET *net) {}
-
-/**
- * @brief Get the Current Cursor
- *
- * @param net the Net
- *
- * @return a constructed Cursor
- *
- */
-GdkCursor *net_get_current_cursor(NET *net) {}
+#include "node.h"
 
 /**
  * @brief Create an empty Net
@@ -73,21 +46,6 @@ gint net_play(struct _NET *net) {}
 gint net_stop(struct _NET *net) { return TRUE; }
 
 /**
- * @brief Notify the handler of an event
- *
- * @param net the Net
- * @param event the event
- */
-void net_notify(NET *net, EVENT *event)
-{
-
-    printf("Notification Received: %d\n", event->notification);
-
-    net->processors[event->notification](net, event);
-
-}
-
-/**
  * @brief Notify the net a new tool has been selected
  *
  * @param net the net
@@ -106,8 +64,38 @@ void net_tool_event_processor(NET *net, EVENT *event)
  * @param net the net
  * @param event the tool selection event
  */
-void net_draw_event_processor(NET *net, EVENT *event)
-{    
+void net_draw_event_processor(NET *net, EVENT *event) {}
+
+/**
+ * @brief Notify the net a node is be created
+ *
+ * @param net the net
+ * @param event the create node event
+ */
+void net_create_node_processor(NET *net, EVENT *event)
+{
+    int x = (int)event->events.create_node.x;
+    int y = (int)event->events.create_node.y;
+
+    int cx = x - (x % 32);
+    int cy = y - (y % 32);
+
+    cx = cx < 32 ? 32 : cx;
+    cy = cy < 32 ? 32 : cy;
+
+    printf("Creating Node: %d\n", net->tool);
+    printf("Coordinates %d, %d, %d, %d\n", x, y, cx, cy);
+
+    if (net->tool != SELECT_TOOL)
+    {
+        NODE *node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
+
+        node->setPosition(node, cx, cy);
+
+        g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
+
+    }
+
 }
 
 /**
@@ -115,11 +103,7 @@ void net_draw_event_processor(NET *net, EVENT *event)
  *
  * @param net the Net to release
  */
-void net_release(NET *net)
-{
-
-    g_free(net);
-}
+void net_release(NET *net) { g_free(net); }
 
 /**
  * @brief Initialise the Net
@@ -135,16 +119,14 @@ NET *net_create(CONTROLLER *controller)
 
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;
+    net->processors[CREATE_NODE] = net_create_node_processor;
 
-    net->notify = net_notify;
-    net->invalidateBounds = net_invalidate_bounds;
-    net->invalidate = net_invalidate;
     net->release = net_release;
 
     net->places = g_ptr_array_new();
     net->transitions = g_ptr_array_new();
     net->arcs = g_ptr_array_new();
- 
+
     return net;
 
 }

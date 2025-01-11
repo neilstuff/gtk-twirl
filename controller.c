@@ -9,7 +9,10 @@
 void controller_handler_iterator(gpointer net, gpointer event)
 {
 
-    TO_NET(net)->notify(TO_NET(net), TO_EVENT(event));
+    printf("Notification Received: %d\n", TO_EVENT(event)->notification);
+
+    TO_NET(net)->processors[TO_EVENT(event)->notification](TO_NET(net),  TO_EVENT(event));
+
 }
 
 /**
@@ -97,7 +100,22 @@ void controller_gesture_released(GtkGestureClick *gesture,
                                  gpointer user_data)
 {
 
-    printf("Pressed %d, %f, %f - %s\n", n_press, x, y, user_data == NULL ? "NULL" : "OK");
+     EVENT *event = create_node_event(n_press, x, y);
+    
+    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
+                        controller_handler_iterator, event);
+
+}
+
+/**
+ * @brief Redraw the Drawing Area
+ * 
+ * @param controller the Controller
+ */
+void controller_redraw(CONTROLLER *controller) 
+{
+
+    gtk_widget_queue_draw(TO_CONTROLLER(controller)->drawingArea);
 
 }
 
@@ -140,6 +158,7 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 
     controller->release = controller_release;
     controller->monitor = controller_monitor;
+    controller->redraw = controller_redraw;
 
     controller->handlers = g_ptr_array_new();
 
@@ -185,4 +204,5 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
     gtk_window_present(GTK_WINDOW(controller->window));
 
     return controller;
+
 }

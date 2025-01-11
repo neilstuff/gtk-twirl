@@ -82,7 +82,7 @@ typedef struct _NODE
     void (*getBounds)(struct _NODE *node, GdkRectangle *bounds);
     gint (*isNodeAtPoint)(struct _NODE *node, gdouble x, gdouble y);
 
-    gint type;
+    enum TYPE type;
     gint id;
     GString *name;
 

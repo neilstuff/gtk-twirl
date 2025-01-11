@@ -24,10 +24,6 @@ typedef struct _NET {
     void (*processors[END_NOTIFICATION]) (struct _NET *net, EVENT * event);
 
     void (*release) (struct _NET * net);
-    void (*notify) (struct _NET * net, EVENT * event);
-
-    void (*invalidateBounds)(struct _NET * net, GdkRectangle * bounds);
-    void (*invalidate)(struct _NET * net);
 
 
 } NET, * NET_P;

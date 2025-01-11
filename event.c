@@ -51,3 +51,27 @@ EVENT *create_draw_event(cairo_t *cr, int width, int height)
 
     return event;
 }
+
+/**
+ * @brief Create a node (creation) event
+ *
+ * @param n_times the times the button was pressedt
+ * @param x the 'x' location of the node
+ * @param y the 'y' location of the node
+ *
+ * @return an initialised event
+ */
+EVENT *create_node_event(int n_times, double x, double y)
+{
+    EVENT *event = g_malloc(sizeof(EVENT));
+
+    event->release = event_release;
+
+    event->notification = CREATE_NODE;
+    event->events.create_node.n_times = n_times;
+    event->events.create_node.x = x;
+    event->events.create_node.y = y;
+
+    return event;
+}
+
