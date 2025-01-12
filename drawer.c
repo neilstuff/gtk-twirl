@@ -15,17 +15,20 @@ void draw_text(DRAWER* drawer, NODE *node)
 {
     gdouble x;
     gdouble y;
+    cairo_text_extents_t extents;
 
     cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
-    cairo_move_to(drawer->canvas, (int)node->position.x - 15, (int)node->position.y + 30);
-
     cairo_select_font_face(drawer->canvas, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-
     cairo_set_font_size(drawer->canvas, 12);
+    cairo_text_extents(drawer->canvas, node->name->str, &extents);
+
+    printf("Text extends : %d\n", (int)extents.width);
+
+    cairo_move_to(drawer->canvas, (int)node->position.x - 15 + (int)extents.width/2, (int)node->position.y + 30);
     cairo_show_text(drawer->canvas, node->name->str);
     cairo_get_current_point(drawer->canvas, &x, &y);
 
-    node->textLength = x - node->position.x - 15;
+    node->textLength = (int)extents.width;
 
 }
 
