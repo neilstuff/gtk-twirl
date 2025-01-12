@@ -20,7 +20,7 @@ LIBS = $(shell $(PKGCONFIG)  --libs gtk4)
 
 PROD = -mwindows
 
-SRC = painter.c event.c node.c net.c controller.c main.c
+SRC = drawer.c event.c node.c net.c controller.c main.c
 BUILT_SRC = resource.c
 
 OBJS = $(BUILT_SRC:.c=.o) $(SRC:.c=.o)

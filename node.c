@@ -175,8 +175,8 @@ NODE *new_node()
 
     node->setName = set_name;
     node->setDefaultName = set_default_name;
-
-    node->name = NULL;
+    
+    set_default_name(node);
 
     return node;
 }
@@ -191,6 +191,8 @@ NODE *new_node()
 NODE *new_place()
 {
     NODE *node = new_node();
+
+    printf("Node: creating Place\n");
 
     node->place.marked = 0;
     node->place.occupied = FALSE;
@@ -211,6 +213,8 @@ NODE *new_place()
 NODE *new_transition()
 {
     NODE *node = new_node();
+
+    printf("Node: creating Transition\n");
 
     node->transition.duration = 0;
     node->enabled = 0;

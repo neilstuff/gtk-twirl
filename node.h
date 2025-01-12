@@ -35,8 +35,9 @@
 
 enum TYPE
 {
-    PLACE_NODE,
-    TRANSITION_NODE
+    PLACE_NODE = 0,
+    TRANSITION_NODE,
+    END_NODE_TYPES
 
 };
 

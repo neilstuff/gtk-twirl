@@ -28,6 +28,7 @@ static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int he
 {
     EVENT *event = create_draw_event(cr, width, height);
 
+
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
                         controller_handler_iterator, event);
 }
@@ -115,7 +116,7 @@ void controller_gesture_released(GtkGestureClick *gesture,
 void controller_redraw(CONTROLLER *controller) 
 {
 
-    gtk_widget_queue_draw(TO_CONTROLLER(controller)->drawingArea);
+    gtk_widget_queue_draw(controller->drawingArea);
 
 }
 

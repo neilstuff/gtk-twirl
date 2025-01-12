@@ -34,7 +34,7 @@ EVENT *create_tool_selected_event(enum TOOL tool)
 /**
  * @brief Create a draw event
  *
- * @param cr the drawing context
+ * @param cr the cairo drawing context 
  * @param width the width of the drawing Area
  * @param height the height of the drawing Area
  *
@@ -47,7 +47,7 @@ EVENT *create_draw_event(cairo_t *cr, int width, int height)
     event->release = event_release;
 
     event->notification = DRAW_REQUESTED;
-    event->events.draw_event.cr = cr;
+    event->events.draw_event.canvas = cr;
 
     return event;
 }

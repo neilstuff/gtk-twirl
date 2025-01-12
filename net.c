@@ -16,34 +16,22 @@
 #include "event.h"
 #include "net.h"
 #include "node.h"
+#include "drawer.h"
 
 /**
- * @brief Create an empty Net
- *
- * @param net the Net
- *
+ * @brief Draw all the nodes in a net
+ * 
+ * @param node 
+ * @param painter 
  */
-void create_empty_net(NET *net) {}
+void net_draw_node_iterator(gpointer node, gpointer drawer)
+{
 
-/**
- * @brief Play the NET
- *
- * @param net the NET
- *
- * @return 'TRUE' the play was successful, 'FALSE' otherwise
- *
- */
-gint net_play(struct _NET *net) {}
+    printf("Drawing Node\n");
 
-/**
- * @brief Stop the NET
- *
- * @param net the NET
- *
- * @return 'TRUE' the play was successful, 'FALSE' otherwise
- *
- */
-gint net_stop(struct _NET *net) { return TRUE; }
+    TO_DRAWER(drawer)->draw(TO_DRAWER(drawer), TO_NODE(node));
+
+}
 
 /**
  * @brief Notify the net a new tool has been selected
@@ -62,9 +50,21 @@ void net_tool_event_processor(NET *net, EVENT *event)
  * @brief Notify the net must be redrawn
  *
  * @param net the net
- * @param event the tool selection event
+ * @param event the draw/redraw event
  */
-void net_draw_event_processor(NET *net, EVENT *event) {}
+void net_draw_event_processor(NET *net, EVENT *event)
+ {
+    DRAWER  *drawer = create_drawer(event->events.draw_event.canvas);
+    
+    printf("Net: Received Draw Event\n");
+    g_ptr_array_foreach(net->places,
+                        net_draw_node_iterator, drawer);
+    g_ptr_array_foreach(net->transitions,
+                        net_draw_node_iterator, drawer);
+
+    drawer->release(drawer);
+
+}
 
 /**
  * @brief Notify the net a node is be created
@@ -77,13 +77,12 @@ void net_create_node_processor(NET *net, EVENT *event)
     int x = (int)event->events.create_node.x;
     int y = (int)event->events.create_node.y;
 
-    int cx = x - (x % 32);
-    int cy = y - (y % 32);
+    int cx = x - (x % 30);
+    int cy = y - (y % 30);
 
-    cx = cx < 32 ? 32 : cx;
-    cy = cy < 32 ? 32 : cy;
+    cx = cx < 30 ? 30 : cx;
+    cy = cy < 30 ? 30 : cy;
 
-    printf("Creating Node: %d\n", net->tool);
     printf("Coordinates %d, %d, %d, %d\n", x, y, cx, cy);
 
     if (net->tool != SELECT_TOOL)
@@ -93,6 +92,8 @@ void net_create_node_processor(NET *net, EVENT *event)
         node->setPosition(node, cx, cy);
 
         g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
+
+        net->controller->redraw(net->controller);
 
     }
 

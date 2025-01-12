@@ -16,12 +16,12 @@
 enum NOTIFICATION
 {
     NEW_NET = 0,
-    OPEN_NET = 1,
-    CLOSE_NET = 2,
-    TOOL_SELECTED = 3,
-    DRAW_REQUESTED = 4,
-    CREATE_NODE = 5,
-    END_NOTIFICATION = 6
+    OPEN_NET,
+    CLOSE_NET,
+    TOOL_SELECTED,
+    DRAW_REQUESTED,
+    CREATE_NODE,
+    END_NOTIFICATION
     
 };
 
@@ -51,7 +51,7 @@ typedef struct _EVENT
         struct
         {
 
-            cairo_t *cr;
+            cairo_t *canvas;
 
         } draw_event;
 
