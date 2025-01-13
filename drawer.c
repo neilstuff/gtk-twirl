@@ -22,8 +22,6 @@ void draw_text(DRAWER* drawer, NODE *node)
     cairo_set_font_size(drawer->canvas, 12);
     cairo_text_extents(drawer->canvas, node->name->str, &extents);
 
-    printf("Text extends : %d\n", (int)extents.width);
-
     cairo_move_to(drawer->canvas, (int)node->position.x - 15 + (int)extents.width/2, (int)node->position.y + 30);
     cairo_show_text(drawer->canvas, node->name->str);
     cairo_get_current_point(drawer->canvas, &x, &y);
@@ -102,11 +100,11 @@ void draw_transition(DRAWER* drawer, NODE *node)
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.1);
 
-    cairo_rectangle(drawer->canvas, (int)node->position.x - 10, (int)node->position.y - 10, 19, 19);
+    cairo_rectangle(drawer->canvas, (int)node->position.x - 9, (int)node->position.y - 9, 17, 17);
     cairo_fill(drawer->canvas);
 
     cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
-    cairo_rectangle(drawer->canvas, (int)node->position.x - 10, (int)node->position.y - 10, 20, 20);
+    cairo_rectangle(drawer->canvas, (int)node->position.x - 9, (int)node->position.y - 9, 18, 18);
     cairo_stroke(drawer->canvas);
 
     draw_selection_box(drawer, node);
