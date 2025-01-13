@@ -61,9 +61,7 @@ void draw_selection_box(DRAWER* drawer, NODE *node)
  */
 void draw_place(DRAWER* drawer, NODE *node)
 {
-     printf("Draw Drawing: Place %d\n", node->type);
 
- 
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.1);
  
@@ -122,7 +120,6 @@ void draw_transition(DRAWER* drawer, NODE *node)
 void drawer_draw(DRAWER * drawer, NODE * node) 
 { 
 
-    printf("Draw Drawing: Node %d\n", node->type);
     drawer->drawers[node->type](drawer, node);
 
 }

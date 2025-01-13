@@ -192,8 +192,6 @@ NODE *new_place()
 {
     NODE *node = new_node();
 
-    printf("Node: creating Place\n");
-
     node->place.marked = 0;
     node->place.occupied = FALSE;
 
@@ -213,8 +211,6 @@ NODE *new_place()
 NODE *new_transition()
 {
     NODE *node = new_node();
-
-    printf("Node: creating Transition\n");
 
     node->transition.duration = 0;
     node->enabled = 0;
