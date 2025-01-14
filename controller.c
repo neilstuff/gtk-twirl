@@ -28,7 +28,6 @@ static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int he
 {
     EVENT *event = create_draw_event(cr, width, height);
 
-
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
                         controller_handler_iterator, event);
 }
@@ -150,7 +149,6 @@ void controller_release(CONTROLLER *controller)
  * Create and initialise the controller
  *
  * @return an initialised controller
- *
  */
 CONTROLLER *create_controller(GtkApplication *gtkAppication,
                               char *resourceURL)
@@ -200,7 +198,17 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 
     gtk_widget_add_controller(controller->drawingArea, GTK_EVENT_CONTROLLER(controller->gesture));
 
-    controller->monitor(controller, net_create(controller));
+    /* Initialise the Net */
+    {
+        NET *net = net_create(controller);
+        EVENT *event = create_net_event(SELECT_TOOL);
+
+        gtk_toggle_button_set_active((GtkToggleButton*)controller->selectButton, TRUE);
+
+        controller->monitor(controller, net);
+        net->processors[event->notification](net,  event);
+
+    }
 
     gtk_window_present(GTK_WINDOW(controller->window));
 

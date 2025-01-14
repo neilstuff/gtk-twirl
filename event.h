@@ -15,7 +15,7 @@
 
 enum NOTIFICATION
 {
-    NEW_NET = 0,
+    CREATE_NET = 0,
     OPEN_NET,
     CLOSE_NET,
     TOOL_SELECTED,
@@ -64,6 +64,13 @@ typedef struct _EVENT
 
         } create_node;
 
+        struct
+        {
+
+           enum TOOL tool;
+
+        } create_net;
+
     } events;
 
 } EVENT, *EVENT_P;
@@ -71,6 +78,6 @@ typedef struct _EVENT
 extern EVENT *create_tool_selected_event(enum TOOL);
 extern EVENT *create_draw_event(cairo_t *cr, int width, int height);
 extern EVENT *create_node_event(int n_press, double x, double y);
-
+extern EVENT *create_net_event( enum TOOL tool);
 
 #endif // EVENT_H_INCLUDED

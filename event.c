@@ -4,12 +4,33 @@
 
 #include "event.h"
 
+
+
 /**
  * @brief Release a Event and free any resources
  *
  * @param event the event to release
  */
 void event_release(EVENT *event) { g_free(event); }
+
+/**
+ * @brief Create a event object
+ * 
+ * @param notification the type of event
+ * 
+ * @return an initialised event
+ */
+EVENT *create_event(enum NOTIFICATION notification)
+{
+    EVENT *event = g_malloc(sizeof(EVENT));
+
+    event->notification = notification;
+
+    event->release = event_release;
+
+    return event;
+
+}
 
 /**
  * @brief Create and initialise the Event
@@ -21,14 +42,12 @@ void event_release(EVENT *event) { g_free(event); }
  */
 EVENT *create_tool_selected_event(enum TOOL tool)
 {
-    EVENT *event = g_malloc(sizeof(EVENT));
-
-    event->release = event_release;
-
-    event->notification = TOOL_SELECTED;
+    EVENT *event = create_event(TOOL_SELECTED);
+    
     event->events.button_event.tool = tool;
 
     return event;
+
 }
 
 /**
@@ -42,11 +61,8 @@ EVENT *create_tool_selected_event(enum TOOL tool)
  */
 EVENT *create_draw_event(cairo_t *cr, int width, int height)
 {
-    EVENT *event = g_malloc(sizeof(EVENT));
+    EVENT *event = create_event(DRAW_REQUESTED);
 
-    event->release = event_release;
-
-    event->notification = DRAW_REQUESTED;
     event->events.draw_event.canvas = cr;
 
     return event;
@@ -63,15 +79,28 @@ EVENT *create_draw_event(cairo_t *cr, int width, int height)
  */
 EVENT *create_node_event(int n_times, double x, double y)
 {
-    EVENT *event = g_malloc(sizeof(EVENT));
+    EVENT *event = create_event(CREATE_NODE);
 
-    event->release = event_release;
-
-    event->notification = CREATE_NODE;
     event->events.create_node.n_times = n_times;
     event->events.create_node.x = x;
     event->events.create_node.y = y;
 
     return event;
 }
+
+/**
+ * @brief Net is created
+
+ * @return an initialised event
+ */
+EVENT *create_net_event(enum TOOL tool)
+{
+    EVENT *event = create_event(CREATE_NET);
+
+    event->events.create_net.tool = tool;
+
+    return event;
+
+}
+
 

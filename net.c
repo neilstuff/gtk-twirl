@@ -76,6 +76,7 @@ void net_tool_event_processor(NET *net, EVENT *event)
 {
 
     net->tool = event->events.button_event.tool;
+
 }
 
 /**
@@ -140,6 +141,20 @@ void net_create_node_processor(NET *net, EVENT *event)
     }
 }
 
+
+/**
+ * @brief Notify the net has beencreate
+ *
+ * @param net the net
+ * @param event the tool selection event
+ */
+void net_create_processor(NET *net, EVENT *event)
+{
+
+    net->tool = event->events.create_net.tool;
+    
+}
+
 /**
  * @brief Reealse a Net and free any resources
  *
@@ -162,6 +177,7 @@ NET *net_create(CONTROLLER *controller)
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;
     net->processors[CREATE_NODE] = net_create_node_processor;
+    net->processors[CREATE_NET] = net_create_processor;
 
     net->release = net_release;
 
@@ -170,4 +186,5 @@ NET *net_create(CONTROLLER *controller)
     net->arcs = g_ptr_array_new();
 
     return net;
+
 }
