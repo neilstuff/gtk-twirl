@@ -3,6 +3,14 @@
 
 #define TO_CONTROLLER(controller) ((CONTROLLER*)(controller))
 
+enum MODES
+{
+    NORMAL = 0,
+    CONNECT,
+    END_MODES
+    
+};
+
 typedef struct _CONTROLLER 
 {
 
@@ -10,12 +18,15 @@ typedef struct _CONTROLLER
     GtkWidget *scrolledWindow;
     GtkWidget *drawingArea;
     GtkGesture *gesture;
+    GtkEventController * keyController;
 
     GtkWidget *selectButton;
     GtkWidget *placeButton;
     GtkWidget *transitionButton;
 
     GPtrArray * handlers;
+
+    enum MODES mode;
 
    void (*monitor) (struct _CONTROLLER * controller, void * net);  
    void (*redraw) (struct _CONTROLLER * controller);

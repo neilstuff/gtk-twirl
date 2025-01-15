@@ -11,8 +11,7 @@ void controller_handler_iterator(gpointer net, gpointer event)
 
     printf("Notification Received: %d\n", TO_EVENT(event)->notification);
 
-    TO_NET(net)->processors[TO_EVENT(event)->notification](TO_NET(net),  TO_EVENT(event));
-
+    TO_NET(net)->processors[TO_EVENT(event)->notification](TO_NET(net), TO_EVENT(event));
 }
 
 /**
@@ -100,23 +99,63 @@ void controller_gesture_released(GtkGestureClick *gesture,
                                  gpointer user_data)
 {
 
-     EVENT *event = create_node_event(n_press, x, y);
-    
+    EVENT *event = create_node_event(n_press, x, y);
+
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
                         controller_handler_iterator, event);
+}
 
+/**
+ * @brief Capture the Control Key
+ *
+ * @param self controller key event
+ * @param keyval the key value
+ * @param keycode the key code
+ * @param state bitmask of modifier keys
+ * @param user_data the controller object
+ * @return gboolean 'true' to continue
+ */
+gboolean controller_key_pressed(GtkEventControllerKey *self,
+                                guint keyval, guint keycode,
+                                GdkModifierType state,
+                                gpointer user_data)
+{
+
+    if (state & (GDK_CONTROL_MASK))
+    {
+        TO_CONTROLLER(user_data)->mode = CONNECT;
+    }
+
+    return TRUE;
+}
+
+/**
+ *  @brief release the Control Key
+ *
+ * @param self controller key event
+ * @param keyval the key value
+ * @param state bitmask of modifier keys
+ * @param user_data the controller object
+ * @param user_data
+ */
+void controller_key_released(GtkEventControllerKey *self,
+                             guint keyval, guint keycode,
+                             GdkModifierType state,
+                             gpointer user_data)
+{
+
+    TO_CONTROLLER(user_data)->mode = NORMAL;
 }
 
 /**
  * @brief Redraw the Drawing Area
- * 
+ *
  * @param controller the Controller
  */
-void controller_redraw(CONTROLLER *controller) 
+void controller_redraw(CONTROLLER *controller)
 {
 
     gtk_widget_queue_draw(controller->drawingArea);
-
 }
 
 /**
@@ -129,7 +168,6 @@ void controller_monitor(CONTROLLER *controller, void *net)
 {
 
     g_ptr_array_add(controller->handlers, net);
-
 }
 
 /**
@@ -154,6 +192,8 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
                               char *resourceURL)
 {
     CONTROLLER *controller = g_malloc(sizeof(CONTROLLER));
+
+    controller->mode = NORMAL;
 
     controller->release = controller_release;
     controller->monitor = controller_monitor;
@@ -203,15 +243,28 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         NET *net = net_create(controller);
         EVENT *event = create_net_event(SELECT_TOOL);
 
-        gtk_toggle_button_set_active((GtkToggleButton*)controller->selectButton, TRUE);
+        gtk_toggle_button_set_active((GtkToggleButton *)controller->selectButton, TRUE);
 
         controller->monitor(controller, net);
-        net->processors[event->notification](net,  event);
+        net->processors[event->notification](net, event);
+    }
 
+    {
+
+        controller->keyController = gtk_event_controller_key_new();
+
+        g_signal_connect(controller->keyController, "key-pressed",
+                         G_CALLBACK(controller_key_pressed),
+                         controller);
+
+        g_signal_connect(controller->keyController, "key-released",
+                         G_CALLBACK(controller_key_released),
+                         controller);
+
+        gtk_widget_add_controller(controller->window, GTK_EVENT_CONTROLLER(controller->keyController));
     }
 
     gtk_window_present(GTK_WINDOW(controller->window));
 
     return controller;
-
 }

@@ -168,7 +168,6 @@
             <child>
               <object class="GtkScrolledWindow" id="scrolledWindow">
                 <property name="visible">true</property>
-                <property name="can_focus">true</property>
                 <property name="has_frame">true</property>
                 <property name="vexpand">1</property>
                 <property name="hexpand">1</property>
