@@ -124,6 +124,7 @@ gboolean controller_key_pressed(GtkEventControllerKey *self,
     if (state & (GDK_CONTROL_MASK))
     {
         TO_CONTROLLER(user_data)->mode = CONNECT;
+        printf("controller_key_pressed\n");
     }
 
     return TRUE;
@@ -145,6 +146,25 @@ void controller_key_released(GtkEventControllerKey *self,
 {
 
     TO_CONTROLLER(user_data)->mode = NORMAL;
+    printf("controller_key_released\n");
+}
+
+void controller_drag_begin(GtkGestureDrag *gesture, double x, double y, gpointer user_data)
+{
+
+    printf("Controller: Drag Begin\n");
+}
+
+void controller_drag_update(GtkGestureDrag *gesture, double offset_x, double offset_y, gpointer user_data)
+{
+
+    printf("Controller: Drag Update\n");
+}
+
+void controller_drag_end(GtkGestureDrag *gesture, double offset_x, double offset_y, gpointer user_data)
+{
+
+    printf("Controller: Drag End\n");
 }
 
 /**
@@ -193,51 +213,54 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 {
     CONTROLLER *controller = g_malloc(sizeof(CONTROLLER));
 
-    controller->mode = NORMAL;
+    {
+        controller->mode = NORMAL;
 
-    controller->release = controller_release;
-    controller->monitor = controller_monitor;
-    controller->redraw = controller_redraw;
+        controller->release = controller_release;
+        controller->monitor = controller_monitor;
+        controller->redraw = controller_redraw;
 
-    controller->handlers = g_ptr_array_new();
+        controller->handlers = g_ptr_array_new();
+    }
+    {
+        GtkBuilder *builder = gtk_builder_new_from_resource(resourceURL);
 
-    GtkBuilder *builder = gtk_builder_new_from_resource(resourceURL);
+        controller->window = GTK_WIDGET(gtk_builder_get_object(builder, "main"));
+        controller->scrolledWindow =
+            GTK_WIDGET(gtk_builder_get_object(builder, "scrolledWindow"));
+        controller->drawingArea =
+            GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
 
-    controller->window = GTK_WIDGET(gtk_builder_get_object(builder, "main"));
-    controller->scrolledWindow =
-        GTK_WIDGET(gtk_builder_get_object(builder, "scrolledWindow"));
-    controller->drawingArea =
-        GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
+        gtk_window_set_application(GTK_WINDOW(controller->window),
+                                   GTK_APPLICATION(gtkAppication));
 
-    gtk_window_set_application(GTK_WINDOW(controller->window),
-                               GTK_APPLICATION(gtkAppication));
+        controller->selectButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "selectButton"));
+        controller->placeButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "placeButton"));
+        controller->transitionButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "transitionButton"));
+    }
+    {
+        g_signal_connect(controller->selectButton, "clicked",
+                         G_CALLBACK(controller_select_clicked), controller);
 
-    controller->selectButton =
-        GTK_WIDGET(gtk_builder_get_object(builder, "selectButton"));
-    controller->placeButton =
-        GTK_WIDGET(gtk_builder_get_object(builder, "placeButton"));
-    controller->transitionButton =
-        GTK_WIDGET(gtk_builder_get_object(builder, "transitionButton"));
+        g_signal_connect(controller->placeButton, "clicked",
+                         G_CALLBACK(controller_place_clicked), controller);
 
-    g_signal_connect(controller->selectButton, "clicked",
-                     G_CALLBACK(controller_select_clicked), controller);
+        g_signal_connect(controller->transitionButton, "clicked",
+                         G_CALLBACK(controller_transition_clicked), controller);
 
-    g_signal_connect(controller->placeButton, "clicked",
-                     G_CALLBACK(controller_place_clicked), controller);
+        gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(controller->drawingArea), controller_draw, controller,
+                                       NULL);
+        controller->gesture = gtk_gesture_click_new();
 
-    g_signal_connect(controller->transitionButton, "clicked",
-                     G_CALLBACK(controller_transition_clicked), controller);
+        g_signal_connect(controller->gesture, "released",
+                         G_CALLBACK(controller_gesture_released),
+                         controller);
 
-    gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(controller->drawingArea), controller_draw, controller,
-                                   NULL);
-    controller->gesture = gtk_gesture_click_new();
-
-    g_signal_connect(controller->gesture, "released",
-                     G_CALLBACK(controller_gesture_released),
-                     controller);
-
-    gtk_widget_add_controller(controller->drawingArea, GTK_EVENT_CONTROLLER(controller->gesture));
-
+        gtk_widget_add_controller(controller->drawingArea, GTK_EVENT_CONTROLLER(controller->gesture));
+    }
     /* Initialise the Net */
     {
         NET *net = net_create(controller);
@@ -250,7 +273,6 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
     }
 
     {
-
         controller->keyController = gtk_event_controller_key_new();
 
         g_signal_connect(controller->keyController, "key-pressed",
@@ -262,6 +284,14 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
                          controller);
 
         gtk_widget_add_controller(controller->window, GTK_EVENT_CONTROLLER(controller->keyController));
+    }
+    {
+        controller->drag = gtk_gesture_drag_new();
+        g_signal_connect(controller->drag, "drag-begin", G_CALLBACK(controller_drag_begin), controller);
+        g_signal_connect(controller->drag, "drag-update", G_CALLBACK(controller_drag_update), controller);
+        g_signal_connect(controller->drag, "drag-end", G_CALLBACK(controller_drag_end), controller);
+
+        gtk_widget_add_controller(controller->drawingArea, GTK_EVENT_CONTROLLER(controller->drag));
     }
 
     gtk_window_present(GTK_WINDOW(controller->window));

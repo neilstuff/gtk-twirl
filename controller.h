@@ -18,6 +18,7 @@ typedef struct _CONTROLLER
     GtkWidget *scrolledWindow;
     GtkWidget *drawingArea;
     GtkGesture *gesture;
+    GtkGesture *drag;
     GtkEventController * keyController;
 
     GtkWidget *selectButton;
