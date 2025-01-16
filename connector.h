@@ -14,7 +14,7 @@
 
 #define TO_CONNECTOR(connector) ((CONNECTOR*)(connector))
 
-#include "point.h"
+#include "geometry.h"
 
 /**
  * Connector Definition File

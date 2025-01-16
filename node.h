@@ -10,7 +10,7 @@
 #ifndef NODE_H_INCLUDED
 #define NODE_H_INCLUDED
 
-#include "point.h"
+#include "geometry.h"
 
 #define TO_NODE(node) ((NODE *)(node))
 #define TO_PLACE(node) ((NODE *)(node))->place
