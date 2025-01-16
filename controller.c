@@ -253,13 +253,13 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 
         gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(controller->drawingArea), controller_draw, controller,
                                        NULL);
-        controller->gesture = gtk_gesture_click_new();
+        controller->click = gtk_gesture_click_new();
 
-        g_signal_connect(controller->gesture, "released",
+        g_signal_connect(controller->click, "released",
                          G_CALLBACK(controller_gesture_released),
                          controller);
 
-        gtk_widget_add_controller(controller->drawingArea, GTK_EVENT_CONTROLLER(controller->gesture));
+        gtk_widget_add_controller(controller->drawingArea, GTK_EVENT_CONTROLLER(controller->click));
     }
     /* Initialise the Net */
     {
