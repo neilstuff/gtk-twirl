@@ -174,7 +174,6 @@ void controller_drag_end(GtkGestureDrag *gesture, double offset_x, double offset
  */
 void controller_redraw(CONTROLLER *controller)
 {
-
     gtk_widget_queue_draw(controller->drawingArea);
 }
 
@@ -186,7 +185,6 @@ void controller_redraw(CONTROLLER *controller)
  */
 void controller_monitor(CONTROLLER *controller, void *net)
 {
-
     g_ptr_array_add(controller->handlers, net);
 }
 

@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 
 #include "node.h"
+#include "connector.h"
 #include "drawer.h"
 
 /**
@@ -110,7 +111,6 @@ void draw_transition(DRAWER* drawer, NODE *node)
 
 }
 
-
 /**
  * @brief Draw the node
  *
@@ -121,6 +121,25 @@ void drawer_draw(DRAWER * drawer, NODE * node)
 { 
 
     drawer->drawers[node->type](drawer, node);
+
+}
+
+/**
+ * @brief Paint the Connector
+ *
+ * @param drawer the drawer
+ * @param connector the connector between nodes to draw
+ */
+void draw_connector(DRAWER * drawer, CONNECTOR * connector)
+{
+
+    cairo_set_line_width (drawer->canvas, 1);
+    cairo_set_source_rgb (drawer->canvas, 255, 0, 0);
+
+    cairo_move_to(drawer->canvas, connector->source->position.x, connector->source->position.y);
+    cairo_line_to(drawer->canvas, connector->position.x, connector->position.y);
+
+    cairo_stroke (drawer->canvas);
 
 }
 
