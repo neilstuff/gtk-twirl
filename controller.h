@@ -3,6 +3,8 @@
 
 #define TO_CONTROLLER(controller) ((CONTROLLER*)(controller))
 
+#include "event.h"
+
 enum MODES
 {
     NORMAL = 0,
@@ -29,7 +31,7 @@ typedef struct _CONTROLLER
 
     enum MODES mode;
 
-   void (*monitor) (struct _CONTROLLER * controller, void * net);  
+   void (*monitor) (struct _CONTROLLER * controller, HANDLER * handler);  
    void (*redraw) (struct _CONTROLLER * controller);
 
    void (*release) (struct _CONTROLLER * controller);

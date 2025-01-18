@@ -6,12 +6,11 @@
 #include "event.h"
 #include "net.h"
 
-void controller_handler_iterator(gpointer net, gpointer event)
+void controller_handler_iterator(gpointer handler, gpointer event)
 {
 
-    printf("Notification Received: %d\n", TO_EVENT(event)->notification);
+    TO_HANDLER(handler)->handler(event,  TO_HANDLER(handler)->processor);
 
-    TO_NET(net)->processors[TO_EVENT(event)->notification](TO_NET(net), TO_EVENT(event));
 }
 
 /**
@@ -181,11 +180,11 @@ void controller_redraw(CONTROLLER *controller)
  * @brief Register a handle with the controller
  *
  * @param controller the contoller that manages the handlers
- * @param net the net to register
+ * @param handler the event handler
  */
-void controller_monitor(CONTROLLER *controller, void *net)
+void controller_monitor(CONTROLLER *controller, HANDLER* handler)
 {
-    g_ptr_array_add(controller->handlers, net);
+    g_ptr_array_add(controller->handlers, handler);
 }
 
 /**
@@ -266,7 +265,7 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 
         gtk_toggle_button_set_active((GtkToggleButton *)controller->selectButton, TRUE);
 
-        controller->monitor(controller, net);
+        controller->monitor(controller, &net->handler);
         net->processors[event->notification](net, event);
     }
 

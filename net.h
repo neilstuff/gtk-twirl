@@ -1,6 +1,7 @@
 #ifndef NET_H_INCLUDED
 #define NET_H_INCLUDED
 
+#include "event.h"
 /**
  * Net - prototype
  *
@@ -20,10 +21,13 @@ typedef struct _NET {
 
     enum TOOL tool;
 
-    
+    HANDLER handler;
+
     void (*processors[END_NOTIFICATION]) (struct _NET *net, EVENT * event);
 
     void (*release) (struct _NET * net);
+
+
 
 
 } NET, * NET_P;

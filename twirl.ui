@@ -193,7 +193,7 @@
             <property name="hexpand">1</property>
             <property name="margin_top">2</property>
             <property name="margin_bottom">2</property>
-            <property name="label">Twirl - V1.0.0 - The Sour Orange</property>
+            <property name="label">Twirl - V0.0.1 - The Sour Orange</property>
             <layout>
               <property name="column">0</property>
               <property name="row">2</property>

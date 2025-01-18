@@ -1,9 +1,11 @@
 /**
- * @brief Net - implementation
+ * @file net.c
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief A "Petri Net" representation
+ * @version 0.1
+ * @date 2025-01-18
  *
- * @author Neil Brittliff
- *
- * (c) Neil Brittliff - all rights reserved
+ * @copyright Copyright (c) 2025
  *
  */
 
@@ -39,7 +41,6 @@ typedef struct _CONTEXT
             DRAWER *drawer;
 
         } draw_context;
-
     };
 
 } CONTEXT, *CONTEXT_P;
@@ -63,7 +64,6 @@ void net_node_iterator(gpointer node, gpointer context)
         TO_NODE(node)->selected = FALSE;
         break;
     }
-
 }
 
 /**
@@ -76,7 +76,6 @@ void net_tool_event_processor(NET *net, EVENT *event)
 {
 
     net->tool = event->events.button_event.tool;
-
 }
 
 /**
@@ -128,7 +127,11 @@ void net_create_node_processor(NET *net, EVENT *event)
     g_ptr_array_foreach(net->transitions,
                         net_node_iterator, &context);
 
-    if (net->tool != SELECT_TOOL)
+    if (net->tool == SELECT_TOOL)
+    {
+        net->controller->redraw(net->controller);
+    }
+    else
     {
 
         NODE *node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
@@ -141,7 +144,6 @@ void net_create_node_processor(NET *net, EVENT *event)
     }
 }
 
-
 /**
  * @brief Notify the net has beencreate
  *
@@ -152,7 +154,18 @@ void net_create_processor(NET *net, EVENT *event)
 {
 
     net->tool = event->events.create_net.tool;
-    
+}
+
+/**
+ * @brief Event processor
+ *
+ * @param event the event to process
+ * @param processor in this case the 'net' is the processor
+ */
+void net_event_handler(EVENT *event, void *processor)
+{
+
+    TO_NET(processor)->processors[event->notification](TO_NET(processor), TO_EVENT(event));
 }
 
 /**
@@ -160,7 +173,10 @@ void net_create_processor(NET *net, EVENT *event)
  *
  * @param net the Net to release
  */
-void net_release(NET *net) { g_free(net); }
+void net_release(NET *net)
+{
+    g_free(net);
+}
 
 /**
  * @brief Initialise the Net
@@ -172,8 +188,10 @@ NET *net_create(CONTROLLER *controller)
 {
     NET *net = g_malloc(sizeof(NET));
 
-    net->controller = controller;
+    net->handler.handler = net_event_handler;
+    net->handler.processor = net;
 
+    net->controller = controller;
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;
     net->processors[CREATE_NODE] = net_create_node_processor;
@@ -186,5 +204,4 @@ NET *net_create(CONTROLLER *controller)
     net->arcs = g_ptr_array_new();
 
     return net;
-
 }

@@ -11,7 +11,7 @@
  */
 
 #define TO_EVENT(event) ((EVENT *)(event))
-#define NOTIFICATIONS 6
+#define TO_HANDLER(handler) ((HANDLER *)(handler))
 
 enum NOTIFICATION
 {
@@ -22,7 +22,7 @@ enum NOTIFICATION
     DRAW_REQUESTED,
     CREATE_NODE,
     END_NOTIFICATION
-    
+
 };
 
 enum TOOL
@@ -67,7 +67,7 @@ typedef struct _EVENT
         struct
         {
 
-           enum TOOL tool;
+            enum TOOL tool;
 
         } create_net;
 
@@ -75,9 +75,18 @@ typedef struct _EVENT
 
 } EVENT, *EVENT_P;
 
+
+typedef struct _HANDLER
+{
+
+    void (*handler)(EVENT* event, void *processor);
+    void *processor;
+
+} HANDLER, HANDLER_P;
+
 extern EVENT *create_tool_selected_event(enum TOOL);
 extern EVENT *create_draw_event(cairo_t *cr, int width, int height);
 extern EVENT *create_node_event(int n_press, double x, double y);
-extern EVENT *create_net_event( enum TOOL tool);
+extern EVENT *create_net_event(enum TOOL tool);
 
 #endif // EVENT_H_INCLUDED

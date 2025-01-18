@@ -18,4 +18,20 @@ typedef struct
 
 } POINT;
 
+typedef struct
+{
+
+    int w;
+    int h;
+
+} SIZE;
+
+typedef struct
+{
+
+    POINT point;
+    SIZE size;
+
+} BOUNDS;
+
 #endif // POINT_H_INCLUDED
