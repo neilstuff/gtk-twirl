@@ -26,6 +26,7 @@ enum ACTION
 {
     DRAW_NODE,
     UNSELECT_ALL,
+    SELECT_NODES_BY_POINT,
     EOF_ACTIONS
 };
 
@@ -41,6 +42,12 @@ typedef struct _CONTEXT
             DRAWER *drawer;
 
         } draw_context;
+        struct
+        {
+
+           POINT * point;
+
+        } point_context;
     };
 
 } CONTEXT, *CONTEXT_P;
@@ -56,6 +63,8 @@ void net_node_iterator(gpointer node, gpointer context)
 
     switch (TO_CONTEXT(context)->action)
     {
+     case SELECT_NODES_BY_POINT:
+        break;
     case DRAW_NODE:
         TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer), TO_NODE(node));
         break;

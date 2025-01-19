@@ -13,16 +13,16 @@
 typedef struct
 {
 
-    int x;
-    int y;
+    gdouble x;
+    gdouble y;
 
 } POINT;
 
 typedef struct
 {
 
-    int w;
-    int h;
+    gdouble w;
+    gdouble h;
 
 } SIZE;
 
@@ -33,5 +33,8 @@ typedef struct
     SIZE size;
 
 } BOUNDS;
+
+extern int point_in_bounds(POINT * point, BOUNDS * bounds);
+extern POINT * set_point(POINT * point, double x, double y);
 
 #endif // POINT_H_INCLUDED

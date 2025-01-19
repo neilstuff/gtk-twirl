@@ -68,26 +68,26 @@ typedef struct _NODE
 {
 
     void (*destroy)(struct _NODE *node);
-    void (*setPosition)(struct _NODE *, gdouble x, gdouble y);
+    void (*setPosition)(struct _NODE *, double x, double y);
     gint (*isTransition)(struct _NODE *node);
     int (*isPlace)(struct _NODE *node);
     void (*setName)(struct _NODE *node, gchar *name);
     void (*setDefaultName)(struct _NODE *node);
 
-    void (*getBounds)(struct _NODE *node, GdkRectangle *bounds);
-    gint (*isNodeAtPoint)(struct _NODE *node, gdouble x, gdouble y);
+    void (*getBounds)(struct _NODE *node, BOUNDS * bounds);
+    gint (*isNodeAtPoint)(struct _NODE *node, double x, double y);
 
     enum TYPE type;
     gint id;
     GString *name;
 
-    POINT position;
     int selected;
     int textLength;
     int enabled;
     int state;
 
-    GdkRectangle bounds;
+    POINT position;
+    BOUNDS bounds;
 
     union
     {

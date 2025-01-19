@@ -22,11 +22,27 @@
  * @param bounds the bounds (width, height)
  * @return int 1 - in bounds (true), 0 (false) - otherwise
  */
-int static point_in_bounds(POINT point, BOUNDS bounds)
+int point_in_bounds(POINT * point, BOUNDS * bounds)
 {
 
-    return (point.x >= bounds.point.x &&
-            point.x <= bounds.point.x + bounds.size.w &&
-            point.y >= bounds.point.y &&
-            point.y <= bounds.point.y + bounds.size.h);
-}twirl
+    return (point->x >= bounds->point.x &&
+            point->x <= bounds->point.x + bounds->size.w &&
+            point->y >= bounds->point.y &&
+            point->y <= bounds->point.y + bounds->size.h);
+}
+
+/**
+ * @brief Set the point object
+ * 
+ * @param point the receiving point
+ * @param x the point's x value
+ * @param y the point's y value
+ * @return POINT* return the populated point - fluent style
+ */
+POINT * set_point(POINT * point, double x, double y)
+{
+    point->x = x;
+    point->y = y;
+
+    return point;
+}

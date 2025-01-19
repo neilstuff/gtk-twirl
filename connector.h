@@ -2,6 +2,8 @@
 #define CONNECTOR_H_INCLUDED
 
 #include "node.h"
+#include "event.h"
+#include "geometry.h"
 
 /**
  * Connector - prototype
@@ -13,8 +15,6 @@
  */
 
 #define TO_CONNECTOR(connector) ((CONNECTOR*)(connector))
-
-#include "geometry.h"
 
 /**
  * Connector Definition File
@@ -28,8 +28,10 @@ typedef struct _CONNECTOR {
     void (*connect)(struct _CONNECTOR * connector, NODE* target);
     void (*draw)(struct _CONNECTOR * connector, cairo_t * cr);
 
-    struct _NODE * source;
-    struct _NODE * target;
+    HANDLER handler;
+
+    NODE * source;
+    NODE * target;
 
     POINT position;
 

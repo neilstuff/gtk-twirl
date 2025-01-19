@@ -13,6 +13,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+#include "geometry.h"
 #include "event.h"
 #include "node.h"
 
@@ -70,17 +71,17 @@ gint is_place(NODE *node)
  * @param y the 'y' coordinate
  *
  */
-void set_position(NODE *node, gdouble x, gdouble y)
+void set_position(NODE *node, double x, double y)
 {
 
     node->position.x = x;
     node->position.y = y;
 
-    node->bounds.x = x - 15;
-    node->bounds.y = y - 15;
+    node->bounds.point.x = x - 15;
+    node->bounds.point.y = y - 15;
 
-    node->bounds.width = 30;
-    node->bounds.height = 30;
+    node->bounds.size.w = 30;
+    node->bounds.size.h = 30;
 }
 
 /**
@@ -121,13 +122,13 @@ void set_default_name(NODE *node)
  * @param bounds receives the nodes bounds
  *
  */
-void get_bounds(NODE *node, GdkRectangle *bounds)
+void get_bounds(NODE *node, BOUNDS *bounds)
 {
 
-    bounds->x = node->bounds.x;
-    bounds->y = node->bounds.y;
-    bounds->width = node->bounds.width + node->textLength;
-    bounds->height = node->bounds.height;
+    bounds->point.x = node->bounds.point.x;
+    bounds->point.y = node->bounds.point.y;
+    bounds->size.w = node->bounds.size.w;
+    bounds->size.h = node->bounds.size.h;
 }
 
 /**
@@ -138,13 +139,11 @@ void get_bounds(NODE *node, GdkRectangle *bounds)
  * @param y the 'Y' location
  *
  */
-gint is_node_at_point(NODE *node, gdouble x, gdouble y)
+gint is_node_at_point(NODE *node, double x, double y)
 {
+    POINT point;
 
-    return ((x >= node->bounds.x) && (x <= node->bounds.x + node->bounds.width) &&
-            (y >= node->bounds.y) && (y <= node->bounds.y + node->bounds.height))
-               ? 1
-               : 0;
+    return point_in_bounds(set_point(&point, x, y), &node->bounds);
 }
 
 /**
@@ -175,7 +174,7 @@ NODE *new_node()
 
     node->setName = set_name;
     node->setDefaultName = set_default_name;
-    
+
     set_default_name(node);
 
     return node;
@@ -233,6 +232,4 @@ NODE *create_node(int type)
 {
 
     return type == PLACE_NODE ? new_place() : new_transition();
-    
-
 }

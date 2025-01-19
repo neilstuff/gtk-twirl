@@ -34,6 +34,18 @@ void connect_connector(CONNECTOR *connector, NODE *target)
 }
 
 /**
+ * @brief Event processor
+ *
+ * @param event the event to process
+ * @param processor in this case the 'connect' is the processor
+ */
+void connector_event_handler(EVENT *event, void *processor)
+{
+
+}
+
+
+/**
  * @brief Release the Connector
  *
  * @param connector the Connector to destroy
@@ -55,6 +67,9 @@ void release_connector(void *connector)
 CONNECTOR *create_connector(NODE *source)
 {
     CONNECTOR *connector = g_malloc(sizeof(CONNECTOR));
+
+    connector->handler.handler = connector_event_handler;
+    connector->handler.processor = connector;
 
     connector->release = release_connector;
     connector->connect = connect_connector;
