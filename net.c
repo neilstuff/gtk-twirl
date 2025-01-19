@@ -26,7 +26,8 @@ enum ACTION
 {
     DRAW_NODE,
     UNSELECT_ALL,
-    SELECT_NODES_BY_POINT,
+    SELECT_NODE_BY_POINT,
+    NODE_AT_POINT,
     EOF_ACTIONS
 };
 
@@ -45,12 +46,24 @@ typedef struct _CONTEXT
         struct
         {
 
-           POINT * point;
+            POINT point;
 
         } point_context;
     };
 
 } CONTEXT, *CONTEXT_P;
+
+/**
+ * @brief Returns true if the point is in the bounds of the tested node
+ * 
+ * @param point the point to test
+ * @param node the current node in the array
+ * @return gboolean true if in the bounds, false otherwise
+ */
+gboolean net_node_find_by_point(gconstpointer  point,  gconstpointer  node)
+{
+    return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), (POINT *)point);
+}
 
 /**
  * @brief Process the action'x context - Draw all nodes, unselect nodes, etc
@@ -63,12 +76,19 @@ void net_node_iterator(gpointer node, gpointer context)
 
     switch (TO_CONTEXT(context)->action)
     {
-     case SELECT_NODES_BY_POINT:
+    case SELECT_NODE_BY_POINT:
+        if (TO_NODE(node)->isNodeAtPoint(TO_NODE(node), &TO_CONTEXT(context)->point_context.point))
+        {
+            TO_NODE(node)->selected = TRUE;
+        }
+        else
+        {
+            TO_NODE(node)->selected = FALSE;
+        }
         break;
     case DRAW_NODE:
         TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer), TO_NODE(node));
         break;
-
     case UNSELECT_ALL:
         TO_NODE(node)->selected = FALSE;
         break;
@@ -85,6 +105,60 @@ void net_tool_event_processor(NET *net, EVENT *event)
 {
 
     net->tool = event->events.button_event.tool;
+}
+
+NODE *net_find_node_by_point(NET *net, POINT *point)
+{
+    NODE *node = NULL;
+    guint index;
+
+    if (g_ptr_array_find_with_equal_func(net->places,
+                                         point,
+                                         net_node_find_by_point,
+                                         &index))
+    {
+        return g_ptr_array_index(net->places, index);
+    }
+
+    if (g_ptr_array_find_with_equal_func(net->transitions,
+                                         point,
+                                         net_node_find_by_point,
+                                         &index))
+    {
+        return g_ptr_array_index(net->transitions, index);
+    }
+
+    return NULL;
+}
+
+/**
+ * @brief Apply a context to all nodes
+ *
+ * @param net that active net
+ * @param context context to apply
+ */
+void net_apply_context_all_nodes(NET *net, CONTEXT *context)
+{
+
+    g_ptr_array_foreach(net->places,
+                        net_node_iterator, context);
+    g_ptr_array_foreach(net->transitions,
+                        net_node_iterator, context);
+}
+
+/**
+ * @brief Apply an action SELECT or UNSELECT on all nodes
+ *
+ * @param net that active net
+ * @param action the action either SELECT OR UNSELECT
+ */
+void net_apply_action_all_nodes(NET *net, enum ACTION action)
+{
+    CONTEXT context;
+
+    context.action = action;
+
+    net_apply_context_all_nodes(net, &context);
 }
 
 /**
@@ -114,36 +188,38 @@ void net_draw_event_processor(NET *net, EVENT *event)
  * @param net the net
  * @param event the create node event
  */
-void net_create_node_processor(NET *net, EVENT *event)
+void net_select_node_processor(NET *net, EVENT *event)
 {
-    CONTEXT context;
-
-    context.action = UNSELECT_ALL;
-
-    int x = (int)event->events.create_node.x;
-    int y = (int)event->events.create_node.y;
-
-    int cx = x - (x % 30);
-    int cy = y - (y % 30);
-
-    cx = cx < 30 ? 30 : cx;
-    cy = cy < 30 ? 30 : cy;
-
-    printf("Coordinates %d, %d, %d, %d\n", x, y, cx, cy);
-
-    g_ptr_array_foreach(net->places,
-                        net_node_iterator, &context);
-    g_ptr_array_foreach(net->transitions,
-                        net_node_iterator, &context);
+    net_apply_action_all_nodes(net, UNSELECT_ALL);
 
     if (net->tool == SELECT_TOOL)
     {
+        CONTEXT context;
+
+        context.action = SELECT_NODE_BY_POINT;
+        context.point_context.point.x = event->events.create_node.x;
+        context.point_context.point.y = event->events.create_node.y;
+
+        net_apply_context_all_nodes(net, &context);
+
         net->controller->redraw(net->controller);
     }
     else
     {
-
         NODE *node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
+        CONTEXT context;
+        int x = (int)event->events.create_node.x;
+        int y = (int)event->events.create_node.y;
+
+        int cx = x - (x % 30);
+        int cy = y - (y % 30);
+
+        cx = cx < 30 ? 30 : cx;
+        cy = cy < 30 ? 30 : cy;
+
+        printf("Coordinates %d, %d, %d, %d\n", x, y, cx, cy);
+
+        context.action = DRAW_NODE;
 
         node->setPosition(node, cx, cy);
 
@@ -203,7 +279,7 @@ NET *net_create(CONTROLLER *controller)
     net->controller = controller;
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;
-    net->processors[CREATE_NODE] = net_create_node_processor;
+    net->processors[CREATE_NODE] = net_select_node_processor;
     net->processors[CREATE_NET] = net_create_processor;
 
     net->release = net_release;

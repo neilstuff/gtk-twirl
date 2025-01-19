@@ -75,7 +75,7 @@ typedef struct _NODE
     void (*setDefaultName)(struct _NODE *node);
 
     void (*getBounds)(struct _NODE *node, BOUNDS * bounds);
-    gint (*isNodeAtPoint)(struct _NODE *node, double x, double y);
+    gint (*isNodeAtPoint)(struct _NODE *node,  POINT * point);
 
     enum TYPE type;
     gint id;

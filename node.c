@@ -21,7 +21,6 @@
  * @brief Destroy the Node
  *
  * @param node the Node to destroy
- *
  */
 void destroy_node(NODE *node)
 {
@@ -41,7 +40,6 @@ void destroy_node(NODE *node)
  * @param node the Node
  *
  * @return TRUE if it is a transition, FALSE otherwise
- *
  */
 gint is_transition(NODE *node)
 {
@@ -55,7 +53,6 @@ gint is_transition(NODE *node)
  * @param node the Node
  *
  * @return TRUE if it is a place, FALSE otherwise
- *
  */
 gint is_place(NODE *node)
 {
@@ -64,12 +61,23 @@ gint is_place(NODE *node)
 }
 
 /**
+ * @brief Is the point (x,y) within the node's bounds
+ *
+ * @param node the node
+ * @param point determine if the point is in the bounds of the node
+ */
+gint is_node_at_point(NODE *node, POINT *point)
+{
+
+    return point_in_bounds(point, &node->bounds);
+}
+
+/**
  * @brief Set the Node Position
  *
  * @param node the Node
  * @param x the 'x' coordinate
  * @param y the 'y' coordinate
- *
  */
 void set_position(NODE *node, double x, double y)
 {
@@ -89,7 +97,6 @@ void set_position(NODE *node, double x, double y)
  *
  * @param node the Node
  * @param name the Name of the Node
- *
  */
 void set_name(NODE *node, gchar *name)
 {
@@ -102,7 +109,6 @@ void set_name(NODE *node, gchar *name)
  * @brief Set the Default Node
  *
  * @param node the Node
- *
  */
 void set_default_name(NODE *node)
 {
@@ -120,7 +126,6 @@ void set_default_name(NODE *node)
  *
  * @param node the Node
  * @param bounds receives the nodes bounds
- *
  */
 void get_bounds(NODE *node, BOUNDS *bounds)
 {
@@ -132,27 +137,12 @@ void get_bounds(NODE *node, BOUNDS *bounds)
 }
 
 /**
- * @brief Node at a point
- *
- * @param node the Node
- * @param x the 'X' location
- * @param y the 'Y' location
- *
- */
-gint is_node_at_point(NODE *node, double x, double y)
-{
-    POINT point;
-
-    return point_in_bounds(set_point(&point, x, y), &node->bounds);
-}
-
-/**
  * @brief Initialise and create a 'BLANK' node
  *
  * Node: the methods applicable apply to both Places/Transitions
  *       the actual node type is applied later
  *
- * @return a Node
+ * @return a node
  */
 NODE *new_node()
 {
@@ -226,7 +216,6 @@ NODE *new_transition()
  * @param type The Type of Node to Create 0 - place, 1 - transition
  *
  * @return a newly created Node
- *
  */
 NODE *create_node(int type)
 {

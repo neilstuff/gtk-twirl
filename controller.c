@@ -9,8 +9,7 @@
 void controller_handler_iterator(gpointer handler, gpointer event)
 {
 
-    TO_HANDLER(handler)->handler(event,  TO_HANDLER(handler)->processor);
-
+    TO_HANDLER(handler)->handler(event, TO_HANDLER(handler)->processor);
 }
 
 /**
@@ -182,7 +181,7 @@ void controller_redraw(CONTROLLER *controller)
  * @param controller the contoller that manages the handlers
  * @param handler the event handler
  */
-void controller_monitor(CONTROLLER *controller, HANDLER* handler)
+void controller_monitor(CONTROLLER *controller, HANDLER *handler)
 {
     g_ptr_array_add(controller->handlers, handler);
 }
