@@ -229,8 +229,19 @@ void net_select_node_processor(NET *net, EVENT *event)
     }
 }
 
+
 /**
- * @brief Notify the net has beencreate
+ * @brief Notify the net to connect a node
+ *
+ * @param net the net
+ * @param event the drag event
+ */
+void net_start_drag_processor(NET *net, EVENT *event)
+{
+}
+
+/**
+ * @brief Notify the net to create a node or select an existing node
  *
  * @param net the net
  * @param event the tool selection event
@@ -281,6 +292,7 @@ NET *net_create(CONTROLLER *controller)
     net->processors[TOOL_SELECTED] = net_tool_event_processor;
     net->processors[CREATE_NODE] = net_select_node_processor;
     net->processors[CREATE_NET] = net_create_processor;
+    net->processors[START_DRAG] = net_start_drag_processor;
 
     net->release = net_release;
 

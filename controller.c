@@ -23,7 +23,7 @@ void controller_handler_iterator(gpointer handler, gpointer event)
 static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int height,
                             gpointer user_data)
 {
-    EVENT *event = create_draw_event(cr, width, height);
+    EVENT *event = create_event(DRAW_REQUESTED, cr, width, height);
 
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
                         controller_handler_iterator, event);
@@ -37,7 +37,7 @@ static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int he
  */
 void controller_select_clicked(GtkButton *button, gpointer user_data)
 {
-    EVENT *event = create_tool_selected_event(SELECT_TOOL);
+    EVENT *event = create_event(TOOL_SELECTED, SELECT_TOOL);
     GdkCursor *cursor = gdk_cursor_new_from_name("default", NULL);
 
     gtk_widget_set_cursor(TO_CONTROLLER(user_data)->scrolledWindow, cursor);
@@ -54,7 +54,7 @@ void controller_select_clicked(GtkButton *button, gpointer user_data)
  */
 void controller_place_clicked(GtkButton *button, gpointer user_data)
 {
-    EVENT *event = create_tool_selected_event(PLACE_TOOL);
+    EVENT *event = create_event(TOOL_SELECTED, PLACE_TOOL);
     GdkCursor *cursor = gdk_cursor_new_from_name("copy", NULL);
 
     gtk_widget_set_cursor(TO_CONTROLLER(user_data)->scrolledWindow, cursor);
@@ -71,7 +71,7 @@ void controller_place_clicked(GtkButton *button, gpointer user_data)
  */
 void controller_transition_clicked(GtkButton *button, gpointer user_data)
 {
-    EVENT *event = create_tool_selected_event(TRANSITION_TOOL);
+    EVENT *event = create_event(TOOL_SELECTED, TRANSITION_TOOL);
 
     GdkCursor *cursor = gdk_cursor_new_from_name("copy", NULL);
 
@@ -97,7 +97,7 @@ void controller_gesture_released(GtkGestureClick *gesture,
                                  gpointer user_data)
 {
 
-    EVENT *event = create_node_event(n_press, x, y);
+    EVENT *event = create_event(CREATE_NODE, n_press, x, y);
 
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
                         controller_handler_iterator, event);
@@ -149,8 +149,13 @@ void controller_key_released(GtkEventControllerKey *self,
 
 void controller_drag_begin(GtkGestureDrag *gesture, double x, double y, gpointer user_data)
 {
+    EVENT *event = create_event(START_DRAG, x, y);
+
+    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
+                        controller_handler_iterator, event);
 
     printf("Controller: Drag Begin\n");
+    
 }
 
 void controller_drag_update(GtkGestureDrag *gesture, double offset_x, double offset_y, gpointer user_data)
@@ -260,7 +265,7 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
     /* Initialise the Net */
     {
         NET *net = net_create(controller);
-        EVENT *event = create_net_event(SELECT_TOOL);
+        EVENT *event = create_event(CREATE_NET, SELECT_TOOL);
 
         gtk_toggle_button_set_active((GtkToggleButton *)controller->selectButton, TRUE);
 

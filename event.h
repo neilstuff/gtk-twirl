@@ -21,6 +21,7 @@ enum NOTIFICATION
     TOOL_SELECTED,
     DRAW_REQUESTED,
     CREATE_NODE,
+    START_DRAG,
     END_NOTIFICATION
 
 };
@@ -52,6 +53,8 @@ typedef struct _EVENT
         {
 
             cairo_t *canvas;
+            int width;
+            int height;
 
         } draw_event;
 
@@ -63,7 +66,12 @@ typedef struct _EVENT
             double y;
 
         } create_node;
+        struct
+        {
+            double x;
+            double y;
 
+        } drag_event;
         struct
         {
 
@@ -75,18 +83,14 @@ typedef struct _EVENT
 
 } EVENT, *EVENT_P;
 
-
 typedef struct _HANDLER
 {
 
-    void (*handler)(EVENT* event, void *processor);
+    void (*handler)(EVENT *event, void *processor);
     void *processor;
 
 } HANDLER, HANDLER_P;
 
-extern EVENT *create_tool_selected_event(enum TOOL);
-extern EVENT *create_draw_event(cairo_t *cr, int width, int height);
-extern EVENT *create_node_event(int n_press, double x, double y);
-extern EVENT *create_net_event(enum TOOL tool);
+extern EVENT *create_event(enum NOTIFICATION notification, ...);
 
 #endif // EVENT_H_INCLUDED

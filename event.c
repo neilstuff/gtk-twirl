@@ -1,10 +1,18 @@
+/**
+ * @file event.c
+ * @author your name (you@domain.com)
+ * @brief
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 #include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
 
 #include "event.h"
-
-
 
 /**
  * @brief Release a Event and free any resources
@@ -15,92 +23,54 @@ void event_release(EVENT *event) { g_free(event); }
 
 /**
  * @brief Create a event object
- * 
+ *
  * @param notification the type of event
- * 
- * @return an initialised event
+ * @param ... event arguments (based on the event type - see switch statement)
+ * @return EVENT* an initialised event
  */
-EVENT *create_event(enum NOTIFICATION notification)
+EVENT *create_event(enum NOTIFICATION notification, ...)
 {
     EVENT *event = g_malloc(sizeof(EVENT));
+    va_list args;
+
+    va_start(args, notification);
 
     event->notification = notification;
-
     event->release = event_release;
 
-    return event;
+    switch (notification)
+    {
+        case CREATE_NET:
+        {
+            event->events.create_net.tool = va_arg(args, enum TOOL);
+        }
+        break;
+        case TOOL_SELECTED:
+        {
+            event->events.button_event.tool = va_arg(args, enum TOOL);
+        }
+        break;
+        case DRAW_REQUESTED:
+        {
+            event->events.draw_event.canvas = va_arg(args, cairo_t *);
+            event->events.draw_event.width = va_arg(args, int);
+            event->events.draw_event.height = va_arg(args, int);
+        }
+        break;
+        case CREATE_NODE:
+        {
+            event->events.create_node.n_times = va_arg(args, int);
+            event->events.create_node.x = va_arg(args, double);
+            event->events.create_node.y = va_arg(args, double);
+        }
+        break;
+        case START_DRAG:
+        {
+            event->events.drag_event.x = va_arg(args, double);
+            event->events.drag_event.y = va_arg(args, double);           
+        }
+    }
 
-}
-
-/**
- * @brief Create and initialise the Event
- *
- * @param tool the tool selected by the user
- *
- * @return an initialised event
- *
- */
-EVENT *create_tool_selected_event(enum TOOL tool)
-{
-    EVENT *event = create_event(TOOL_SELECTED);
-    
-    event->events.button_event.tool = tool;
-
-    return event;
-
-}
-
-/**
- * @brief Create a draw event
- *
- * @param cr the cairo drawing context 
- * @param width the width of the drawing Area
- * @param height the height of the drawing Area
- *
- * @return an initialised event
- */
-EVENT *create_draw_event(cairo_t *cr, int width, int height)
-{
-    EVENT *event = create_event(DRAW_REQUESTED);
-
-    event->events.draw_event.canvas = cr;
-
+    va_end(args);
     return event;
 }
-
-/**
- * @brief Create a node (creation) event
- *
- * @param n_times the times the button was pressedt
- * @param x the 'x' location of the node
- * @param y the 'y' location of the node
- *
- * @return an initialised event
- */
-EVENT *create_node_event(int n_times, double x, double y)
-{
-    EVENT *event = create_event(CREATE_NODE);
-
-    event->events.create_node.n_times = n_times;
-    event->events.create_node.x = x;
-    event->events.create_node.y = y;
-
-    return event;
-}
-
-/**
- * @brief Net is created
-
- * @return an initialised event
- */
-EVENT *create_net_event(enum TOOL tool)
-{
-    EVENT *event = create_event(CREATE_NET);
-
-    event->events.create_net.tool = tool;
-
-    return event;
-
-}
-
-
