@@ -10,6 +10,10 @@
 #ifndef POINT_H_INCLUDED
 #define POINT_H_INCLUDED
 
+#define TO_POINT(point) ((POINT*)(point))
+#define TO_SIZE(size) ((POINT*)(size))
+#define TO_BOUNDS(bounds) ((POINT*)(bounds))
+
 typedef struct
 {
 

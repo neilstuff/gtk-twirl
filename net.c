@@ -55,14 +55,15 @@ typedef struct _CONTEXT
 
 /**
  * @brief Returns true if the point is in the bounds of the tested node
- * 
+ *
  * @param point the point to test
  * @param node the current node in the array
  * @return gboolean true if in the bounds, false otherwise
  */
-gboolean net_node_find_by_point(gconstpointer  point,  gconstpointer  node)
+gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
 {
-    return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), (POINT *)point);
+    printf("IM HERE 1 - %f:%f\n", TO_POINT(point)->x, TO_POINT(point)->y);
+    return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), TO_POINT(point));
 }
 
 /**
@@ -117,6 +118,7 @@ NODE *net_find_node_by_point(NET *net, POINT *point)
                                          net_node_find_by_point,
                                          &index))
     {
+
         return g_ptr_array_index(net->places, index);
     }
 
@@ -125,6 +127,7 @@ NODE *net_find_node_by_point(NET *net, POINT *point)
                                          net_node_find_by_point,
                                          &index))
     {
+
         return g_ptr_array_index(net->transitions, index);
     }
 
@@ -190,6 +193,10 @@ void net_draw_event_processor(NET *net, EVENT *event)
  */
 void net_select_node_processor(NET *net, EVENT *event)
 {
+    POINT point;
+
+    set_point(&point, event->events.create_node.x, event->events.create_node.y);
+
     net_apply_action_all_nodes(net, UNSELECT_ALL);
 
     if (net->tool == SELECT_TOOL)
@@ -204,31 +211,40 @@ void net_select_node_processor(NET *net, EVENT *event)
 
         net->controller->redraw(net->controller);
     }
-    else
     {
-        NODE *node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
-        CONTEXT context;
-        int x = (int)event->events.create_node.x;
-        int y = (int)event->events.create_node.y;
+        NODE * node = net_find_node_by_point(net, &point);
+        
+        if (node == NULL)
+        {
+            CONTEXT context;
+            
+            node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
 
-        int cx = x - (x % 30);
-        int cy = y - (y % 30);
+            int x = (int)event->events.create_node.x;
+            int y = (int)event->events.create_node.y;
 
-        cx = cx < 30 ? 30 : cx;
-        cy = cy < 30 ? 30 : cy;
+            int cx = x - (x % 30);
+            int cy = y - (y % 30);
 
-        printf("Coordinates %d, %d, %d, %d\n", x, y, cx, cy);
+            cx = cx < 30 ? 30 : cx;
+            cy = cy < 30 ? 30 : cy;
 
-        context.action = DRAW_NODE;
+            printf("Coordinates %d, %d, %d, %d\n", x, y, cx, cy);
 
-        node->setPosition(node, cx, cy);
+            context.action = DRAW_NODE;
 
-        g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
+            node->setPosition(node, cx, cy);
+
+            g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
+        } 
+        else 
+        {
+            node->selected = TRUE;
+        }
 
         net->controller->redraw(net->controller);
     }
 }
-
 
 /**
  * @brief Notify the net to connect a node
@@ -238,6 +254,12 @@ void net_select_node_processor(NET *net, EVENT *event)
  */
 void net_start_drag_processor(NET *net, EVENT *event)
 {
+    POINT point;
+    printf("Points %f:%f\n", event->events.drag_event.x, event->events.drag_event.y);
+
+    set_point(&point, event->events.drag_event.x, event->events.drag_event.y);
+
+    net_find_node_by_point(net, &point);
 }
 
 /**
