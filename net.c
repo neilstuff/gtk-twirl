@@ -210,7 +210,8 @@ void net_select_node_processor(NET *net, EVENT *event)
         net_apply_context_all_nodes(net, &context);
 
         net->controller->redraw(net->controller);
-    }
+    } 
+    else
     {
         NODE * node = net_find_node_by_point(net, &point);
         
