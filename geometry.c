@@ -15,6 +15,10 @@
 
 #include "geometry.h"
 
+/** 
+ * @brief determine if a point is in the bounding rectangle
+ *
+ */
 int point_in_bounds(POINT * point, BOUNDS * bounds)
 {
 
@@ -24,6 +28,10 @@ int point_in_bounds(POINT * point, BOUNDS * bounds)
             point->y <= bounds->point.y + bounds->size.h);
 }
 
+/** 
+ * @brief set a point (x, y) coordinates
+ *
+ */
 POINT * set_point(POINT * point, double x, double y)
 {
     point->x = x;
