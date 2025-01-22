@@ -1,3 +1,13 @@
+/**
+ * @file connector.c
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief An connector is a graphical way to connect a place with a transition or a transition to a place
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 #include <math.h>
 
 #include <glib.h>
@@ -6,21 +16,6 @@
 
 #include "connector.h"
 
-/**
- * Connector Manager - implementation
- *
- * @author Neil Brittliff
- *
- * (c) Neil Brittliff - all rights reserved
- *
- */
-
-/**
- * Destroy the Connector
- *
- * @param connector the Connector
- *
- */
 void connect_connector(CONNECTOR *connector, NODE *target)
 {
 
@@ -33,37 +28,16 @@ void connect_connector(CONNECTOR *connector, NODE *target)
     }
 }
 
-/**
- * @brief Event processor
- *
- * @param event the event to process
- * @param processor in this case the 'connect' is the processor
- */
 void connector_event_handler(EVENT *event, void *processor)
 {
-
 }
 
-
-/**
- * @brief Release the Connector
- *
- * @param connector the Connector to destroy
- *
- */
 void release_connector(void *connector)
 {
 
     g_free(connector);
 }
 
-/**
- * Create a Connector
- *
- * @param source the Source Node - Place/Target
- * @return a newly created Connector
- *
- */
 CONNECTOR *create_connector(NODE *source)
 {
     CONNECTOR *connector = g_malloc(sizeof(CONNECTOR));

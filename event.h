@@ -1,14 +1,16 @@
-#ifndef EVENT_H_INCLUDED
-#define EVENT_H_INCLUDED
-
 /**
- * EVENT - prototype
+ * @file event.c
+ * @author Neil.Brittliff@outlook.com
+ * @brief An Event is designed to contain data to communicate between objects
+ * @version 0.1
+ * @date 2025-01-18
  *
- * @author Neil Brittliff
- *
- * (c) Neil Brittliff - all rights reserved
+ * @copyright Copyright (c) 2025
  *
  */
+
+#ifndef EVENT_H_INCLUDED
+#define EVENT_H_INCLUDED
 
 #define TO_EVENT(event) ((EVENT *)(event))
 #define TO_HANDLER(handler) ((HANDLER *)(handler))

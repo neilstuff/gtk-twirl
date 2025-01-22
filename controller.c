@@ -111,7 +111,7 @@ void controller_gesture_released(GtkGestureClick *gesture,
  * @param keycode the key code
  * @param state bitmask of modifier keys
  * @param user_data the controller object
- * @return gboolean 'true' to continue
+ * @returns gboolean 'true' to continue
  */
 gboolean controller_key_pressed(GtkEventControllerKey *self,
                                 guint keyval, guint keycode,
@@ -207,7 +207,7 @@ void controller_release(CONTROLLER *controller)
 /**
  * Create and initialise the controller
  *
- * @return an initialised controller
+ * @returns an initialised controller
  */
 CONTROLLER *create_controller(GtkApplication *gtkAppication,
                               char *resourceURL)

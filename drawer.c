@@ -160,7 +160,7 @@ void drawer_release(DRAWER * drawer)
  *
  * @param canvas The cairo canvas
  *
- * @return a newly created DRAWER
+ * @returns a newly created DRAWER
  *
  */
 DRAWER *create_drawer(cairo_t *canvas)

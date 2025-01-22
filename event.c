@@ -1,33 +1,25 @@
 /**
  * @file event.c
- * @author your name (you@domain.com)
- * @brief
+ * @author Neil.Brittliff@outlook.com
+ * @brief An Event is designed to contain data to communicate between objects
  * @version 0.1
  * @date 2025-01-18
  *
  * @copyright Copyright (c) 2025
  *
  */
+
 #include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
 
 #include "event.h"
 
-/**
- * @brief Release a Event and free any resources
- *
- * @param event the event to release
- */
-void event_release(EVENT *event) { g_free(event); }
+void event_release(EVENT *event) 
+{ 
+    g_free(event); 
+}
 
-/**
- * @brief Create a event object
- *
- * @param notification the type of event
- * @param ... event arguments (based on the event type - see switch statement)
- * @return EVENT* an initialised event
- */
 EVENT *create_event(enum NOTIFICATION notification, ...)
 {
     EVENT *event = g_malloc(sizeof(EVENT));

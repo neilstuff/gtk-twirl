@@ -5,22 +5,7 @@
 #include "event.h"
 #include "geometry.h"
 
-/**
- * Connector - prototype
- *
- * @author Neil Brittliff
- *
- * (c) Neil Brittliff - all rights reserved
- *
- */
-
 #define TO_CONNECTOR(connector) ((CONNECTOR*)(connector))
-
-/**
- * Connector Definition File
- *
- * @author Neil Brittliff
- */
 
 typedef struct _CONNECTOR {
 

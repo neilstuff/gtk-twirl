@@ -137,12 +137,12 @@ void get_bounds(NODE *node, BOUNDS *bounds)
 }
 
 /**
- * @brief Initialise and create a 'BLANK' node
+ * @brief Initialise and create a 'BLANK' node this should never be called directly
  *
  * Node: the methods applicable apply to both Places/Transitions
  *       the actual node type is applied later
  *
- * @return a node
+ * @returns a newly constructed node
  */
 NODE *new_node()
 {
@@ -175,7 +175,7 @@ NODE *new_node()
  *
  * Node: the methods applicable apply to PLACE only
  *
- * @return a 'PLACE' Node
+ * @returns a 'PLACE' Node
  */
 NODE *new_place()
 {
@@ -195,7 +195,7 @@ NODE *new_place()
  *
  * Node: the methods applicable apply to TRANSITION only
  *
- * @return a 'TRANSITION' Node
+ * @returns a 'TRANSITION' Node
  */
 NODE *new_transition()
 {
@@ -215,7 +215,7 @@ NODE *new_transition()
  *
  * @param type The Type of Node to Create 0 - place, 1 - transition
  *
- * @return a newly created Node
+ * @returns an allocated and initialised Node
  */
 NODE *create_node(int type)
 {

@@ -1,3 +1,13 @@
+/**
+ * @file net.h
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief A "Petri Net" representation
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 #ifndef NET_H_INCLUDED
 #define NET_H_INCLUDED
 

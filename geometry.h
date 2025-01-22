@@ -1,9 +1,11 @@
 /**
- * Point - prototype
+ * @file geometry.c
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief  A collection of geometric functions
+ * @version 0.1
+ * @date 2025-01-18
  *
- * @author Neil Brittliff
- *
- * (c) Neil Brittliff - all rights reserved
+ * @copyright Copyright (c) 2025
  *
  */
 

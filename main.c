@@ -24,7 +24,7 @@ static void on_open(GtkApplication *app, GFile **files, gint n_files,
  * Main Menu
  *
  * @param arc The number of arguments
- * @param argv The actual arguments
+ * @param argv The actual arguments to the program
  *
  */
 int main(int argc, char *argv[])

@@ -1,7 +1,7 @@
 /**
  * @file geometry.c
  * @author Dr. Neil Brittliff (brittliff.org)
- * @brief Geometrycollection of geometric functions
+ * @brief  A collection of geometric functions
  * @version 0.1
  * @date 2025-01-18
  *
@@ -15,13 +15,6 @@
 
 #include "geometry.h"
 
-/**
- * @brief Determine if a point is in bounds
- *
- * @param point the point (x, y)
- * @param bounds the bounds (width, height)
- * @return int 1 - in bounds (true), 0 (false) - otherwise
- */
 int point_in_bounds(POINT * point, BOUNDS * bounds)
 {
 
@@ -31,14 +24,6 @@ int point_in_bounds(POINT * point, BOUNDS * bounds)
             point->y <= bounds->point.y + bounds->size.h);
 }
 
-/**
- * @brief Set the point object
- * 
- * @param point the receiving point
- * @param x the point's x value
- * @param y the point's y value
- * @return POINT* return the populated point - fluent style
- */
 POINT * set_point(POINT * point, double x, double y)
 {
     point->x = x;

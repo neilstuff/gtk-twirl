@@ -28,9 +28,14 @@ enum ACTION
     UNSELECT_ALL,
     SELECT_NODE_BY_POINT,
     NODE_AT_POINT,
+    GET_NEXT_NODE_ID,
     EOF_ACTIONS
 };
 
+/**
+ * @brief private structure used to call functions with a general parameter container
+ *
+ */
 typedef struct _CONTEXT
 {
     enum ACTION action;
@@ -49,29 +54,22 @@ typedef struct _CONTEXT
             POINT point;
 
         } point_context;
+        struct
+        {
+
+            int id;
+
+        } id_context;
     };
 
 } CONTEXT, *CONTEXT_P;
 
-/**
- * @brief Returns true if the point is in the bounds of the tested node
- *
- * @param point the point to test
- * @param node the current node in the array
- * @return gboolean true if in the bounds, false otherwise
- */
 gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
 {
-    printf("IM HERE 1 - %f:%f\n", TO_POINT(point)->x, TO_POINT(point)->y);
+
     return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), TO_POINT(point));
 }
 
-/**
- * @brief Process the action'x context - Draw all nodes, unselect nodes, etc
- *
- * @param node the current node
- * @param context the action's context
- */
 void net_node_iterator(gpointer node, gpointer context)
 {
 
@@ -93,14 +91,16 @@ void net_node_iterator(gpointer node, gpointer context)
     case UNSELECT_ALL:
         TO_NODE(node)->selected = FALSE;
         break;
+    case GET_NEXT_NODE_ID:
+        TO_CONTEXT(context)->id_context.id = TO_NODE(node)->id >= TO_CONTEXT(context)->id_context.id
+                                                 ? TO_NODE(node)->id + 1
+                                                 : TO_CONTEXT(context)->id_context.id;
     }
 }
 
 /**
- * @brief Notify the net a new tool has been selected
+ * @brief process the event
  *
- * @param net the net
- * @param event the tool selection event
  */
 void net_tool_event_processor(NET *net, EVENT *event)
 {
@@ -108,6 +108,10 @@ void net_tool_event_processor(NET *net, EVENT *event)
     net->tool = event->events.button_event.tool;
 }
 
+/**
+ * @brief find a node given a point
+ *
+ */
 NODE *net_find_node_by_point(NET *net, POINT *point)
 {
     NODE *node = NULL;
@@ -135,10 +139,8 @@ NODE *net_find_node_by_point(NET *net, POINT *point)
 }
 
 /**
- * @brief Apply a context to all nodes
+ * @brief apply a context to all the transitions and places
  *
- * @param net that active net
- * @param context context to apply
  */
 void net_apply_context_all_nodes(NET *net, CONTEXT *context)
 {
@@ -150,10 +152,8 @@ void net_apply_context_all_nodes(NET *net, CONTEXT *context)
 }
 
 /**
- * @brief Apply an action SELECT or UNSELECT on all nodes
+ * @brief apply an action all the transitions and places
  *
- * @param net that active net
- * @param action the action either SELECT OR UNSELECT
  */
 void net_apply_action_all_nodes(NET *net, enum ACTION action)
 {
@@ -165,10 +165,8 @@ void net_apply_action_all_nodes(NET *net, enum ACTION action)
 }
 
 /**
- * @brief Notify the net must be redrawn
+ * @brief draw/paint the entire net to the drawing-canvas
  *
- * @param net the net
- * @param event the draw/redraw event
  */
 void net_draw_event_processor(NET *net, EVENT *event)
 {
@@ -186,10 +184,8 @@ void net_draw_event_processor(NET *net, EVENT *event)
 }
 
 /**
- * @brief Notify the net a node is be created
+ * @brief select or create a node (based on the selected tool)
  *
- * @param net the net
- * @param event the create node event
  */
 void net_select_node_processor(NET *net, EVENT *event)
 {
@@ -210,15 +206,15 @@ void net_select_node_processor(NET *net, EVENT *event)
         net_apply_context_all_nodes(net, &context);
 
         net->controller->redraw(net->controller);
-    } 
+    }
     else
     {
-        NODE * node = net_find_node_by_point(net, &point);
-        
+        NODE *node = net_find_node_by_point(net, &point);
+
         if (node == NULL)
         {
             CONTEXT context;
-            
+
             node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
 
             int x = (int)event->events.create_node.x;
@@ -237,8 +233,8 @@ void net_select_node_processor(NET *net, EVENT *event)
             node->setPosition(node, cx, cy);
 
             g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
-        } 
-        else 
+        }
+        else
         {
             node->selected = TRUE;
         }
@@ -248,10 +244,8 @@ void net_select_node_processor(NET *net, EVENT *event)
 }
 
 /**
- * @brief Notify the net to connect a node
+ * @brief start a drag (connecting nodes)
  *
- * @param net the net
- * @param event the drag event
  */
 void net_start_drag_processor(NET *net, EVENT *event)
 {
@@ -263,12 +257,6 @@ void net_start_drag_processor(NET *net, EVENT *event)
     net_find_node_by_point(net, &point);
 }
 
-/**
- * @brief Notify the net to create a node or select an existing node
- *
- * @param net the net
- * @param event the tool selection event
- */
 void net_create_processor(NET *net, EVENT *event)
 {
 
@@ -276,10 +264,8 @@ void net_create_processor(NET *net, EVENT *event)
 }
 
 /**
- * @brief Event processor
+ * @brief net event processor
  *
- * @param event the event to process
- * @param processor in this case the 'net' is the processor
  */
 void net_event_handler(EVENT *event, void *processor)
 {
@@ -288,9 +274,8 @@ void net_event_handler(EVENT *event, void *processor)
 }
 
 /**
- * @brief Reealse a Net and free any resources
+ * @brief release/free the net object
  *
- * @param net the Net to release
  */
 void net_release(NET *net)
 {
@@ -298,9 +283,7 @@ void net_release(NET *net)
 }
 
 /**
- * @brief Initialise the Net
- *
- * @return an initialised NET
+ * @brief net constructor
  *
  */
 NET *net_create(CONTROLLER *controller)
