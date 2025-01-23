@@ -29,7 +29,7 @@ int point_in_bounds(POINT * point, BOUNDS * bounds)
 }
 
 /** 
- * @brief set a point (x, y) coordinates
+ * @brief set (x, y) coordinates of a point and return that paint
  *
  */
 POINT * set_point(POINT * point, double x, double y)
@@ -38,4 +38,19 @@ POINT * set_point(POINT * point, double x, double y)
     point->y = y;
 
     return point;
+}
+
+/** 
+ * @brief set the source and target of a line and return that line
+ *
+ */
+LINE * set_line(LINE * line, POINT * source, POINT* target)
+{
+    line->source.x = source->x;
+    line->source.y = source->y;
+
+    line->target.x = target->x;
+    line->target.y = target->y;
+
+    return line;
 }
