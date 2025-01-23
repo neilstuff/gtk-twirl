@@ -69,28 +69,112 @@ typedef struct
 typedef struct _NODE
 {
 
+    /**
+     * @brief node's destructor
+     * 
+     */
     void (*destroy)(struct _NODE *node);
+
+    /**
+     * @brief set the nodes position within the drawing canvas
+     * 
+     */
     void (*setPosition)(struct _NODE *, double x, double y);
-    gint (*isTransition)(struct _NODE *node);
+
+    /**
+     * @brief returns true if the node is a transition, false othewise
+     * 
+     */
+    int (*isTransition)(struct _NODE *node);
+
+    /**
+     * @brief returns true if the node is a place, false othewise
+     * 
+     */
     int (*isPlace)(struct _NODE *node);
+
+    /**
+     * @brief set/replace the node's name
+     * 
+     */
     void (*setName)(struct _NODE *node, gchar *name);
+
+    /**
+     * @brief set the node's default name - format: [p|t]-[0-9]*
+     * 
+     */
     void (*setDefaultName)(struct _NODE *node);
 
+    /**
+     * @brief get the nodes bounds (bounds is the input to receive the coordinates)
+     * 
+     */
     void (*getBounds)(struct _NODE *node, BOUNDS * bounds);
-    gint (*isNodeAtPoint)(struct _NODE *node,  POINT * point);
 
+    /**
+     * @brief returns true if the node's bounds are contained within the poinr, false otherwise
+     * 
+     */
+    int (*isNodeAtPoint)(struct _NODE *node,  POINT * point);
+
+    /**
+     * @brief private (the nodes type - place/transition)
+     * 
+     */
     enum TYPE type;
-    gint id;
+
+    /**
+     * @brief private (the nodes unique id)
+     * 
+     */
+    int id;
+
+    /**
+     * @brief the node's name/title
+     * 
+     */
     GString *name;
 
+    /**
+     * @brief if '1'the node is selected, '0'not selected
+     * 
+     */
     int selected;
+
+    /**
+     * @brief the node's text length in pixels
+     * 
+     */
     int textLength;
+
+    /**
+     * @brief '1' the node is enabled, '0' not enabled
+     * 
+     */
     int enabled;
+
+    /**
+     * @brief the node's state either ACTIVE or INACTIVE
+     * 
+     */
     int state;
 
+    /**
+     * @brief the node's central point
+     * 
+     */
     POINT position;
+
+    /**
+     * @brief the node's bound
+     * 
+     */
     BOUNDS bounds;
 
+    /**
+     * @brief a node can be one type - PLACE or TRANSITION
+     * 
+     */
     union
     {
 

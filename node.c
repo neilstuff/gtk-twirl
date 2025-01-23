@@ -39,7 +39,7 @@ void destroy_node(NODE *node)
  * @brief is the node a 'transition' node
  *
  */
-gint is_transition(NODE *node)
+int is_transition(NODE *node)
 {
 
     return (node->type == TRANSITION_NODE) ? 1 : 0;
@@ -49,7 +49,7 @@ gint is_transition(NODE *node)
  * @brief is the node a 'place' node
  * 
  */
-gint is_place(NODE *node)
+int is_place(NODE *node)
 {
 
     return (node->type == PLACE_NODE) ? 1 : 0;

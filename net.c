@@ -24,11 +24,11 @@
 
 enum ACTION
 {
-    DRAW_NODE,
-    UNSELECT_ALL,
-    SELECT_NODE_BY_POINT,
-    NODE_AT_POINT,
-    GET_NEXT_NODE_ID,
+    DRAW_NODE = 0,
+    UNSELECT_ALL = 1,
+    SELECT_NODE_BY_POINT = 2,
+    NODE_AT_POINT = 3,
+    GET_NEXT_NODE_ID = 4,
     EOF_ACTIONS
 };
 
@@ -65,15 +65,19 @@ typedef struct _CONTEXT
 } CONTEXT, *CONTEXT_P;
 
 /**
- * @brief Create a Node or Place
+ * @brief create a Node or Place
  *
-*/
+ */
 gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
 {
 
     return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), TO_POINT(point));
 }
 
+/**
+ * @brief  iterator of nodes - the context defines the processor to apply to the node
+ *
+ */
 void net_node_iterator(gpointer node, gpointer context)
 {
 
@@ -98,13 +102,13 @@ void net_node_iterator(gpointer node, gpointer context)
     case GET_NEXT_NODE_ID:
         TO_CONTEXT(context)->id_context.id = TO_NODE(node)->id >= TO_CONTEXT(context)->id_context.id
                                                  ? TO_NODE(node)->id + 1
-                                                 : TO_CONTEXT(context)->id_context.id;  
-        break;                        
+                                                 : TO_CONTEXT(context)->id_context.id;
+        break;
     }
 }
 
 /**
- * @brief process the event
+ * @brief update the users tool selection
  *
  */
 void net_tool_event_processor(NET *net, EVENT *event)
@@ -220,7 +224,15 @@ void net_select_node_processor(NET *net, EVENT *event)
         {
             CONTEXT context;
 
+            context.action = GET_NEXT_NODE_ID;
+            context.id_context.id = 0;
+
             node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
+
+            g_ptr_array_foreach((net->tool == PLACE_TOOL) ? net->places : net->transitions,
+                                net_node_iterator, &context);
+            node->id = context.id_context.id;
+            node->setDefaultName(node);
 
             int x = (int)event->events.create_node.x;
             int y = (int)event->events.create_node.y;
