@@ -1,7 +1,7 @@
 /**
  * @file net.h
  * @author Dr. Neil Brittliff (brittliff.org)
- * @brief header file - a 'Petri Net' representation
+ * @brief prototype - a 'Petri Net' representation
  * @version 0.1
  * @date 2025-01-18
  *
@@ -13,17 +13,13 @@
 #define NET_H_INCLUDED
 
 #include "event.h"
-/**
- * Net - prototype
- *
- * @author Neil Brittliff
- *
- * (c) Neil Brittliff - all rights reserved
- *
- */
 
 #define TO_NET(net) ((NET*)(net))
 
+/**
+ * @brief the Net's interface
+ * 
+ */
 typedef struct _NET {
     CONTROLLER * controller;
     GPtrArray * places;

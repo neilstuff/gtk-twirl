@@ -112,7 +112,6 @@ gboolean controller_key_pressed(GtkEventControllerKey *self,
     if (state & (GDK_CONTROL_MASK))
     {
         TO_CONTROLLER(user_data)->mode = CONNECT;
-        printf("controller_key_pressed\n");
     }
 
     return TRUE;
@@ -134,7 +133,7 @@ void controller_key_released(GtkEventControllerKey *self,
 
 void controller_drag_begin(GtkGestureDrag *gesture, double x, double y, gpointer user_data)
 {
-    EVENT *event = create_event(START_DRAG, x, y);
+    EVENT *event = create_event(START_DRAG, x, y, TO_CONTROLLER(user_data)->mode);
 
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
                         controller_handler_iterator, event);

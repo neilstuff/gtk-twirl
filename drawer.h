@@ -1,7 +1,7 @@
 /**
  * @file drawer.h
  * @author Dr. Neil Brittliff (brittliff.org) 
- * @brief header file - draws all graphical object - places, transitions and arcs on the canvas (drawingarea)
+ * @brief prototype - draws all graphical object - places, transitions and arcs on the canvas (drawingarea)
  * @version 0.1
  * @date 2025-01-18
  *

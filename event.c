@@ -1,6 +1,6 @@
 /**
  * @file event.c
- * @author Neil.Brittliff@outlook.com
+ * @author Dr. Neil Brittliff (brittliff.org)
  * @brief An Event is designed to contain data to communicate between objects
  * @version 0.1
  * @date 2025-01-18
@@ -68,6 +68,7 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
         {
             event->events.drag_event.x = va_arg(args, double);
             event->events.drag_event.y = va_arg(args, double);           
+            event->events.drag_event.mode = va_arg(args, int);           
         }
     }
 

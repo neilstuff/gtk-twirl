@@ -1,7 +1,7 @@
 /**
  * @file geometry.h
  * @author Dr. Neil Brittliff (brittliff.org)
- * @brief  header file - a collection of geometric functions
+ * @brief  prototype - a collection of geometric functions
  * @version 0.1
  * @date 2025-01-18
  *

@@ -1,7 +1,7 @@
 /**
  * @file event.h
  * @author Neil.Brittliff@outlook.com
- * @brief header file - an event is designed to contain data to communicate between objects
+ * @brief prototype - an event is designed to contain data to communicate between objects
  * @version 0.1
  * @date 2025-01-18
  *
@@ -15,6 +15,10 @@
 #define TO_EVENT(event) ((EVENT *)(event))
 #define TO_HANDLER(handler) ((HANDLER *)(handler))
 
+/**
+ * @brief notification define the event type
+ * 
+ */
 enum NOTIFICATION
 {
     CREATE_NET = 0,
@@ -28,6 +32,10 @@ enum NOTIFICATION
 
 };
 
+/**
+ * @brief user selected tool from the tool pane; can be either - 'select', 'place', and 'transition'
+ * 
+ */
 enum TOOL
 {
     SELECT_TOOL,
@@ -72,12 +80,16 @@ typedef struct _EVENT
             double y;
 
         } create_node;
+
         struct
         {
             double x;
             double y;
 
+            int mode;
+
         } drag_event;
+
         struct
         {
 

@@ -1,7 +1,7 @@
 /**
  * @file node.h
  * @author Dr. Neil Brittliff (brittliff.org) 
- * @brief header file - a representation of a petri-net node 'Place' or 'Transition
+ * @brief prototype - a representation of a petri-net node 'Place' or 'Transition
  * @version 0.1
  * @date 2025-01-18
  *

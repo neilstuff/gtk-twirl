@@ -1,7 +1,7 @@
 /**
  * @file controller.h
  * @author Dr. Neil Brittliff (brittliff.org)
- * @brief  header file - the interface between the GDK event processing system and petri-net's implementation
+ * @brief  prototype - the interface between the GDK event processing system and petri-net's implementation
  * @version 0.1
  * @date 2025-01-18
  *

@@ -271,9 +271,18 @@ void net_start_drag_processor(NET *net, EVENT *event)
 
     set_point(&point, event->events.drag_event.x, event->events.drag_event.y);
 
-    net_find_node_by_point(net, &point);
+    NODE * node = net_find_node_by_point(net, &point);
+
+    if (node != NULL)
+    {
+        printf("NODE is not NULL\n");
+    }
 }
 
+/**
+ * @brief set the current tool - for the created net
+ * 
+ */
 void net_create_processor(NET *net, EVENT *event)
 {
 
