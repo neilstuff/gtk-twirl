@@ -17,6 +17,10 @@
 #include "event.h"
 #include "net.h"
 
+/**
+ * @brief iterates through the handlers for a specific event
+ *
+ */
 void controller_handler_iterator(gpointer handler, gpointer event)
 {
 
@@ -24,7 +28,7 @@ void controller_handler_iterator(gpointer handler, gpointer event)
 }
 
 /**
- * @brief manage the Draw Event
+ * @brief manage the 'draw' event
  *
  */
 static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int height,
@@ -128,30 +132,45 @@ void controller_key_released(GtkEventControllerKey *self,
 {
 
     TO_CONTROLLER(user_data)->mode = NORMAL;
-    printf("controller_key_released\n");
+
 }
 
+/**
+ * @brief begin the drag and notify hanlders
+ *
+ */
 void controller_drag_begin(GtkGestureDrag *gesture, double x, double y, gpointer user_data)
 {
     EVENT *event = create_event(START_DRAG, x, y, TO_CONTROLLER(user_data)->mode);
 
     g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
                         controller_handler_iterator, event);
-
-    printf("Controller: Drag Begin\n");
     
 }
 
+/**
+ * @brief update the drag and notify hanlders
+ *
+ */
 void controller_drag_update(GtkGestureDrag *gesture, double offset_x, double offset_y, gpointer user_data)
 {
+    EVENT *event = create_event(UPDATE_DRAG, offset_x, offset_y, TO_CONTROLLER(user_data)->mode);
 
-    printf("Controller: Drag Update\n");
+    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
+                        controller_handler_iterator, event);
+
 }
 
+/**
+ * @brief end the drag and notify hanlders
+ *
+ */
 void controller_drag_end(GtkGestureDrag *gesture, double offset_x, double offset_y, gpointer user_data)
 {
+    EVENT *event = create_event(END_DRAG, offset_x, offset_y, TO_CONTROLLER(user_data)->mode);
 
-    printf("Controller: Drag End\n");
+    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
+                        controller_handler_iterator, event);
 }
 
 /**
@@ -170,6 +189,15 @@ void controller_redraw(CONTROLLER *controller)
 void controller_monitor(CONTROLLER *controller, HANDLER *handler)
 {
     g_ptr_array_add(controller->handlers, handler);
+}
+
+/**
+ * @brief register an event handler with the controller
+ *
+ */
+void controller_unmonitor(CONTROLLER *controller, HANDLER *handler)
+{
+    g_ptr_array_remove(controller->handlers, handler);
 }
 
 /**
@@ -198,6 +226,7 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 
         controller->release = controller_release;
         controller->monitor = controller_monitor;
+        controller->unmonitor = controller_unmonitor;
         controller->redraw = controller_redraw;
 
         controller->handlers = g_ptr_array_new();

@@ -66,10 +66,25 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
         break;
         case START_DRAG:
         {
-            event->events.drag_event.x = va_arg(args, double);
-            event->events.drag_event.y = va_arg(args, double);           
-            event->events.drag_event.mode = va_arg(args, int);           
+            event->events.start_drag_event.x = va_arg(args, double);
+            event->events.start_drag_event.y = va_arg(args, double);           
+            event->events.start_drag_event.mode = va_arg(args, int);           
         }
+        break;
+        case UPDATE_DRAG:
+        {
+            event->events.update_drag_event.offset_x = va_arg(args, double);
+            event->events.update_drag_event.offset_y = va_arg(args, double);           
+            event->events.update_drag_event.mode = va_arg(args, int);           
+        }
+        break;
+        case END_DRAG:
+        {
+            event->events.end_drag_event.offset_x = va_arg(args, double);
+            event->events.end_drag_event.offset_y = va_arg(args, double);           
+            event->events.end_drag_event.mode = va_arg(args, int);           
+        }
+        break;
     }
 
     va_end(args);

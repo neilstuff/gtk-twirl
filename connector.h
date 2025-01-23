@@ -15,15 +15,38 @@
 #include "event.h"
 #include "geometry.h"
 
+/**
+ * @brief casts an object to a connector
+ * 
+ */
 #define TO_CONNECTOR(connector) ((CONNECTOR*)(connector))
 
+/**
+ * @brief connector interface
+ * 
+ */
 typedef struct _CONNECTOR {
 
-    void (*release)(void * connector);
+/**
+ * @brief release the connector and deallocate resources
+ * 
+ */
+    void (*release)(struct _CONNECTOR * connector);
+/**
+ * @brief connect the two nodes together
+ * 
+ */
     void (*connect)(struct _CONNECTOR * connector, NODE* target);
+
+/**
+ * @brief draw the connector line and possible selected object
+ * 
+ */
     void (*draw)(struct _CONNECTOR * connector, cairo_t * cr);
 
     HANDLER handler;
+
+    NET * net;
 
     NODE * source;
     NODE * target;
@@ -32,6 +55,10 @@ typedef struct _CONNECTOR {
 
 } CONNECTOR, * CONNECTOR_P;
 
-extern CONNECTOR * create_connector(NODE * source);
+/**
+ * @brief create a connector object
+ *  
+ */
+extern CONNECTOR * create_connector(NET* net, NODE * source);
 
 #endif // CONNECTOR_H_INCLUDED

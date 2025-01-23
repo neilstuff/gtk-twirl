@@ -28,6 +28,8 @@ enum NOTIFICATION
     DRAW_REQUESTED,
     CREATE_NODE,
     START_DRAG,
+    UPDATE_DRAG,
+    END_DRAG,
     END_NOTIFICATION
 
 };
@@ -88,7 +90,25 @@ typedef struct _EVENT
 
             int mode;
 
-        } drag_event;
+        } start_drag_event;
+        
+        struct
+        {
+            double offset_x;
+            double offset_y;
+
+            int mode;
+
+        } update_drag_event;
+
+        struct
+        {
+            double offset_x;
+            double offset_y;
+
+            int mode;
+
+        } end_drag_event;
 
         struct
         {

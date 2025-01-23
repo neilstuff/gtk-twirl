@@ -17,6 +17,7 @@
 #include "controller.h"
 #include "event.h"
 #include "net.h"
+#include "connector.h"
 #include "node.h"
 #include "drawer.h"
 
@@ -267,21 +268,22 @@ void net_select_node_processor(NET *net, EVENT *event)
 void net_start_drag_processor(NET *net, EVENT *event)
 {
     POINT point;
-    printf("Points %f:%f\n", event->events.drag_event.x, event->events.drag_event.y);
+ 
+    set_point(&point, event->events.start_drag_event.x, event->events.start_drag_event.y);
 
-    set_point(&point, event->events.drag_event.x, event->events.drag_event.y);
-
-    NODE * node = net_find_node_by_point(net, &point);
+    NODE *node = net_find_node_by_point(net, &point);
 
     if (node != NULL)
     {
-        printf("NODE is not NULL\n");
+        create_connector(net, node);
+
+
     }
 }
 
 /**
  * @brief set the current tool - for the created net
- * 
+ *
  */
 void net_create_processor(NET *net, EVENT *event)
 {
@@ -296,7 +298,11 @@ void net_create_processor(NET *net, EVENT *event)
 void net_event_handler(EVENT *event, void *processor)
 {
 
-    TO_NET(processor)->processors[event->notification](TO_NET(processor), TO_EVENT(event));
+    if ( TO_NET(processor)->processors[event->notification] != NULL) 
+    {
+        TO_NET(processor)->processors[event->notification](TO_NET(processor), TO_EVENT(event));
+    }
+
 }
 
 /**
@@ -325,6 +331,8 @@ NET *net_create(CONTROLLER *controller)
     net->processors[CREATE_NODE] = net_select_node_processor;
     net->processors[CREATE_NET] = net_create_processor;
     net->processors[START_DRAG] = net_start_drag_processor;
+    net->processors[UPDATE_DRAG] = NULL;
+    net->processors[END_DRAG] = NULL;
 
     net->release = net_release;
 
