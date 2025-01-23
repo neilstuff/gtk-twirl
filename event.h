@@ -1,7 +1,7 @@
 /**
- * @file event.c
+ * @file event.h
  * @author Neil.Brittliff@outlook.com
- * @brief An Event is designed to contain data to communicate between objects
+ * @brief header file - an event is designed to contain data to communicate between objects
  * @version 0.1
  * @date 2025-01-18
  *
@@ -35,6 +35,10 @@ enum TOOL
     TRANSITION_TOOL
 };
 
+/**
+ * @brief an event structure is a union of multiple event types
+ * 
+ */
 typedef struct _EVENT
 {
 
@@ -85,10 +89,23 @@ typedef struct _EVENT
 
 } EVENT, *EVENT_P;
 
+/**
+ * @brief an handler is an interface for implementation to processor events
+ * 
+ */
 typedef struct _HANDLER
 {
 
+    /**
+     * @brief function to process events
+     * 
+     */
     void (*handler)(EVENT *event, void *processor);
+
+    /**
+     * @brief user-data to pass the data to the processor
+     * 
+     */
     void *processor;
 
 } HANDLER, HANDLER_P;

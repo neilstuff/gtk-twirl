@@ -1,9 +1,11 @@
 /**
- * Node - implementation
+ * @file node.c
+ * @author Dr. Neil Brittliff (brittliff.org) 
+ * @brief A representation of a petri-net node 'Place' or 'Transition
+ * @version 0.1
+ * @date 2025-01-18
  *
- * @author Neil Brittliff
- *
- * (c) Neil Brittliff - all rights reserved
+ * @copyright Copyright (c) 2025
  *
  */
 
@@ -18,9 +20,8 @@
 #include "node.h"
 
 /**
- * @brief Destroy the Node
+ * @brief deallocate the node storage
  *
- * @param node the Node to destroy
  */
 void destroy_node(NODE *node)
 {
@@ -35,36 +36,28 @@ void destroy_node(NODE *node)
 }
 
 /**
- * @brief Is the Node a Transition?
+ * @brief is the node a 'transition' node
  *
- * @param node the Node
- *
- * @return TRUE if it is a transition, FALSE otherwise
  */
 gint is_transition(NODE *node)
 {
 
-    return (node->type == 1) ? 1 : 0;
+    return (node->type == TRANSITION_NODE) ? 1 : 0;
 }
 
 /**
- * Is the Node a Place
- *
- * @param node the Node
- *
- * @return TRUE if it is a place, FALSE otherwise
+ * @brief is the node a 'place' node
+ * 
  */
 gint is_place(NODE *node)
 {
 
-    return (node->type == 0) ? 1 : 0;
+    return (node->type == PLACE_NODE) ? 1 : 0;
 }
 
 /**
- * @brief Is the point (x,y) within the node's bounds
- *
- * @param node the node
- * @param point determine if the point is in the bounds of the node
+ * @brief is a point within the node's bounds 
+ * 
  */
 gint is_node_at_point(NODE *node, POINT *point)
 {
@@ -73,11 +66,8 @@ gint is_node_at_point(NODE *node, POINT *point)
 }
 
 /**
- * @brief Set the Node Position
- *
- * @param node the Node
- * @param x the 'x' coordinate
- * @param y the 'y' coordinate
+ * @brief set the node's position ('x', 'y' coordinates)
+ * 
  */
 void set_position(NODE *node, double x, double y)
 {
@@ -93,10 +83,8 @@ void set_position(NODE *node, double x, double y)
 }
 
 /**
- * @brief Set the Node
- *
- * @param node the Node
- * @param name the Name of the Node
+ * @brief set the node's name - default name usually 'P' or 'T' followed by a number
+ * 
  */
 void set_name(NODE *node, gchar *name)
 {
@@ -106,9 +94,8 @@ void set_name(NODE *node, gchar *name)
 }
 
 /**
- * @brief Set the Default Node
- *
- * @param node the Node
+ * @brief set the node's 'default' name - default name either 'P' or 'T' followed by a number
+ * 
  */
 void set_default_name(NODE *node)
 {
@@ -122,10 +109,8 @@ void set_default_name(NODE *node)
 }
 
 /**
- * @brief Get the Bounds
- *
- * @param node the Node
- * @param bounds receives the nodes bounds
+ * @brief get the node's bounds
+ * 
  */
 void get_bounds(NODE *node, BOUNDS *bounds)
 {
@@ -137,12 +122,8 @@ void get_bounds(NODE *node, BOUNDS *bounds)
 }
 
 /**
- * @brief Initialise and create a 'BLANK' node this should never be called directly
- *
- * Node: the methods applicable apply to both Places/Transitions
- *       the actual node type is applied later
- *
- * @returns a newly constructed node
+ * @brief create an initialised node common to both a place and transition node
+ * 
  */
 NODE *new_node()
 {
@@ -165,17 +146,12 @@ NODE *new_node()
     node->setName = set_name;
     node->setDefaultName = set_default_name;
 
-    set_default_name(node);
-
     return node;
 }
 
 /**
- * @brief Create a PLACE Node
- *
- * Node: the methods applicable apply to PLACE only
- *
- * @returns a 'PLACE' Node
+ * @brief create an initialised "place" node
+ * 
  */
 NODE *new_place()
 {
@@ -187,15 +163,14 @@ NODE *new_place()
     node->state = INACTIVE;
     node->type = PLACE_NODE;
 
+    set_default_name(node);
+
     return node;
 }
 
 /**
- * @brief Create a TRANSITION Node
- *
- * Node: the methods applicable apply to TRANSITION only
- *
- * @returns a 'TRANSITION' Node
+ * @brief create an initialised "transition" node
+ * 
  */
 NODE *new_transition()
 {
@@ -207,15 +182,14 @@ NODE *new_transition()
     node->state = INACTIVE;
     node->type = TRANSITION_NODE;
 
+    set_default_name(node);
+
     return node;
 }
 
 /**
- * @brief Create a Node or Place
- *
- * @param type The Type of Node to Create 0 - place, 1 - transition
- *
- * @returns an allocated and initialised Node
+ * @brief create an initialised node common to both a place and transition node
+ * 
  */
 NODE *create_node(int type)
 {

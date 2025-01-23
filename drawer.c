@@ -1,3 +1,14 @@
+/**
+ * @file drawer.c
+ * @author Dr. Neil Brittliff (brittliff.org) 
+ * @brief draws all graphical object - places, transitions and arcs on the canvas (drawingarea)
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
 #include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -7,10 +18,8 @@
 #include "drawer.h"
 
 /**
- * @brief Draw the text
+ * @brief draw the node's text
  * 
- * @param drawer the drawer
- * @param node the node's text to paint
  */
 void draw_text(DRAWER* drawer, NODE *node)
 {
@@ -32,10 +41,8 @@ void draw_text(DRAWER* drawer, NODE *node)
 }
 
 /**
- * @brief Draw the selection box
+ * @brief draw the node's selection box
  * 
- * @param DRAWER the DRAWER
- * @param node the node's selection box to paint
  */
 void draw_selection_box(DRAWER* drawer, NODE *node)
 {
@@ -55,10 +62,8 @@ void draw_selection_box(DRAWER* drawer, NODE *node)
 }
 
 /**
- * Draw the Place Node
+ * @brief draw the 'place' node
  *
- * @param drawer the drawer
- * @param node the node's selection box to paint
  */
 void draw_place(DRAWER* drawer, NODE *node)
 {
@@ -88,10 +93,8 @@ void draw_place(DRAWER* drawer, NODE *node)
 }
 
 /**
- * @brief Draw the Transition Node
- * 
- * @param drawer the drawer
- * @param node the node's selection box to paint
+ * @brief draw the 'transition' node
+ *
  */
 void draw_transition(DRAWER* drawer, NODE *node)
 {
@@ -112,10 +115,8 @@ void draw_transition(DRAWER* drawer, NODE *node)
 }
 
 /**
- * @brief Draw the node
+ * @brief draw the node - will pass it on to the drawer for that type of node
  *
- * @param net the drawer
- * @param node the node to draw
  */
 void drawer_draw(DRAWER * drawer, NODE * node) 
 { 
@@ -125,10 +126,8 @@ void drawer_draw(DRAWER * drawer, NODE * node)
 }
 
 /**
- * @brief Paint the Connector
+ * @brief draw the connector between '2' nodes' must be (p -> t or t -> p)
  *
- * @param drawer the drawer
- * @param connector the connector between nodes to draw
  */
 void draw_connector(DRAWER * drawer, CONNECTOR * connector)
 {
@@ -144,9 +143,8 @@ void draw_connector(DRAWER * drawer, CONNECTOR * connector)
 }
 
 /**
- * @brief Reealse a drawer and free any resources
+ * @brief deallocate the drawer's storage
  *
- * @param net the drawer to release
  */
 void drawer_release(DRAWER * drawer) 
 { 
@@ -156,11 +154,7 @@ void drawer_release(DRAWER * drawer)
 }
 
 /**
- * @brief Create a drawer
- *
- * @param canvas The cairo canvas
- *
- * @returns a newly created DRAWER
+ * @brief create a drawer object
  *
  */
 DRAWER *create_drawer(cairo_t *canvas)

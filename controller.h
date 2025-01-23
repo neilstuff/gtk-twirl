@@ -1,4 +1,13 @@
-#ifndef CONTROLLER_H_INCLUDED
+/**
+ * @file controller.h
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief  header file - the interface between the GDK event processing system and petri-net's implementation
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */#ifndef CONTROLLER_H_INCLUDED
 #define CONTROLLER_H_INCLUDED
 
 #define TO_CONTROLLER(controller) ((CONTROLLER*)(controller))

@@ -64,6 +64,10 @@ typedef struct _CONTEXT
 
 } CONTEXT, *CONTEXT_P;
 
+/**
+ * @brief Create a Node or Place
+ *
+*/
 gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
 {
 
@@ -94,7 +98,8 @@ void net_node_iterator(gpointer node, gpointer context)
     case GET_NEXT_NODE_ID:
         TO_CONTEXT(context)->id_context.id = TO_NODE(node)->id >= TO_CONTEXT(context)->id_context.id
                                                  ? TO_NODE(node)->id + 1
-                                                 : TO_CONTEXT(context)->id_context.id;
+                                                 : TO_CONTEXT(context)->id_context.id;  
+        break;                        
     }
 }
 

@@ -1,3 +1,13 @@
+/**
+ * @file connector.h
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief  header file - connector is a graphical way to connect a place with a transition or a transition to a place
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
 #ifndef CONNECTOR_H_INCLUDED
 #define CONNECTOR_H_INCLUDED
 

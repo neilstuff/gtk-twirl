@@ -1,3 +1,14 @@
+/**
+ * @file controller.c
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief  the interface between the GDK event processing system and petri-net's implementation
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
 #include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -13,12 +24,8 @@ void controller_handler_iterator(gpointer handler, gpointer event)
 }
 
 /**
- * @brief Manage the Draw Event
+ * @brief manage the Draw Event
  *
- * @param area the Widget - Drawing Area
- * @param cr the Cairo context
- * @param width the width of the drawing Area
- * @param height the height of the drawing Area
  */
 static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int height,
                             gpointer user_data)
@@ -30,10 +37,8 @@ static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int he
 }
 
 /**
- * @brief Select Tool Clicked
+ * @brief 'select' tool selected
  *
- * @param button the Select Tool Button
- * @param user_data a pointer to the Controller
  */
 void controller_select_clicked(GtkButton *button, gpointer user_data)
 {
@@ -47,10 +52,8 @@ void controller_select_clicked(GtkButton *button, gpointer user_data)
 }
 
 /**
- * @brief Place Tool Clicked
+ * @brief 'place' tool selected
  *
- * @param button the Place Tool Button
- * @param user_data a pointer to the Controller
  */
 void controller_place_clicked(GtkButton *button, gpointer user_data)
 {
@@ -64,10 +67,8 @@ void controller_place_clicked(GtkButton *button, gpointer user_data)
 }
 
 /**
- * @brief Transition Tool Clicked
+ * @brief 'transition' tool selected
  *
- * @param button the Place Tool Button
- * @param user_data a pointer to the Controller
  */
 void controller_transition_clicked(GtkButton *button, gpointer user_data)
 {
@@ -82,13 +83,8 @@ void controller_transition_clicked(GtkButton *button, gpointer user_data)
 }
 
 /**
- * @brief Release gesture processing
+ * @brief 'release' gesture processing
  *
- * @param gesture The release gesture
- * @param n_press what button was pressed
- * @param x the 'x' coordinate
- * @param y the 'y' coordinate
- * @param user_data the Controller
  */
 void controller_gesture_released(GtkGestureClick *gesture,
                                  int n_press,
@@ -104,14 +100,8 @@ void controller_gesture_released(GtkGestureClick *gesture,
 }
 
 /**
- * @brief Capture the Control Key
+ * @brief capture the 'control' key
  *
- * @param self controller key event
- * @param keyval the key value
- * @param keycode the key code
- * @param state bitmask of modifier keys
- * @param user_data the controller object
- * @returns gboolean 'true' to continue
  */
 gboolean controller_key_pressed(GtkEventControllerKey *self,
                                 guint keyval, guint keycode,
@@ -129,13 +119,8 @@ gboolean controller_key_pressed(GtkEventControllerKey *self,
 }
 
 /**
- *  @brief release the Control Key
+ *  @brief release the 'control' key
  *
- * @param self controller key event
- * @param keyval the key value
- * @param state bitmask of modifier keys
- * @param user_data the controller object
- * @param user_data
  */
 void controller_key_released(GtkEventControllerKey *self,
                              guint keyval, guint keycode,
@@ -173,7 +158,6 @@ void controller_drag_end(GtkGestureDrag *gesture, double offset_x, double offset
 /**
  * @brief Redraw the Drawing Area
  *
- * @param controller the Controller
  */
 void controller_redraw(CONTROLLER *controller)
 {
@@ -181,10 +165,8 @@ void controller_redraw(CONTROLLER *controller)
 }
 
 /**
- * @brief Register a handle with the controller
+ * @brief register an event handler with the controller
  *
- * @param controller the contoller that manages the handlers
- * @param handler the event handler
  */
 void controller_monitor(CONTROLLER *controller, HANDLER *handler)
 {
@@ -192,9 +174,8 @@ void controller_monitor(CONTROLLER *controller, HANDLER *handler)
 }
 
 /**
- * @brief Releasse a Controller and free any resources
+ * @brief release the controller and free any resources
  *
- * @param controller the Controller to release
  */
 void controller_release(CONTROLLER *controller)
 {
@@ -205,9 +186,8 @@ void controller_release(CONTROLLER *controller)
 }
 
 /**
- * Create and initialise the controller
+ * @brief create and initialise the controller
  *
- * @returns an initialised controller
  */
 CONTROLLER *create_controller(GtkApplication *gtkAppication,
                               char *resourceURL)

@@ -15,11 +15,19 @@
 
 #include "event.h"
 
+/** 
+ * @brief deallocate an event's storage
+ *
+ */
 void event_release(EVENT *event) 
 { 
     g_free(event); 
 }
 
+/** 
+ * @brief event constructor - based on the notification type
+ *
+ */
 EVENT *create_event(enum NOTIFICATION notification, ...)
 {
     EVENT *event = g_malloc(sizeof(EVENT));
