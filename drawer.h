@@ -12,6 +12,13 @@
 #ifndef DRAWER_H_INCLUDED
 #define DRAWER_H_INCLUDED
 
+#include "node.h"
+#include "connector.h"
+
+/**
+ * @brief casts an object to a drawer
+ * 
+ */
 #define TO_DRAWER(drawer) ((DRAWER*)(drawer))
 
 typedef struct _DRAWER 
@@ -24,6 +31,8 @@ typedef struct _DRAWER
 
     void (*drawers[END_NODE_TYPES]) (struct _DRAWER* drawer, NODE * node);
     
+    void (*drawConnector)(struct _DRAWER* drawer, CONNECTOR *connector);
+
 } DRAWER, * DRAWER_P;
 
 extern DRAWER * create_drawer(cairo_t *canvas);

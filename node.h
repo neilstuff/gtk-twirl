@@ -50,6 +50,10 @@ enum STATE
     INACTIVE
 };
 
+/**
+ * @brief a place node (state container)
+ * 
+ */
 typedef struct
 {
 
@@ -58,6 +62,10 @@ typedef struct
 
 } PLACE;
 
+/**
+ * @brief a transition node (process container)
+ * 
+ */
 typedef struct
 {
 

@@ -46,12 +46,13 @@ typedef struct _CONNECTOR {
 
     HANDLER handler;
 
+    CONTROLLER * controller;
     NET * net;
 
     NODE * source;
     NODE * target;
 
-    POINT position;
+    POINT offset;
 
 } CONNECTOR, * CONNECTOR_P;
 
@@ -59,6 +60,6 @@ typedef struct _CONNECTOR {
  * @brief create a connector object
  *  
  */
-extern CONNECTOR * create_connector(NET* net, NODE * source);
+extern CONNECTOR * create_connector(CONTROLLER *controller, NET *net, NODE *source);
 
 #endif // CONNECTOR_H_INCLUDED

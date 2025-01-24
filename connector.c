@@ -16,11 +16,13 @@
 
 #include "controller.h"
 #include "net.h"
+#include "node.h"
+#include "drawer.h"
 #include "connector.h"
 
 /**
  * @brief connect to nodes together (p -> t or t -> p)
- * 
+ *
  */
 void connect_connector(CONNECTOR *connector, NODE *target)
 {
@@ -36,34 +38,38 @@ void connect_connector(CONNECTOR *connector, NODE *target)
 
 /**
  * @brief event handler for a connector
- * 
+ *
  */
 void connector_event_handler(EVENT *event, void *processor)
 {
     switch (event->notification)
     {
-        case UPDATE_DRAG:
-            printf("UPDATED DRAG\n");
-            break;
+    case UPDATE_DRAG:
+        TO_CONNECTOR(processor)->offset.x = event->events.update_drag_event.offset_x;
+        TO_CONNECTOR(processor)->offset.y = event->events.update_drag_event.offset_y;
+        
+        TO_CONNECTOR(processor)->controller->redraw(TO_CONNECTOR(processor)->controller);
+        break;
 
-        case END_DRAG:
-            printf("END DRAG\n");
-            TO_CONNECTOR(processor)->release(TO_CONNECTOR(processor));
-            break;
+    case END_DRAG:
+        printf("END DRAG\n");
+        TO_CONNECTOR(processor)->release(TO_CONNECTOR(processor));
+        break;
 
-        case DRAW_REQUESTED:
-            printf("DRAW REQUESTED\n");
-            break;
-            
+    case DRAW_REQUESTED:
+        DRAWER *drawer = create_drawer(event->events.draw_event.canvas);
+
+        drawer->drawConnector(drawer,  TO_CONNECTOR(processor));
+
+        break;
     }
-
 }
 
 /**
  * @brief deallocate a connector object
- * 
+ *
  */
-void release_connector(CONNECTOR * connector)
+void release_connector(CONNECTOR *connector)
 {
 
     connector->net->controller->unmonitor(connector->net->controller, &connector->handler);
@@ -73,9 +79,9 @@ void release_connector(CONNECTOR * connector)
 
 /**
  * @brief create a coonector for a specific node
- * 
+ *
  */
-CONNECTOR *create_connector(NET* net, NODE *source)
+CONNECTOR *create_connector(CONTROLLER *controller, NET *net, NODE *source)
 {
     CONNECTOR *connector = g_malloc(sizeof(CONNECTOR));
 
@@ -85,15 +91,15 @@ CONNECTOR *create_connector(NET* net, NODE *source)
     connector->release = release_connector;
     connector->connect = connect_connector;
 
+    connector->controller = controller;
     connector->net = net;
 
     connector->source = source;
-    connector->target = NULL;
 
-    connector->position.x = connector->source->position.x;
-    connector->position.y = connector->source->position.y;
+    connector->offset.x = 0;
+    connector->offset.y = 0;
 
-    net->controller->monitor(net->controller, &connector->handler);
+    net->controller->monitor(controller, &connector->handler);
 
     return connector;
 }

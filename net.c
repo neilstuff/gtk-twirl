@@ -275,9 +275,7 @@ void net_start_drag_processor(NET *net, EVENT *event)
 
     if (node != NULL)
     {
-        create_connector(net, node);
-
-
+        create_connector(net->controller, net, node);
     }
 }
 
