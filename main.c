@@ -1,3 +1,24 @@
+/**
+ * @file main.c
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief The main class - it all starts here...
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
+/*! \mainpage Twirl Overview
+ *
+ * \section Introduction
+ *
+ * TWIRL is an example petri-net implementation.  There are 3 main artifacts which are: 
+ * \li \c place (represents a state); 
+ * \li \c transition (represent a process); and
+ * \li \c arc connects place to a transition or a transition to a place 
+ *
+ */
 #include <cairo.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdk.h>
@@ -9,11 +30,19 @@
 
 CONTROLLER *contoller;
 
+/**
+ * @brief establishes the controller
+ *
+ */
 static void on_activate(GtkApplication *app, gpointer user_data)
 {
     contoller = create_controller(app, "/org/twirl/twirl.ui");
 }
 
+/**
+ * @brief activate the application
+ *
+ */
 static void on_open(GtkApplication *app, GFile **files, gint n_files,
                     gchar *hint, gpointer user_data)
 {
@@ -21,10 +50,7 @@ static void on_open(GtkApplication *app, GFile **files, gint n_files,
 }
 
 /**
- * Main Menu
- *
- * @param arc The number of arguments
- * @param argv The actual arguments to the program
+ * @brief the main section
  *
  */
 int main(int argc, char *argv[])

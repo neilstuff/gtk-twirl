@@ -16,6 +16,7 @@
 #include "controller.h"
 #include "net.h"
 #include "node.h"
+#include "arc.h"
 #include "connector.h"
 #include "drawer.h"
 
@@ -119,6 +120,72 @@ void drawer_draw(DRAWER *drawer, NODE *node)
 {
 
     drawer->drawers[node->type](drawer, node);
+}
+
+/**
+ * @brief draw an 'arc' between a place to a transition 
+ *
+ */
+void draw_arc (ARC * arc, cairo_t *cr)
+{
+    gint position = ABS(arc->source->position.y - arc->target->position.y)/3;
+
+    cairo_new_path(cr);
+
+    cairo_set_line_width (cr, 1);
+
+    if (arc->selected) {
+        cairo_set_source_rgb (cr, 0, 0, 255);
+        cairo_set_line_width (cr, 2);
+    } else {
+        cairo_set_source_rgb (cr, 0, 0, 0);
+        cairo_set_line_width (cr, 1);
+    }
+
+    cairo_move_to (cr, arc->source->position.x,
+                       arc->source->position.y);
+
+    cairo_line_to (cr, arc->target->position.x,
+                       arc->target->position.y);
+
+}
+
+/**
+ * @brief arc's arrow drawer
+ *
+ */
+void draw_arrow_head(ARC * arc, POINT* source, POINT * target, POINT * position, cairo_t * cr)
+{
+	gdouble slopy = atan2 (target->y - source->y , target->x - source->x);
+	gdouble cosy = cos (slopy);
+	gdouble siny = sin (slopy);
+	gdouble par = 12;
+
+    cairo_new_path (cr);
+
+    if (arc->selected) {
+        cairo_set_source_rgb (cr, 0, 0, 255);
+    } else {
+        cairo_set_source_rgb (cr, 0, 0, 0);
+    }
+
+    cairo_set_line_width (cr, 1);
+
+    cairo_move_to (cr, position->x, position->y);
+
+	cairo_line_to (cr, position->x + (int)(-par * cosy - (par/2.0 * siny)),
+                       position->y + (int)(-par * siny + (par/2.0 * cosy)));
+
+	cairo_line_to (cr, position->x + (int)(-par * cosy + (par/2.0 * siny)),
+                       position->y - (int)(par/2.0 * cosy + par * siny));
+
+	cairo_line_to (cr, position->x, position->y);
+
+    cairo_fill (cr);
+    cairo_stroke (cr);
+
+    cairo_close_path (cr);
+
 }
 
 /**

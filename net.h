@@ -13,6 +13,7 @@
 #define NET_H_INCLUDED
 
 #include "event.h"
+#include "node.h"
 
 #define TO_NET(net) ((NET*)(net))
 
@@ -30,7 +31,9 @@ typedef struct _NET {
 
     HANDLER handler;
 
-    void (*processors[END_NOTIFICATION]) (struct _NET *net, EVENT * event);
+    void (*connect) (struct _NET * net, NODE * source, POINT * point);
+
+    void (*processors[END_NOTIFICATION]) (struct _NET * net, EVENT * event);
 
     void (*release) (struct _NET * net);
 

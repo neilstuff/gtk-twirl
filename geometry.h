@@ -84,6 +84,8 @@ typedef struct
 
 } LINE;
 
+extern double get_length(LINE * line);
+extern POINT * get_point_on_line(LINE *line, int distance, POINT *point);
 extern int point_in_bounds(POINT * point, BOUNDS * bounds);
 extern POINT * set_point(POINT * point, double x, double y);
 extern LINE * set_line(LINE * line, POINT * source, POINT * target);

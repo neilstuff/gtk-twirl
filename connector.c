@@ -14,6 +14,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+#include "geometry.h"
 #include "controller.h"
 #include "net.h"
 #include "node.h"
@@ -47,19 +48,25 @@ void connector_event_handler(EVENT *event, void *processor)
     case UPDATE_DRAG:
         TO_CONNECTOR(processor)->offset.x = event->events.update_drag_event.offset_x;
         TO_CONNECTOR(processor)->offset.y = event->events.update_drag_event.offset_y;
-        
+
         TO_CONNECTOR(processor)->controller->redraw(TO_CONNECTOR(processor)->controller);
         break;
 
     case END_DRAG:
-        printf("END DRAG\n");
+        POINT point;
+
+        set_point(&point,
+                  TO_CONNECTOR(processor)->source->position.x + TO_CONNECTOR(processor)->offset.x,
+                  TO_CONNECTOR(processor)->source->position.y + TO_CONNECTOR(processor)->offset.y);
+
         TO_CONNECTOR(processor)->release(TO_CONNECTOR(processor));
+
         break;
 
     case DRAW_REQUESTED:
         DRAWER *drawer = create_drawer(event->events.draw_event.canvas);
 
-        drawer->drawConnector(drawer,  TO_CONNECTOR(processor));
+        drawer->drawConnector(drawer, TO_CONNECTOR(processor));
 
         break;
     }
