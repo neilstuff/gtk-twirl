@@ -40,11 +40,16 @@ ARC * create_arc (NODE * source, NODE * target)
 {
     ARC * arc = g_malloc(sizeof(ARC));
 
+    printf("Creating ARC: %d:%d", source->id, target->id);
+
     arc->source = source;
     arc->target = target;
     arc->selected = 0;
 
     arc->points = g_ptr_array_new();
+
+    g_ptr_array_add(arc->points, clone_point(&source->position));
+    g_ptr_array_add(arc->points, clone_point(&target->position));
 
     arc->destroy = destroy_arc;
 

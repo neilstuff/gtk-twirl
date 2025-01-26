@@ -12,6 +12,9 @@
 #ifndef EVENT_H_INCLUDED
 #define EVENT_H_INCLUDED
 
+#include "geometry.h"
+#include "node.h"
+
 #define TO_EVENT(event) ((EVENT *)(event))
 #define TO_HANDLER(handler) ((HANDLER *)(handler))
 
@@ -30,6 +33,7 @@ enum NOTIFICATION
     START_DRAG,
     UPDATE_DRAG,
     END_DRAG,
+    CONNECT_NODES,
     END_NOTIFICATION
 
 };
@@ -109,6 +113,13 @@ typedef struct _EVENT
             int mode;
 
         } end_drag_event;
+
+        struct
+        {
+            NODE * source;
+            POINT * target;
+
+        } connect_event;
 
         struct
         {

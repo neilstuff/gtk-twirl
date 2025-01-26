@@ -281,6 +281,21 @@ void net_start_drag_processor(NET *net, EVENT *event)
 }
 
 /**
+ * @brief connect this node to a node if one is present at this point
+ *
+ */
+void net_connect_processor(NET *net, EVENT *event)
+{
+    NODE *target = net_find_node_by_point(net, event->events.connect_event.target);
+
+    if (target != NULL && event->events.connect_event.source->type != target->type)
+    {
+
+        g_ptr_array_add(net->arcs, create_arc(event->events.connect_event.source, target));
+    }
+}
+
+/**
  * @brief set the current tool - for the created net
  *
  */
@@ -300,21 +315,6 @@ void net_event_handler(EVENT *event, void *processor)
     if (TO_NET(processor)->processors[event->notification] != NULL)
     {
         TO_NET(processor)->processors[event->notification](TO_NET(processor), TO_EVENT(event));
-    }
-}
-
-/**
- * @brief connect this node to a node if one is present at this point
- *
- */
-void net_connect(NET *net, NODE *source, POINT *point)
-{
-    NODE *target = net_find_node_by_point(net, point);
-
-    if (target != NULL && source->type != target->type)
-    {
-
-        g_ptr_array_add(net->arcs, create_arc(source, target));
     }
 }
 
@@ -345,9 +345,9 @@ NET *net_create(CONTROLLER *controller)
     net->processors[CREATE_NET] = net_create_processor;
     net->processors[START_DRAG] = net_start_drag_processor;
     net->processors[UPDATE_DRAG] = NULL;
+    net->processors[CONNECT_NODES] = net_connect_processor;
     net->processors[END_DRAG] = NULL;
 
-    net->connect = net_connect;
     net->release = net_release;
 
     net->places = g_ptr_array_new();

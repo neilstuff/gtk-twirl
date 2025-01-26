@@ -96,3 +96,16 @@ LINE *set_line(LINE *line, POINT *source, POINT *target)
 
     return line;
 }
+
+/**
+ * @brief clone a point
+ *
+ */
+POINT *clone_point(POINT *clone)
+{
+    POINT * point = g_malloc(sizeof(POINT));;
+    point->x = clone->x;
+    point->y = clone->y;
+
+    return point;
+}

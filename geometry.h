@@ -73,7 +73,7 @@ typedef struct
 } BOUNDS;
 
 /**
- * @brief a line is 2 point the ssource and target locations
+ * @brief a line is 2 points - the source and target locations
  * 
  */
 typedef struct
@@ -89,5 +89,6 @@ extern POINT * get_point_on_line(LINE *line, int distance, POINT *point);
 extern int point_in_bounds(POINT * point, BOUNDS * bounds);
 extern POINT * set_point(POINT * point, double x, double y);
 extern LINE * set_line(LINE * line, POINT * source, POINT * target);
+extern POINT *clone_point(POINT *clone);
 
 #endif // POINT_H_INCLUDED

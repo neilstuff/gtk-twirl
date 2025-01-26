@@ -24,7 +24,6 @@
 #include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
-#include <windows.h>
 
 #include "controller.h"
 

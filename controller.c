@@ -28,6 +28,16 @@ void controller_handler_iterator(gpointer handler, gpointer event)
 }
 
 /**
+ * @brief notify the event handlers with a new event
+ *
+ */
+void controller_notify(CONTROLLER *controller, EVENT *event)
+{
+    g_ptr_array_foreach(controller->handlers,
+                        controller_handler_iterator, event);
+}
+
+/**
  * @brief manage the 'draw' event
  *
  */
@@ -36,8 +46,7 @@ static void controller_draw(GtkDrawingArea *area, cairo_t *cr, int width, int he
 {
     EVENT *event = create_event(DRAW_REQUESTED, cr, width, height);
 
-    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                        controller_handler_iterator, event);
+    controller_notify(TO_CONTROLLER(user_data), event);
 }
 
 /**
@@ -51,8 +60,7 @@ void controller_select_clicked(GtkButton *button, gpointer user_data)
 
     gtk_widget_set_cursor(TO_CONTROLLER(user_data)->scrolledWindow, cursor);
 
-    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                        controller_handler_iterator, event);
+    controller_notify(TO_CONTROLLER(user_data), event);
 }
 
 /**
@@ -66,8 +74,7 @@ void controller_place_clicked(GtkButton *button, gpointer user_data)
 
     gtk_widget_set_cursor(TO_CONTROLLER(user_data)->scrolledWindow, cursor);
 
-    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                        controller_handler_iterator, event);
+    controller_notify(TO_CONTROLLER(user_data), event);
 }
 
 /**
@@ -82,8 +89,7 @@ void controller_transition_clicked(GtkButton *button, gpointer user_data)
 
     gtk_widget_set_cursor(TO_CONTROLLER(user_data)->scrolledWindow, cursor);
 
-    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                        controller_handler_iterator, event);
+    controller_notify(TO_CONTROLLER(user_data), event);
 }
 
 /**
@@ -99,8 +105,7 @@ void controller_gesture_released(GtkGestureClick *gesture,
 
     EVENT *event = create_event(CREATE_NODE, n_press, x, y);
 
-    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                        controller_handler_iterator, event);
+    controller_notify(TO_CONTROLLER(user_data), event);
 }
 
 /**
@@ -132,7 +137,6 @@ void controller_key_released(GtkEventControllerKey *self,
 {
 
     TO_CONTROLLER(user_data)->mode = NORMAL;
-
 }
 
 /**
@@ -143,9 +147,7 @@ void controller_drag_begin(GtkGestureDrag *gesture, double x, double y, gpointer
 {
     EVENT *event = create_event(START_DRAG, x, y, TO_CONTROLLER(user_data)->mode);
 
-    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                        controller_handler_iterator, event);
-    
+    controller_notify(TO_CONTROLLER(user_data), event);
 }
 
 /**
@@ -156,9 +158,7 @@ void controller_drag_update(GtkGestureDrag *gesture, double offset_x, double off
 {
     EVENT *event = create_event(UPDATE_DRAG, offset_x, offset_y, TO_CONTROLLER(user_data)->mode);
 
-    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                        controller_handler_iterator, event);
-
+    controller_notify(TO_CONTROLLER(user_data), event);
 }
 
 /**
@@ -169,8 +169,7 @@ void controller_drag_end(GtkGestureDrag *gesture, double offset_x, double offset
 {
     EVENT *event = create_event(END_DRAG, offset_x, offset_y, TO_CONTROLLER(user_data)->mode);
 
-    g_ptr_array_foreach(TO_CONTROLLER(user_data)->handlers,
-                        controller_handler_iterator, event);
+    controller_notify(TO_CONTROLLER(user_data), event);
 }
 
 /**
@@ -228,6 +227,7 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         controller->monitor = controller_monitor;
         controller->unmonitor = controller_unmonitor;
         controller->redraw = controller_redraw;
+        controller->notify = controller_notify;
 
         controller->handlers = g_ptr_array_new();
     }

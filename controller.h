@@ -67,6 +67,12 @@ typedef struct _CONTROLLER
    void (*unmonitor) (struct _CONTROLLER * controller, HANDLER * handler);  
 
 /**
+ * @brief notify the handler(s) to process the event
+ * 
+ */
+   void (*notify) (struct _CONTROLLER * controller, EVENT * event);  
+
+/**
  * @brief this is called GTK to call all handlers to respond to the 'draw' event
  * 
  */

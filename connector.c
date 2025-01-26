@@ -46,29 +46,38 @@ void connector_event_handler(EVENT *event, void *processor)
     switch (event->notification)
     {
     case UPDATE_DRAG:
+    {
         TO_CONNECTOR(processor)->offset.x = event->events.update_drag_event.offset_x;
         TO_CONNECTOR(processor)->offset.y = event->events.update_drag_event.offset_y;
 
         TO_CONNECTOR(processor)->controller->redraw(TO_CONNECTOR(processor)->controller);
-        break;
+    }
+    break;
 
     case END_DRAG:
+    {
         POINT point;
 
         set_point(&point,
                   TO_CONNECTOR(processor)->source->position.x + TO_CONNECTOR(processor)->offset.x,
                   TO_CONNECTOR(processor)->source->position.y + TO_CONNECTOR(processor)->offset.y);
 
-        TO_CONNECTOR(processor)->release(TO_CONNECTOR(processor));
+        EVENT *event = create_event(CONNECT_NODES, TO_CONNECTOR(processor)->source, &point);
 
-        break;
+        TO_CONNECTOR(processor)->controller->notify(TO_CONNECTOR(processor)->controller, event);
+       
+        TO_CONNECTOR(processor)->release(TO_CONNECTOR(processor));
+    }
+    break;
 
     case DRAW_REQUESTED:
+    {
         DRAWER *drawer = create_drawer(event->events.draw_event.canvas);
 
         drawer->drawConnector(drawer, TO_CONNECTOR(processor));
+    }
 
-        break;
+    break;
     }
 }
 

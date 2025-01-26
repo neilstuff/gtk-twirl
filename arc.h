@@ -12,11 +12,11 @@
 #ifndef ARC_H_INCLUDED
 #define ARC_H_INCLUDED
 
+/**
+ * @brief casts an object to an arc
+ * 
+ */
 #define TO_ARC(arc) ((ARC*)(arc))
-
-#define ARC_ELEMENT "arc"
-#define SOURCE_ATTRIBUTE "source"
-#define TARGET_ATTRIBUTE "target"
 
 typedef struct _ARC {
 
