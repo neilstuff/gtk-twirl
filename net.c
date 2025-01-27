@@ -14,13 +14,18 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#include "controller.h"
-#include "event.h"
-#include "net.h"
-#include "connector.h"
+#include "drawer.h"
+
 #include "node.h"
 #include "arc.h"
-#include "drawer.h"
+
+#include "event.h"
+#include "controller.h"
+#include "net.h"
+
+#include "connector.h"
+
+
 
 #define TO_CONTEXT(context) ((CONTEXT *)(context))
 
@@ -31,6 +36,7 @@ enum ACTION
     SELECT_NODE_BY_POINT = 2,
     NODE_AT_POINT = 3,
     GET_NEXT_NODE_ID = 4,
+    DRAW_ARC = 5,
     EOF_ACTIONS
 };
 
@@ -77,33 +83,38 @@ gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
 }
 
 /**
- * @brief  iterator of nodes - the context defines the processor to apply to the node
+ * @brief  iterator of nodes and arcs - the context determines the processor to apply to the artifact
  *
  */
-void net_node_iterator(gpointer node, gpointer context)
+void net_artifact_iterator(gpointer artifcat, gpointer context)
 {
 
     switch (TO_CONTEXT(context)->action)
     {
     case SELECT_NODE_BY_POINT:
-        if (TO_NODE(node)->isNodeAtPoint(TO_NODE(node), &TO_CONTEXT(context)->point_context.point))
+        if (TO_NODE(artifcat)->isNodeAtPoint(TO_NODE(artifcat), &TO_CONTEXT(context)->point_context.point))
         {
-            TO_NODE(node)->selected = TRUE;
+            TO_NODE(artifcat)->selected = TRUE;
         }
         else
         {
-            TO_NODE(node)->selected = FALSE;
+            TO_NODE(artifcat)->selected = FALSE;
         }
         break;
+    case DRAW_ARC:
+        TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
+                                                       &TO_ARC(artifcat)->painter);
+        break;
     case DRAW_NODE:
-        TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer), TO_NODE(node));
+        TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
+                                                       &TO_NODE(artifcat)->painter);
         break;
     case UNSELECT_ALL:
-        TO_NODE(node)->selected = FALSE;
+        TO_NODE(artifcat)->selected = FALSE;
         break;
     case GET_NEXT_NODE_ID:
-        TO_CONTEXT(context)->id_context.id = TO_NODE(node)->id >= TO_CONTEXT(context)->id_context.id
-                                                 ? TO_NODE(node)->id + 1
+        TO_CONTEXT(context)->id_context.id = TO_NODE(artifcat)->id >= TO_CONTEXT(context)->id_context.id
+                                                 ? TO_NODE(artifcat)->id + 1
                                                  : TO_CONTEXT(context)->id_context.id;
         break;
     }
@@ -157,9 +168,9 @@ void net_apply_context_all_nodes(NET *net, CONTEXT *context)
 {
 
     g_ptr_array_foreach(net->places,
-                        net_node_iterator, context);
+                        net_artifact_iterator, context);
     g_ptr_array_foreach(net->transitions,
-                        net_node_iterator, context);
+                        net_artifact_iterator, context);
 }
 
 /**
@@ -181,17 +192,29 @@ void net_apply_action_all_nodes(NET *net, enum ACTION action)
  */
 void net_draw_event_processor(NET *net, EVENT *event)
 {
-    CONTEXT context;
+    {
+        CONTEXT context;
 
-    context.action = DRAW_NODE;
-    context.draw_context.drawer = create_drawer(event->events.draw_event.canvas);
+        context.action = DRAW_ARC;
+        context.draw_context.drawer = create_drawer(event->events.draw_event.canvas);
 
-    g_ptr_array_foreach(net->places,
-                        net_node_iterator, &context);
-    g_ptr_array_foreach(net->transitions,
-                        net_node_iterator, &context);
+        g_ptr_array_foreach(net->arcs,
+                            net_artifact_iterator, &context);
+    }
 
-    context.draw_context.drawer->release(context.draw_context.drawer);
+    {
+        CONTEXT context;
+
+        context.action = DRAW_NODE;
+        context.draw_context.drawer = create_drawer(event->events.draw_event.canvas);
+
+        g_ptr_array_foreach(net->places,
+                            net_artifact_iterator, &context);
+        g_ptr_array_foreach(net->transitions,
+                            net_artifact_iterator, &context);
+
+        context.draw_context.drawer->release(context.draw_context.drawer);
+    }
 }
 
 /**
@@ -232,7 +255,7 @@ void net_select_node_processor(NET *net, EVENT *event)
             node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
 
             g_ptr_array_foreach((net->tool == PLACE_TOOL) ? net->places : net->transitions,
-                                net_node_iterator, &context);
+                                net_artifact_iterator, &context);
             node->id = context.id_context.id;
             node->setDefaultName(node);
 

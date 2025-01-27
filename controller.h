@@ -18,8 +18,7 @@
  */
 #define TO_CONTROLLER(controller) ((CONTROLLER*)(controller))
 
-#include "event.h"
-
+#define TO_HANDLER(handler) ((HANDLER *)(handler))
 /**
  * @brief drag modes - based on the control key being pressed
  * 
@@ -31,6 +30,27 @@ enum MODES
     END_MODES
     
 };
+
+/**
+ * @brief an handler is an interface for implementation to processor events
+ * 
+ */
+typedef struct _HANDLER
+{
+
+    /**
+     * @brief function to process events
+     * 
+     */
+    void (*handler)(EVENT *event, void *processor);
+
+    /**
+     * @brief user-data to pass the data to the processor
+     * 
+     */
+    void *processor;
+
+} HANDLER, HANDLER_P;
 
 /**
  * @brief controller interface 

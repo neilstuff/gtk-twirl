@@ -13,10 +13,8 @@
 #define EVENT_H_INCLUDED
 
 #include "geometry.h"
-#include "node.h"
 
 #define TO_EVENT(event) ((EVENT *)(event))
-#define TO_HANDLER(handler) ((HANDLER *)(handler))
 
 /**
  * @brief notification define the event type
@@ -132,26 +130,6 @@ typedef struct _EVENT
 
 } EVENT, *EVENT_P;
 
-/**
- * @brief an handler is an interface for implementation to processor events
- * 
- */
-typedef struct _HANDLER
-{
-
-    /**
-     * @brief function to process events
-     * 
-     */
-    void (*handler)(EVENT *event, void *processor);
-
-    /**
-     * @brief user-data to pass the data to the processor
-     * 
-     */
-    void *processor;
-
-} HANDLER, HANDLER_P;
 
 extern EVENT *create_event(enum NOTIFICATION notification, ...);
 

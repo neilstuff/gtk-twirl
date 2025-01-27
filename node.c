@@ -16,8 +16,10 @@
 #include <gdk/gdk.h>
 
 #include "geometry.h"
-#include "event.h"
+#include "drawer.h"
+
 #include "node.h"
+#include "event.h"
 
 /**
  * @brief deallocate the node storage
@@ -163,6 +165,9 @@ NODE *new_place()
     node->state = INACTIVE;
     node->type = PLACE_NODE;
 
+    node->painter.type = PLACE_PAINTER;
+    node->painter.painters.place_painter.node = node;
+
     set_default_name(node);
 
     return node;
@@ -181,6 +186,9 @@ NODE *new_transition()
 
     node->state = INACTIVE;
     node->type = TRANSITION_NODE;
+
+    node->painter.type = TRANSITION_PAINTER;
+    node->painter.painters.transition_painter.node = node;
 
     set_default_name(node);
 

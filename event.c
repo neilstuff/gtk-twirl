@@ -13,6 +13,8 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+#include "drawer.h"
+#include "node.h"
 #include "event.h"
 
 /**

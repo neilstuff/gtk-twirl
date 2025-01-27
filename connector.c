@@ -15,10 +15,13 @@
 #include <gdk/gdk.h>
 
 #include "geometry.h"
+#include "drawer.h"
+
+#include "node.h"
+#include "event.h"
 #include "controller.h"
 #include "net.h"
-#include "node.h"
-#include "drawer.h"
+
 #include "connector.h"
 
 /**
@@ -74,7 +77,7 @@ void connector_event_handler(EVENT *event, void *processor)
     {
         DRAWER *drawer = create_drawer(event->events.draw_event.canvas);
 
-        drawer->drawConnector(drawer, TO_CONNECTOR(processor));
+        drawer->draw(drawer, &TO_CONNECTOR(processor)->painter);
     }
 
     break;
@@ -100,6 +103,10 @@ void release_connector(CONNECTOR *connector)
 CONNECTOR *create_connector(CONTROLLER *controller, NET *net, NODE *source)
 {
     CONNECTOR *connector = g_malloc(sizeof(CONNECTOR));
+
+    connector->painter.type = CONNECTOR_PAINTER;
+    connector->painter.painters.connector_painter.connector = connector;
+    connector->painter.painters.connector_painter.net = net;
 
     connector->handler.handler = connector_event_handler;
     connector->handler.processor = connector;

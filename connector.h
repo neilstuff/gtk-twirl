@@ -11,8 +11,6 @@
 #ifndef CONNECTOR_H_INCLUDED
 #define CONNECTOR_H_INCLUDED
 
-#include "node.h"
-#include "event.h"
 #include "geometry.h"
 
 /**
@@ -27,21 +25,28 @@
  */
 typedef struct _CONNECTOR {
 
-/**
- * @brief release the connector and deallocate resources
- * 
- */
-    void (*release)(struct _CONNECTOR * connector);
-/**
- * @brief connect the two nodes together
- * 
- */
-    void (*connect)(struct _CONNECTOR * connector, NODE* target);
+    /**  
+     * @brief define how the painter should draw the connector
+     * 
+     */
+   struct _PAINTER painter;
 
-/**
- * @brief draw the connector line and possible selected object
- * 
- */
+    /**
+     * @brief release the connector and deallocate resources
+     * 
+     */
+    void (*release)(struct _CONNECTOR * connector);
+
+    /**
+     * @brief connect the two nodes together
+     * 
+     */
+    void (*connect)(struct _CONNECTOR * connector, NODE * target);
+
+    /**
+     * @brief draw the connector line and possible selected object
+     * 
+     */
     void (*draw)(struct _CONNECTOR * connector, cairo_t * cr);
 
     HANDLER handler;

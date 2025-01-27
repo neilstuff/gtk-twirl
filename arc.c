@@ -15,12 +15,9 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+#include "drawer.h"
 #include "arc.h"
 #include "node.h"
-#include "controller.h"
-#include "net.h"
-#include "event.h"
-
 
 /**
  * @brief release/free an arc object
@@ -40,11 +37,14 @@ ARC * create_arc (NODE * source, NODE * target)
 {
     ARC * arc = g_malloc(sizeof(ARC));
 
-    printf("Creating ARC: %d:%d", source->id, target->id);
+    printf("Creating ARC: %s:%s", source->name, target->name);
 
     arc->source = source;
     arc->target = target;
     arc->selected = 0;
+
+    arc->painter.type = ARC_PAINTER;
+    arc->painter.painters.arc_painter.arc = arc;
 
     arc->points = g_ptr_array_new();
 

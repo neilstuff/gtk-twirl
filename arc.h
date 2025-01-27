@@ -12,13 +12,17 @@
 #ifndef ARC_H_INCLUDED
 #define ARC_H_INCLUDED
 
+#include "geometry.h"
+
 /**
  * @brief casts an object to an arc
  * 
  */
 #define TO_ARC(arc) ((ARC*)(arc))
 
-typedef struct _ARC {
+typedef struct _ARC
+ {
+    struct _PAINTER painter;
 
     void (*destroy)(struct _ARC * arc);
     void (*setBounds)(struct _ARC * arc);

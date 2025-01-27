@@ -13,12 +13,15 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#include "controller.h"
-#include "net.h"
-#include "node.h"
-#include "arc.h"
-#include "connector.h"
 #include "drawer.h"
+#include "node.h"
+#include "event.h"
+#include "controller.h"
+#include "arc.h"
+#include "net.h"
+#include "connector.h"
+
+#include "node.h"
 
 /**
  * @brief draw the node's text
@@ -65,8 +68,9 @@ void draw_selection_box(DRAWER *drawer, NODE *node)
  * @brief draw the 'place' node
  *
  */
-void draw_place(DRAWER *drawer, NODE *node)
+void draw_place(DRAWER *drawer, PAINTER * painter)
 {
+    NODE * node = painter->painters.transition_painter.node;
 
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.1);
@@ -95,8 +99,9 @@ void draw_place(DRAWER *drawer, NODE *node)
  * @brief draw the 'transition' node
  *
  */
-void draw_transition(DRAWER *drawer, NODE *node)
+void draw_transition(DRAWER *drawer, PAINTER * painter)
 {
+    NODE * node = painter->painters.place_painter.node;
 
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.1);
@@ -116,36 +121,38 @@ void draw_transition(DRAWER *drawer, NODE *node)
  * @brief draw the node - will pass it on to the drawer for that type of node
  *
  */
-void drawer_draw(DRAWER *drawer, NODE *node)
+void drawer_draw(DRAWER *drawer, PAINTER *painter)
 {
 
-    drawer->drawers[node->type](drawer, node);
+    drawer->drawers[painter->type](drawer, painter);
 }
 
 /**
  * @brief draw an 'arc' between a place to a transition 
  *
  */
-void draw_arc (ARC * arc, cairo_t *cr)
+void draw_arc (DRAWER *drawer, PAINTER *painter)
 {
+    ARC * arc = painter->painters.arc_painter.arc;
+
     gint position = ABS(arc->source->position.y - arc->target->position.y)/3;
 
-    cairo_new_path(cr);
+    cairo_new_path(drawer->canvas);
 
-    cairo_set_line_width (cr, 1);
+    cairo_set_line_width (drawer->canvas, 1);
 
     if (arc->selected) {
-        cairo_set_source_rgb (cr, 0, 0, 255);
-        cairo_set_line_width (cr, 2);
+        cairo_set_source_rgb (drawer->canvas, 0, 0, 255);
+        cairo_set_line_width (drawer->canvas, 2);
     } else {
-        cairo_set_source_rgb (cr, 0, 0, 0);
-        cairo_set_line_width (cr, 1);
+        cairo_set_source_rgb (drawer->canvas, 0, 0, 0);
+        cairo_set_line_width (drawer->canvas, 1);
     }
 
-    cairo_move_to (cr, arc->source->position.x,
+    cairo_move_to (drawer->canvas, arc->source->position.x,
                        arc->source->position.y);
 
-    cairo_line_to (cr, arc->target->position.x,
+    cairo_line_to (drawer->canvas, arc->target->position.x,
                        arc->target->position.y);
 
 }
@@ -192,8 +199,10 @@ void draw_arrow_head(ARC * arc, POINT* source, POINT * target, POINT * position,
  * @brief draw the connector between '2' nodes' must be (p -> t or t -> p)
  *
  */
-void draw_connector(DRAWER *drawer, CONNECTOR *connector)
+void draw_connector(DRAWER *drawer, PAINTER *painter)
 {
+    CONNECTOR * connector = painter->painters.connector_painter.connector;
+
     const double dashes[] = {1.0, 1.0, 1.0};    
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_dash(drawer->canvas, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
@@ -230,10 +239,10 @@ DRAWER *create_drawer(cairo_t *canvas)
 
     drawer->draw = drawer_draw;
 
-    drawer->drawers[PLACE_NODE] = draw_place;
-    drawer->drawers[TRANSITION_NODE] = draw_transition;
-
-    drawer->drawConnector = draw_connector;
+    drawer->drawers[PLACE_PAINTER] = draw_place;
+    drawer->drawers[TRANSITION_PAINTER] = draw_transition;
+    drawer->drawers[ARC_PAINTER] = draw_arc;
+    drawer->drawers[CONNECTOR_PAINTER] = draw_connector;
 
     return drawer;
 }

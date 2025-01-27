@@ -37,9 +37,6 @@ typedef struct _NET {
 
     void (*release) (struct _NET * net);
 
-
-
-
 } NET, * NET_P;
 
 extern NET * net_create(CONTROLLER * controller);

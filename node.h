@@ -77,6 +77,12 @@ typedef struct
 typedef struct _NODE
 {
 
+    /**  
+     * @brief define how the painter should draw the node
+     * 
+     */
+   struct _PAINTER painter;
+
     /**
      * @brief node's destructor
      * 

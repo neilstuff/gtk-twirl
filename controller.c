@@ -13,8 +13,13 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#include "controller.h"
+
+#include "drawer.h"
+
+#include "node.h"
 #include "event.h"
+
+#include "controller.h"
 #include "net.h"
 
 /**
