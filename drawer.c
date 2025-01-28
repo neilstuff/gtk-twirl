@@ -32,7 +32,7 @@ void draw_arrow_head(ARC *arc, POINT *source, POINT *target, cairo_t *cr)
     gdouble slopy = atan2(target->y - source->y, target->x - source->x);
     gdouble cosy = cos(slopy);
     gdouble siny = sin(slopy);
-    gdouble par = 12;
+    gdouble par = 14;
 
     POINT position;
 
@@ -190,7 +190,7 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
     }
     else
     {
-        cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.6);
+        cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 1.0);
         cairo_set_line_width(drawer->canvas, 1);
     }
 
