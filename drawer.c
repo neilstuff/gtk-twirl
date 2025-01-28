@@ -27,39 +27,43 @@
  * @brief arc's arrow (-->--) drawer
  *
  */
-void draw_arrow_head(ARC * arc, POINT* source, POINT * target,cairo_t * cr)
+void draw_arrow_head(ARC *arc, POINT *source, POINT *target, cairo_t *cr)
 {
-    /**
-	gdouble slopy = atan2 (target->y - source->y , target->x - source->x);
-	gdouble cosy = cos (slopy);
-	gdouble siny = sin (slopy);
-	gdouble par = 12;
+    gdouble slopy = atan2(target->y - source->y, target->x - source->x);
+    gdouble cosy = cos(slopy);
+    gdouble siny = sin(slopy);
+    gdouble par = 12;
 
-    cairo_new_path (cr);
+    POINT position;
 
-    if (arc->selected) {
-        cairo_set_source_rgb (cr, 0, 0, 255);
-    } else {
-        cairo_set_source_rgb (cr, 0, 0, 0);
+    get_midpoint(source, target, &position);
+
+    cairo_new_path(cr);
+    if (arc->selected)
+    {
+        cairo_set_source_rgb(cr, 0, 0, 255);
+    }
+    else
+    {
+        cairo_set_source_rgb(cr, 0.5, 0.5, 0.5);
     }
 
-    cairo_set_line_width (cr, 1);
+    cairo_set_line_width(cr, 1);
 
-    cairo_move_to (cr, position->x, position->y);
+    cairo_move_to(cr, position.x, position.y);
 
-	cairo_line_to (cr, position->x + (int)(-par * cosy - (par/2.0 * siny)),
-                       position->y + (int)(-par * siny + (par/2.0 * cosy)));
+    cairo_line_to(cr, position.x + (int)(-par * cosy - (par / 2.0 * siny)),
+                  position.y + (int)(-par * siny + (par / 2.0 * cosy)));
 
-	cairo_line_to (cr, position->x + (int)(-par * cosy + (par/2.0 * siny)),
-                       position->y - (int)(par/2.0 * cosy + par * siny));
+    cairo_line_to(cr, position.x + (int)(-par * cosy + (par / 2.0 * siny)),
+                  position.y - (int)(par / 2.0 * cosy + par * siny));
 
-	cairo_line_to (cr, position->x, position->y);
+    cairo_line_to(cr, position.x, position.y);
 
-    cairo_fill (cr);
-    cairo_stroke (cr);
+    cairo_fill(cr);
+    cairo_stroke(cr);
 
-    cairo_close_path (cr);
-    */
+    cairo_close_path(cr);
 }
 
 /**
@@ -107,9 +111,9 @@ void draw_selection_box(DRAWER *drawer, NODE *node)
  * @brief draw the 'place' node
  *
  */
-void draw_place(DRAWER *drawer, PAINTER * painter)
+void draw_place(DRAWER *drawer, PAINTER *painter)
 {
-    NODE * node = painter->painters.transition_painter.node;
+    NODE *node = painter->painters.transition_painter.node;
 
     printf("draw_place: from: %s\n", node->name->str);
 
@@ -140,10 +144,10 @@ void draw_place(DRAWER *drawer, PAINTER * painter)
  * @brief draw the 'transition' node
  *
  */
-void draw_transition(DRAWER *drawer, PAINTER * painter)
+void draw_transition(DRAWER *drawer, PAINTER *painter)
 {
-    NODE * node = painter->painters.place_painter.node;
-    
+    NODE *node = painter->painters.place_painter.node;
+
     printf("draw_transition: from: %s\n", node->name->str);
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_source_rgb(drawer->canvas, 0.75, 0.75, 0.75);
@@ -170,53 +174,53 @@ void drawer_draw(DRAWER *drawer, PAINTER *painter)
 }
 
 /**
- * @brief draw an 'arc' between a place to a transition 
+ * @brief draw an 'arc' between a place to a transition
  *
  */
-void draw_arc (DRAWER *drawer, PAINTER *painter)
+void draw_arc(DRAWER *drawer, PAINTER *painter)
 {
-    ARC * arc = painter->painters.arc_painter.arc;
+    ARC *arc = painter->painters.arc_painter.arc;
     int length = arc->points->len;
     int point = 0;
-     POINT * source;
-    POINT * target;
 
-    if (arc->selected) {
-        cairo_set_source_rgb (drawer->canvas, 0, 0, 255);
-        cairo_set_line_width (drawer->canvas, 2);
-    } else {
-        cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.6);
-        cairo_set_line_width (drawer->canvas, 1);
+    if (arc->selected)
+    {
+        cairo_set_source_rgb(drawer->canvas, 0, 0, 255);
+        cairo_set_line_width(drawer->canvas, 2);
     }
- 
-   
+    else
+    {
+        cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.6);
+        cairo_set_line_width(drawer->canvas, 1);
+    }
 
-    for (point = 0; point <  arc->points->len; point++ ) {
+    for (point = 0; point < arc->points->len; point++)
+    {
 
-        if (point % 2 == 0) 
+        if (point % 2 == 0)
         {
 
-            printf("draw_arc: from: %d:%d\n", (int)TO_POINT(arc->points->pdata[point])->x, 
-                                              (int)TO_POINT(arc->points->pdata[point])->y);
-            cairo_move_to (drawer->canvas, (int)TO_POINT(arc->points->pdata[point])->x,
-                                           (int)TO_POINT(arc->points->pdata[point])->y);
+            printf("draw_arc: from: %d:%d\n", (int)TO_POINT(arc->points->pdata[point])->x,
+                   (int)TO_POINT(arc->points->pdata[point])->y);
+            cairo_move_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[point])->x,
+                          (int)TO_POINT(arc->points->pdata[point])->y);
         }
         else
         {
-             
-            printf("draw_arc: to: %d:%d\n", (int)TO_POINT(arc->points->pdata[point])->x, 
-                                              (int)TO_POINT(arc->points->pdata[point])->y);
 
-            cairo_line_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[point])->x, 
-                                          (int)TO_POINT(arc->points->pdata[point])->y);
+            printf("draw_arc: to: %d:%d\n", (int)TO_POINT(arc->points->pdata[point])->x,
+                   (int)TO_POINT(arc->points->pdata[point])->y);
+
+            cairo_line_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[point])->x,
+                          (int)TO_POINT(arc->points->pdata[point])->y);
 
             cairo_stroke(drawer->canvas);
 
- 
+            draw_arrow_head(arc, TO_POINT(arc->points->pdata[point - 1]),
+                            TO_POINT(arc->points->pdata[point]),
+                            drawer->canvas);
         }
-
     }
-
 }
 
 /**
@@ -225,16 +229,17 @@ void draw_arc (DRAWER *drawer, PAINTER *painter)
  */
 void draw_connector(DRAWER *drawer, PAINTER *painter)
 {
-    CONNECTOR * connector = painter->painters.connector_painter.connector;
+    CONNECTOR *connector = painter->painters.connector_painter.connector;
 
-    const double dashes[] = {1.0, 1.0, 1.0};    
+    const double dashes[] = {1.0, 1.0, 1.0};
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_dash(drawer->canvas, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
-    
+
     cairo_set_source_rgba(drawer->canvas, 255, 0, 0, 0.3);
 
     cairo_move_to(drawer->canvas, (int)connector->source->position.x, (int)(connector->source->position.y));
-    cairo_line_to(drawer->canvas, (int)(connector->source->position.x + connector->offset.x), (int)(connector->source->position.y + connector->offset.y));
+    cairo_line_to(drawer->canvas, (int)(connector->source->position.x + connector->offset.x),
+                  (int)(connector->source->position.y + connector->offset.y));
 
     cairo_stroke(drawer->canvas);
     cairo_set_dash(drawer->canvas, dashes, 0, 0);

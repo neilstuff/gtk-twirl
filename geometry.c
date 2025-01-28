@@ -31,7 +31,7 @@ double get_length(LINE *line)
  * @brief determine if a point (x,y) is on the specified line
  *
  */
-POINT * get_point_on_line(LINE *line, int distance, POINT *point)
+POINT *get_point_on_line(LINE *line, int distance, POINT *point)
 {
 
     // calculate a point on the line x1-y1 to x2-y2 that is distance from x2-y2
@@ -71,6 +71,18 @@ int point_in_bounds(POINT *point, BOUNDS *bounds)
 }
 
 /**
+ * @brief get the midpoint on a line give two points
+ *
+ */
+POINT *get_midpoint(POINT *source, POINT *target, POINT *midpoint)
+{
+    midpoint->x = (source->x + target->x) / 2;
+    midpoint->y = (source->y + target->y) / 2;
+
+    return midpoint;
+}
+
+/**
  * @brief set (x, y) coordinates of a point and return that paint
  *
  */
@@ -103,7 +115,8 @@ LINE *set_line(LINE *line, POINT *source, POINT *target)
  */
 POINT *clone_point(POINT *clone)
 {
-    POINT * point = g_malloc(sizeof(POINT));;
+    POINT *point = g_malloc(sizeof(POINT));
+    ;
     point->x = clone->x;
     point->y = clone->y;
 
