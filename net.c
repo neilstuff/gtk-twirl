@@ -200,6 +200,8 @@ void net_draw_event_processor(NET *net, EVENT *event)
 
         g_ptr_array_foreach(net->arcs,
                             net_artifact_iterator, &context);
+
+        context.draw_context.drawer->release(context.draw_context.drawer);
     }
 
     {

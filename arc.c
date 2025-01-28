@@ -37,7 +37,7 @@ ARC * create_arc (NODE * source, NODE * target)
 {
     ARC * arc = g_malloc(sizeof(ARC));
 
-    printf("Creating ARC: %s:%s", source->name, target->name);
+    printf("Creating ARC: %s:%s\n", source->name->str, target->name->str);
 
     arc->source = source;
     arc->target = target;
