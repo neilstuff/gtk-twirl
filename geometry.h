@@ -85,6 +85,7 @@ typedef struct
 } LINE;
 
 extern double get_length(LINE * line);
+extern int point_intersects(POINT * source, POINT * target, POINT * point, double tolerate);
 extern POINT * get_point_on_line(LINE *line, int distance, POINT *point);
 extern int point_in_bounds(POINT * point, BOUNDS * bounds);
 extern POINT * get_midpoint(POINT *source, POINT *target, POINT *midpoint);
