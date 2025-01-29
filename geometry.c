@@ -13,7 +13,35 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+#include <math.h>
+
 #include "geometry.h"
+
+/**
+ * @brief Get the distance between 2 points
+ *
+ */
+int get_distance(POINT * source, POINT * target)
+{
+    double a = source->x - target->x;
+    double b = source->y - target->y;
+
+    return sqrt(a * a + b * b);
+}
+
+/**
+ * @brief determine if a point is on a line
+ * 
+ */
+int point_intersects(POINT * source, POINT * target, POINT * point, double tolerate)
+{
+    double d1 = get_distance(source, target);
+    double d2 = get_distance(source, point);
+    double d3 = get_distance(target, point);
+
+    return (trunc(d2 + d3) >= trunc(d1) - tolerate) &&
+           (trunc(d2 + d3) <= trunc(d1) + tolerate);
+}
 
 /**
  * @brief calculate the length of a line
