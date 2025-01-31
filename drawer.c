@@ -95,7 +95,8 @@ void draw_text(DRAWER *drawer, NODE *node)
 void draw_selection_box(DRAWER *drawer, NODE *node)
 {
 
-    if (node->selected && node->state == INACTIVE || node->enabled && node->state == ACTIVE)
+    if (node->artifact.selected && node->artifact.state == INACTIVE 
+        || node->artifact.enabled && node->artifact.state == ACTIVE)
     {
         const double dashes[] = {1.0, 1.0, 1.0};
 
@@ -128,7 +129,7 @@ void draw_place(DRAWER *drawer, PAINTER *painter)
     cairo_stroke(drawer->canvas);
 
     // Draw the marking
-    if ((node->place.marked && node->state == INACTIVE) || node->place.occupied && node->state == ACTIVE)
+    if ((node->place.marked && node->artifact.state == INACTIVE) || node->place.occupied && node->artifact.state == ACTIVE)
     {
         cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
 

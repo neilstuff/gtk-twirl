@@ -94,11 +94,11 @@ void net_artifact_iterator(gpointer artifcat, gpointer context)
     case SELECT_NODE_BY_POINT:
         if (TO_NODE(artifcat)->isNodeAtPoint(TO_NODE(artifcat), &TO_CONTEXT(context)->point_context.point))
         {
-            TO_NODE(artifcat)->selected = TRUE;
+            TO_NODE(artifcat)->artifact.selected = TRUE;
         }
         else
         {
-            TO_NODE(artifcat)->selected = FALSE;
+            TO_NODE(artifcat)->artifact.selected = FALSE;
         }
         break;
     case DRAW_ARC:
@@ -110,7 +110,7 @@ void net_artifact_iterator(gpointer artifcat, gpointer context)
                                                        &TO_NODE(artifcat)->painter);
         break;
     case UNSELECT_ALL:
-        TO_NODE(artifcat)->selected = FALSE;
+        TO_NODE(artifcat)->artifact.selected = FALSE;
         break;
     case GET_NEXT_NODE_ID:
         TO_CONTEXT(context)->id_context.id = TO_NODE(artifcat)->id >= TO_CONTEXT(context)->id_context.id
@@ -280,7 +280,7 @@ void net_select_node_processor(NET *net, EVENT *event)
         }
         else
         {
-            node->selected = TRUE;
+            node->artifact.selected = TRUE;
         }
 
         net->controller->redraw(net->controller);

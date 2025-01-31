@@ -12,6 +12,7 @@
 #ifndef ARC_H_INCLUDED
 #define ARC_H_INCLUDED
 
+#include "artifact.h"
 #include "geometry.h"
 
 /**
@@ -22,6 +23,8 @@
 
 typedef struct _ARC
  {
+     struct _ARTIFACT artifact;
+
     struct _PAINTER painter;
 
     void (*destroy)(struct _ARC * arc);

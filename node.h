@@ -12,6 +12,7 @@
 #ifndef NODE_H_INCLUDED
 #define NODE_H_INCLUDED
 
+#include "artifact.h"
 #include "geometry.h"
 
 #define TO_NODE(node) ((NODE *)(node))
@@ -76,12 +77,18 @@ typedef struct
 
 typedef struct _NODE
 {
+    
+    /**  
+     * @brief base structure for a node and arc
+     * 
+     */
+    struct _ARTIFACT artifact;
 
     /**  
      * @brief define how the painter should draw the node
      * 
      */
-   struct _PAINTER painter;
+    struct _PAINTER painter;
 
     /**
      * @brief node's destructor
@@ -150,30 +157,12 @@ typedef struct _NODE
     GString *name;
 
     /**
-     * @brief if '1'the node is selected, '0'not selected
-     * 
-     */
-    int selected;
-
-    /**
      * @brief the node's text length in pixels
      * 
      */
     int textLength;
 
-    /**
-     * @brief '1' the node is enabled, '0' not enabled
-     * 
-     */
-    int enabled;
-
-    /**
-     * @brief the node's state either ACTIVE or INACTIVE
-     * 
-     */
-    int state;
-
-    /**
+     /**
      * @brief the node's central point
      * 
      */

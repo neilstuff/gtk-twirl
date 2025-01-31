@@ -1,6 +1,6 @@
 /**
  * @file node.c
- * @author Dr. Neil Brittliff (brittliff.org) 
+ * @author Dr. Neil Brittliff (brittliff.org)
  * @brief A representation of a petri-net node 'Place' or 'Transition
  * @version 0.1
  * @date 2025-01-18
@@ -49,7 +49,7 @@ int is_transition(NODE *node)
 
 /**
  * @brief is the node a 'place' node
- * 
+ *
  */
 int is_place(NODE *node)
 {
@@ -58,8 +58,8 @@ int is_place(NODE *node)
 }
 
 /**
- * @brief is a point within the node's bounds 
- * 
+ * @brief is a point within the node's bounds
+ *
  */
 gint is_node_at_point(NODE *node, POINT *point)
 {
@@ -69,7 +69,7 @@ gint is_node_at_point(NODE *node, POINT *point)
 
 /**
  * @brief set the node's position ('x', 'y' coordinates)
- * 
+ *
  */
 void set_position(NODE *node, double x, double y)
 {
@@ -86,7 +86,7 @@ void set_position(NODE *node, double x, double y)
 
 /**
  * @brief set the node's name - default name usually 'P' or 'T' followed by a number
- * 
+ *
  */
 void set_name(NODE *node, gchar *name)
 {
@@ -97,7 +97,7 @@ void set_name(NODE *node, gchar *name)
 
 /**
  * @brief set the node's 'default' name - default name either 'P' or 'T' followed by a number
- * 
+ *
  */
 void set_default_name(NODE *node)
 {
@@ -112,7 +112,7 @@ void set_default_name(NODE *node)
 
 /**
  * @brief get the node's bounds
- * 
+ *
  */
 void get_bounds(NODE *node, BOUNDS *bounds)
 {
@@ -125,7 +125,7 @@ void get_bounds(NODE *node, BOUNDS *bounds)
 
 /**
  * @brief create an initialised node common to both a place and transition node
- * 
+ *
  */
 NODE *new_node()
 {
@@ -139,9 +139,9 @@ NODE *new_node()
     node->isTransition = is_transition;
     node->isPlace = is_place;
 
-    node->selected = TRUE;
+    node->artifact.selected = TRUE;
     node->id = 0;
-    node->state = INACTIVE;
+    node->artifact.state = INACTIVE;
 
     node->textLength = 0;
 
@@ -153,7 +153,7 @@ NODE *new_node()
 
 /**
  * @brief create an initialised "place" node
- * 
+ *
  */
 NODE *new_place()
 {
@@ -162,7 +162,8 @@ NODE *new_place()
     node->place.marked = 0;
     node->place.occupied = FALSE;
 
-    node->state = INACTIVE;
+    node->artifact.state = INACTIVE;
+    node->artifact.enabled = 0;
     node->type = PLACE_NODE;
 
     node->painter.type = PLACE_PAINTER;
@@ -175,16 +176,16 @@ NODE *new_place()
 
 /**
  * @brief create an initialised "transition" node
- * 
+ *
  */
 NODE *new_transition()
 {
     NODE *node = new_node();
 
     node->transition.duration = 0;
-    node->enabled = 0;
+    node->artifact.enabled = 0;
 
-    node->state = INACTIVE;
+    node->artifact.state = INACTIVE;
     node->type = TRANSITION_NODE;
 
     node->painter.type = TRANSITION_PAINTER;
@@ -197,7 +198,7 @@ NODE *new_transition()
 
 /**
  * @brief create an initialised node common to both a place and transition node
- * 
+ *
  */
 NODE *create_node(int type)
 {
