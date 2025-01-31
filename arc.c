@@ -15,6 +15,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+#include "artifact.h"
 #include "drawer.h"
 #include "arc.h"
 #include "node.h"
@@ -37,14 +38,16 @@ ARC * create_arc (NODE * source, NODE * target)
 {
     ARC * arc = g_malloc(sizeof(ARC));
 
-    printf("Creating ARC: %s:%s\n", source->name->str, target->name->str);
-
     arc->source = source;
     arc->target = target;
     arc->selected = 0;
 
+    arc->artifact.type = ARC_ARTIFACT;
+    arc->artifact.artifacts.arc_artifact.arc = arc; 
+
     arc->painter.type = ARC_PAINTER;
     arc->painter.painters.arc_painter.arc = arc;
+    
 
     arc->points = g_ptr_array_new();
 

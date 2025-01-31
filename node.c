@@ -16,7 +16,9 @@
 #include <gdk/gdk.h>
 
 #include "geometry.h"
+#include "artifact.h"
 #include "drawer.h"
+
 
 #include "node.h"
 #include "event.h"
@@ -138,6 +140,9 @@ NODE *new_node()
 
     node->isTransition = is_transition;
     node->isPlace = is_place;
+
+    node->artifact.type = NODE_ARTIFACT;
+    node->artifact.artifacts.node_artifact.node = node;  
 
     node->artifact.selected = TRUE;
     node->id = 0;

@@ -13,7 +13,7 @@
 #define NET_H_INCLUDED
 
 #include "event.h"
-#include "node.h"
+
 
 #define TO_NET(net) ((NET*)(net))
 

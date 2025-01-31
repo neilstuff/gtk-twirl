@@ -9,7 +9,15 @@
  *
  */
 
+#include <glib.h>
+#include <gtk/gtk.h>
+#include <gdk/gdk.h>
+
 #include "artifact.h"
+#include "drawer.h"
+
+#include "node.h"
+#include "arc.h"
 
 ARTIFACT *setup_artifact(ARTIFACT *artifact, int enabled, int selected)
 {

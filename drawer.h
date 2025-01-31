@@ -12,7 +12,6 @@
 #ifndef DRAWER_H_INCLUDED
 #define DRAWER_H_INCLUDEDmake
 
-
 enum PAINTER_TYPE
 {
     PLACE_PAINTER = 0,

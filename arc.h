@@ -12,7 +12,6 @@
 #ifndef ARC_H_INCLUDED
 #define ARC_H_INCLUDED
 
-#include "artifact.h"
 #include "geometry.h"
 
 /**

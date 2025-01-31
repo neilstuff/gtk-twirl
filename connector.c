@@ -15,6 +15,7 @@
 #include <gdk/gdk.h>
 
 #include "geometry.h"
+#include "artifact.h"
 #include "drawer.h"
 
 #include "node.h"
