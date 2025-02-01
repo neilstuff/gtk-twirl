@@ -21,6 +21,25 @@
 #include "node.h"
 
 /**
+ * @brief does this arc contain the point
+ *
+ */
+void is_arc_contain_point(ARC *arc, POINT *)
+{
+    int point = 0;
+
+    for (point = 0; point < arc->points->len; point++)
+    {
+
+        if (point % 2 == 0)
+        {
+
+ 
+        }
+    }
+}
+
+/**
  * @brief release/free an arc object
  *
  */
@@ -41,9 +60,6 @@ ARC * create_arc (NODE * source, NODE * target)
     arc->source = source;
     arc->target = target;
     arc->selected = 0;
-
-    arc->artifact.type = ARC_ARTIFACT;
-    arc->artifact.artifacts.arc_artifact.arc = arc; 
 
     arc->painter.type = ARC_PAINTER;
     arc->painter.painters.arc_painter.arc = arc;

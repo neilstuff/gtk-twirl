@@ -19,7 +19,6 @@
 #include "artifact.h"
 #include "drawer.h"
 
-
 #include "node.h"
 #include "event.h"
 
@@ -133,6 +132,8 @@ NODE *new_node()
 {
     NODE *node = g_malloc(sizeof(NODE));
 
+    node->id = 0;
+
     node->destroy = destroy_node;
     node->setPosition = set_position;
     node->getBounds = get_bounds;
@@ -141,12 +142,7 @@ NODE *new_node()
     node->isTransition = is_transition;
     node->isPlace = is_place;
 
-    node->artifact.type = NODE_ARTIFACT;
-    node->artifact.artifacts.node_artifact.node = node;  
-
-    node->artifact.selected = TRUE;
-    node->id = 0;
-    node->artifact.state = INACTIVE;
+    setup_artifact(&node->artifact, FALSE, ACTIVE, TRUE);
 
     node->textLength = 0;
 
@@ -168,7 +164,6 @@ NODE *new_place()
     node->place.occupied = FALSE;
 
     node->artifact.state = INACTIVE;
-    node->artifact.enabled = 0;
     node->type = PLACE_NODE;
 
     node->painter.type = PLACE_PAINTER;
@@ -188,7 +183,6 @@ NODE *new_transition()
     NODE *node = new_node();
 
     node->transition.duration = 0;
-    node->artifact.enabled = 0;
 
     node->artifact.state = INACTIVE;
     node->type = TRANSITION_NODE;

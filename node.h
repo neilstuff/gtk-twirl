@@ -12,7 +12,6 @@
 #ifndef NODE_H_INCLUDED
 #define NODE_H_INCLUDED
 
-#include "artifact.h"
 #include "geometry.h"
 
 #define TO_NODE(node) ((NODE *)(node))
@@ -43,12 +42,6 @@ enum TYPE
     TRANSITION_NODE,
     END_NODE_TYPES
 
-};
-
-enum STATE
-{
-    ACTIVE,
-    INACTIVE
 };
 
 /**

@@ -26,8 +26,6 @@
 
 #include "connector.h"
 
-
-
 #define TO_CONTEXT(context) ((CONTEXT *)(context))
 
 enum ACTION
@@ -74,7 +72,7 @@ typedef struct _CONTEXT
 } CONTEXT, *CONTEXT_P;
 
 /**
- * @brief create a Node or Place
+ * @brief find a node (place or transition)
  *
  */
 gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
@@ -83,6 +81,15 @@ gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
     return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), TO_POINT(point));
 }
 
+/**
+ * @brief 
+ *
+ */
+gboolean net_arc_find_by_point(gconstpointer node, gconstpointer point)
+{
+
+    return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), TO_POINT(point));
+}
 /**
  * @brief  iterator of nodes and arcs - the context determines the processor to apply to the artifact
  *

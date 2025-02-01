@@ -13,22 +13,20 @@
 #define ARTIFACT_H_INCLUDED
 
 /**
- * @brief artifact types - node (places and transitions) or arcs
- *
- */
-enum ARTIFACT_TYPE
-{
-    NODE_ARTIFACT = 0,
-    ARC_ARTIFACT,
-    END_ARTIFACT_TYPES
-
-};
-
-/**
  * @brief casts an object to an artifact
  *
  */
-#define TO_ARTIFACT(connector) ((ARTIFACT *)(artifact))
+#define TO_ARTIFACT(artifact) ((ARTIFACT *)(artifact))
+
+/**
+ * @brief enable states
+ * 
+ */
+enum STATE
+{
+    ACTIVE,
+    INACTIVE
+};
 
 /**
  * @brief Artifact is a node (place/transiton) and an arc.
@@ -55,30 +53,8 @@ typedef struct _ARTIFACT
      */
     int state;
 
-    /**
-     * @brief artifact type
-     * 
-     */
-    enum ARTIFACT_TYPE type;
-
-    union
-    {
-        struct
-        {
-
-            struct _NODE *node;
-
-        } node_artifact;
-
-        struct
-        {
-
-            struct _ARC *arc;
-
-        } arc_artifact;
-
-    } artifacts;
-
 } ARTIFACT, *ARTIFACT_P;
+
+extern ARTIFACT * setup_artifact(ARTIFACT *artifact, int enabled, enum STATE state, int selected);
 
 #endif // ARTIFACT_H_INCLUDED

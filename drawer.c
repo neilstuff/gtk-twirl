@@ -177,13 +177,12 @@ void drawer_draw(DRAWER *drawer, PAINTER *painter)
 }
 
 /**
- * @brief draw an 'arc' between a place to a transition
+ * @brief draw an 'arc' between a place to a transition or transition to place
  *
  */
 void draw_arc(DRAWER *drawer, PAINTER *painter)
 {
     ARC *arc = painter->painters.arc_painter.arc;
-    int length = arc->points->len;
     int point = 0;
 
     if (arc->selected)

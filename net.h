@@ -26,6 +26,7 @@ typedef struct _NET {
     GPtrArray * places;
     GPtrArray * transitions;
     GPtrArray * arcs;
+    GPtrArray * artifacts;
 
     enum TOOL tool;
 

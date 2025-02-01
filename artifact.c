@@ -14,14 +14,11 @@
 #include <gdk/gdk.h>
 
 #include "artifact.h"
-#include "drawer.h"
 
-#include "node.h"
-#include "arc.h"
-
-ARTIFACT *setup_artifact(ARTIFACT *artifact, int enabled, int selected)
+ARTIFACT *setup_artifact(ARTIFACT *artifact, int enabled, enum STATE state, int selected)
 {
 
     artifact->enabled = enabled;
+    artifact->state = state;
     artifact->selected = selected;
 }
