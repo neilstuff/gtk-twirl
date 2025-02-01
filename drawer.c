@@ -41,9 +41,9 @@ void draw_arrow_head(ARC *arc, POINT *source, POINT *target, cairo_t *cr)
     get_midpoint(source, target, &position);
 
     cairo_new_path(cr);
-    if (arc->selected)
+    if (arc->artifact.selected)
     {
-        cairo_set_source_rgb(cr, 0, 0, 255);
+        cairo_set_source_rgb(cr, 0, 0, 1.0);
     }
     else
     {
@@ -183,9 +183,9 @@ void drawer_draw(DRAWER *drawer, PAINTER *painter)
 void draw_arc(DRAWER *drawer, PAINTER *painter)
 {
     ARC *arc = painter->painters.arc_painter.arc;
-    int point = 0;
+    int iPoint = 0;
 
-    if (arc->selected)
+    if (arc->artifact.selected)
     {
         cairo_set_source_rgb(drawer->canvas, 0, 0, 255);
         cairo_set_line_width(drawer->canvas, 2);
@@ -196,30 +196,30 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
         cairo_set_line_width(drawer->canvas, 1);
     }
 
-    for (point = 0; point < arc->points->len; point++)
+    for (iPoint = 0; iPoint < arc->points->len; iPoint++)
     {
 
-        if (point % 2 == 0)
+        if (iPoint % 2 == 0)
         {
 
-            printf("draw_arc: from: %d:%d\n", (int)TO_POINT(arc->points->pdata[point])->x,
-                   (int)TO_POINT(arc->points->pdata[point])->y);
-            cairo_move_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[point])->x,
-                          (int)TO_POINT(arc->points->pdata[point])->y);
+            printf("draw_arc: from: %d:%d\n", (int)TO_POINT(arc->points->pdata[iPoint])->x,
+                   (int)TO_POINT(arc->points->pdata[iPoint])->y);
+            cairo_move_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[iPoint])->x,
+                          (int)TO_POINT(arc->points->pdata[iPoint])->y);
         }
         else
         {
 
-            printf("draw_arc: to: %d:%d\n", (int)TO_POINT(arc->points->pdata[point])->x,
-                   (int)TO_POINT(arc->points->pdata[point])->y);
+            printf("draw_arc: to: %d:%d\n", (int)TO_POINT(arc->points->pdata[iPoint])->x,
+                   (int)TO_POINT(arc->points->pdata[iPoint])->y);
 
-            cairo_line_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[point])->x,
-                          (int)TO_POINT(arc->points->pdata[point])->y);
+            cairo_line_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[iPoint])->x,
+                          (int)TO_POINT(arc->points->pdata[iPoint])->y);
 
             cairo_stroke(drawer->canvas);
 
-            draw_arrow_head(arc, TO_POINT(arc->points->pdata[point - 1]),
-                            TO_POINT(arc->points->pdata[point]),
+            draw_arrow_head(arc, TO_POINT(arc->points->pdata[iPoint - 1]),
+                            TO_POINT(arc->points->pdata[iPoint]),
                             drawer->canvas);
         }
     }

@@ -24,46 +24,53 @@
  * @brief does this arc contain the point
  *
  */
-void is_arc_contain_point(ARC *arc, POINT *)
+int is_arc_at_point(ARC *arc, POINT *point)
 {
-    int point = 0;
-
-    for (point = 0; point < arc->points->len; point++)
-    {
-
-        if (point % 2 == 0)
-        {
-
+    int iPoint = 0;
  
+    for (iPoint = 0; iPoint < arc->points->len; iPoint++)
+    {
+        POINT *source;
+
+        if (iPoint % 2 != 0)
+        {
+            int intersects = point_on_line(TO_POINT(arc->points->pdata[iPoint - 1]),  TO_POINT(arc->points->pdata[iPoint]), point, 8);
+
+            printf("Intersects: %d\n", intersects);
+
+            if (intersects)
+            {
+
+                return TRUE;
+            }
         }
     }
+ 
+    return FALSE;
 }
 
 /**
  * @brief release/free an arc object
  *
  */
-void destroy_arc (ARC * arc)
+void destroy_arc(ARC *arc)
 {
-    g_free (arc);
-
+    g_free(arc);
 }
 
 /**
  * @brief arc constructor
  *
  */
-ARC * create_arc (NODE * source, NODE * target)
+ARC *create_arc(NODE *source, NODE *target)
 {
-    ARC * arc = g_malloc(sizeof(ARC));
+    ARC *arc = g_malloc(sizeof(ARC));
 
     arc->source = source;
     arc->target = target;
-    arc->selected = 0;
 
     arc->painter.type = ARC_PAINTER;
     arc->painter.painters.arc_painter.arc = arc;
-    
 
     arc->points = g_ptr_array_new();
 
@@ -71,7 +78,7 @@ ARC * create_arc (NODE * source, NODE * target)
     g_ptr_array_add(arc->points, clone_point(&target->position));
 
     arc->destroy = destroy_arc;
+    arc->isArcAtPoint = is_arc_at_point;
 
     return arc;
-
 }

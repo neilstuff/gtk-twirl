@@ -9,9 +9,9 @@
  *
  */
 
-#include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 
 #include <math.h>
 
@@ -33,11 +33,13 @@ int get_distance(POINT * source, POINT * target)
  * @brief determine if a point is on a line
  * 
  */
-int point_intersects(POINT * source, POINT * target, POINT * point, double tolerate)
+int point_on_line(POINT * source, POINT * target, POINT * point, double tolerate)
 {
     double d1 = get_distance(source, target);
     double d2 = get_distance(source, point);
     double d3 = get_distance(target, point);
+
+    printf("Distances %f : %f : %f : %f \n", d1,d2,d3, trunc(d2 + d3));
 
     return (trunc(d2 + d3) >= trunc(d1) - tolerate) &&
            (trunc(d2 + d3) <= trunc(d1) + tolerate);
@@ -144,7 +146,7 @@ LINE *set_line(LINE *line, POINT *source, POINT *target)
 POINT *clone_point(POINT *clone)
 {
     POINT *point = g_malloc(sizeof(POINT));
-    ;
+    
     point->x = clone->x;
     point->y = clone->y;
 

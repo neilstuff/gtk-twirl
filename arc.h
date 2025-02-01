@@ -26,6 +26,7 @@ typedef struct _ARC
 
     struct _PAINTER painter;
 
+    int (*isArcAtPoint)(struct _ARC *arc,  POINT * point);
     void (*destroy)(struct _ARC * arc);
     void (*setBounds)(struct _ARC * arc);
     void (*draw)(struct _ARC * arc, cairo_t * cr);
@@ -36,7 +37,6 @@ typedef struct _ARC
     GPtrArray * points;
 
     int weight;
-    int selected;
 
 } ARC, * ARC_P;
 

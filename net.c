@@ -31,11 +31,14 @@
 enum ACTION
 {
     DRAW_NODE = 0,
-    UNSELECT_ALL = 1,
+    UNSELECT_ALL_NODES = 1,
     SELECT_NODE_BY_POINT = 2,
     NODE_AT_POINT = 3,
     GET_NEXT_NODE_ID = 4,
     DRAW_ARC = 5,
+    POINT_IN_ARC = 6,
+    UNSELECT_ALL_ARCS = 7,
+    SELECT_ARC_BY_POINT,
     EOF_ACTIONS
 };
 
@@ -109,6 +112,16 @@ void net_artifact_iterator(gpointer artifcat, gpointer context)
             TO_NODE(artifcat)->artifact.selected = FALSE;
         }
         break;
+    case SELECT_ARC_BY_POINT: 
+        if (TO_ARC(artifcat)->isArcAtPoint(TO_ARC(artifcat), &TO_CONTEXT(context)->point_context.point))
+        {
+            TO_ARC(artifcat)->artifact.selected = TRUE;
+        }
+        else
+        {
+            TO_ARC(artifcat)->artifact.selected = FALSE;
+        }
+        break;       
     case DRAW_ARC:
         TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
                                                        &TO_ARC(artifcat)->painter);
@@ -117,8 +130,11 @@ void net_artifact_iterator(gpointer artifcat, gpointer context)
         TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
                                                        &TO_NODE(artifcat)->painter);
         break;
-    case UNSELECT_ALL:
+    case UNSELECT_ALL_NODES:
         TO_NODE(artifcat)->artifact.selected = FALSE;
+        break;
+    case UNSELECT_ALL_ARCS:
+        TO_ARC(artifcat)->artifact.selected = FALSE;
         break;
     case GET_NEXT_NODE_ID:
         TO_CONTEXT(context)->id_context.id = TO_NODE(artifcat)->id >= TO_CONTEXT(context)->id_context.id
@@ -182,7 +198,17 @@ void net_apply_context_all_nodes(NET *net, CONTEXT *context)
 }
 
 /**
- * @brief apply an action all the transitions and places
+ * @brief apply a context to all the arcs
+ *
+ */
+void net_apply_context_all_arcs(NET *net, CONTEXT *context)
+{
+    g_ptr_array_foreach(net->arcs,
+                        net_artifact_iterator, context);
+}
+
+/**
+ * @brief apply an action all the nodes (transitions and places)
  *
  */
 void net_apply_action_all_nodes(NET *net, enum ACTION action)
@@ -237,7 +263,7 @@ void net_select_node_processor(NET *net, EVENT *event)
 
     set_point(&point, event->events.create_node.x, event->events.create_node.y);
 
-    net_apply_action_all_nodes(net, UNSELECT_ALL);
+    net_apply_action_all_nodes(net, UNSELECT_ALL_NODES);
 
     if (net->tool == SELECT_TOOL)
     {
@@ -248,6 +274,9 @@ void net_select_node_processor(NET *net, EVENT *event)
         context.point_context.point.y = event->events.create_node.y;
 
         net_apply_context_all_nodes(net, &context);
+
+        context.action = SELECT_ARC_BY_POINT;
+        net_apply_context_all_arcs(net, &context);
 
         net->controller->redraw(net->controller);
     }

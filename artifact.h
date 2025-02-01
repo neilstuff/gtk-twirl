@@ -55,6 +55,6 @@ typedef struct _ARTIFACT
 
 } ARTIFACT, *ARTIFACT_P;
 
-extern ARTIFACT * setup_artifact(ARTIFACT *artifact, int enabled, enum STATE state, int selected);
+extern ARTIFACT * setup_artifact(struct _ARTIFACT *artifact, int enabled, enum STATE state, int selected);
 
 #endif // ARTIFACT_H_INCLUDED
