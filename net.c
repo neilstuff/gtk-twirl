@@ -62,6 +62,7 @@ typedef struct _CONTEXT
         {
 
             POINT point;
+            int found;
 
         } point_context;
         struct
@@ -106,6 +107,7 @@ void net_artifact_iterator(gpointer artifcat, gpointer context)
         if (TO_NODE(artifcat)->isNodeAtPoint(TO_NODE(artifcat), &TO_CONTEXT(context)->point_context.point))
         {
             TO_NODE(artifcat)->artifact.selected = TRUE;
+            TO_CONTEXT(context)->point_context.found = TRUE;
         }
         else
         {
@@ -208,7 +210,7 @@ void net_apply_context_all_arcs(NET *net, CONTEXT *context)
 }
 
 /**
- * @brief apply an action all the nodes (transitions and places)
+ * @brief apply an action on all the nodes (transitions and places)
  *
  */
 void net_apply_action_all_nodes(NET *net, enum ACTION action)
@@ -218,6 +220,20 @@ void net_apply_action_all_nodes(NET *net, enum ACTION action)
     context.action = action;
 
     net_apply_context_all_nodes(net, &context);
+}
+
+
+/**
+ * @brief apply an action on all the arcs
+ *
+ */
+void net_apply_action_all_arcs(NET *net, enum ACTION action)
+{
+    CONTEXT context;
+
+    context.action = action;
+
+    net_apply_context_all_arcs(net, &context);
 }
 
 /**
@@ -264,20 +280,25 @@ void net_select_node_processor(NET *net, EVENT *event)
     set_point(&point, event->events.create_node.x, event->events.create_node.y);
 
     net_apply_action_all_nodes(net, UNSELECT_ALL_NODES);
+    net_apply_action_all_arcs(net, UNSELECT_ALL_ARCS);
 
     if (net->tool == SELECT_TOOL)
     {
         CONTEXT context;
 
         context.action = SELECT_NODE_BY_POINT;
+        context.point_context.found = FALSE;
         context.point_context.point.x = event->events.create_node.x;
         context.point_context.point.y = event->events.create_node.y;
 
         net_apply_context_all_nodes(net, &context);
 
-        context.action = SELECT_ARC_BY_POINT;
-        net_apply_context_all_arcs(net, &context);
-
+        if (!context.point_context.found)
+        {
+            context.action = SELECT_ARC_BY_POINT;
+            context.point_context.found = FALSE;
+            net_apply_context_all_arcs(net, &context);
+        }
         net->controller->redraw(net->controller);
     }
     else

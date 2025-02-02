@@ -118,8 +118,6 @@ void draw_place(DRAWER *drawer, PAINTER *painter)
 {
     NODE *node = painter->painters.transition_painter.node;
 
-    printf("draw_place: from: %s\n", node->name->str);
-
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_source_rgb(drawer->canvas, 0.75, 0.75, 0.75);
 
@@ -184,11 +182,14 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
 {
     ARC *arc = painter->painters.arc_painter.arc;
     int iPoint = 0;
+    const double dashes[] = {1.0, 1.0, 1.0};
 
     if (arc->artifact.selected)
     {
         cairo_set_source_rgb(drawer->canvas, 0, 0, 255);
-        cairo_set_line_width(drawer->canvas, 2);
+        cairo_set_line_width(drawer->canvas, 1);
+        cairo_set_dash(drawer->canvas, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
+
     }
     else
     {
@@ -223,6 +224,8 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
                             drawer->canvas);
         }
     }
+
+    cairo_set_dash(drawer->canvas, dashes, 0, 0);
 }
 
 /**
