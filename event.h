@@ -32,6 +32,7 @@ enum NOTIFICATION
     UPDATE_DRAG,
     END_DRAG,
     CONNECT_NODES,
+    ACTIVE_TOOLBAR,
     END_NOTIFICATION
 
 };
@@ -125,6 +126,13 @@ typedef struct _EVENT
             enum TOOL tool;
 
         } create_net;
+
+        struct
+        {
+
+            int activate;
+
+        } activate_toolbar;
 
     } events;
 

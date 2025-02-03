@@ -77,8 +77,8 @@ ARC *create_arc(NODE *source, NODE *target)
 
     arc->vertices = g_ptr_array_new();
 
-    g_ptr_array_add(arc->vertices, create_vertex(&source->position));
-    g_ptr_array_add(arc->vertices, create_vertex(&target->position));
+    g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, &source->position));
+    g_ptr_array_add(arc->vertices, create_vertex(TARGET_POSITION, &target->position));
 
     arc->destroy = destroy_arc;
     arc->isArcAtPoint = is_arc_at_point;

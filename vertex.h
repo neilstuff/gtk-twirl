@@ -20,6 +20,15 @@
  */
 #define TO_VERTEX(vertex) ((VERTEX *)(vertex))
 
+enum POSITION
+{
+    SOURCE_POSITION = 0,
+    TARGET_POSITION,
+    CONTROL_POSITION,
+    END_POSITION_TYPES
+
+};
+
 typedef struct _VERTEX {
 
     /**
@@ -30,10 +39,12 @@ typedef struct _VERTEX {
 
     POINT point;
 
+    enum POSITION position;
+
     void (*destroy)(struct _VERTEX * vertex);
 
 } VERTEX, *VERTEX_P;
 
-extern VERTEX * create_vertex (POINT * point);
+extern VERTEX * create_vertex (enum POSITION position, POINT * point);
 
 #endif // VERTEX_H_INCLUDED

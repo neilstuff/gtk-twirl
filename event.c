@@ -43,57 +43,62 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
 
     switch (notification)
     {
-    case CREATE_NET:
-    {
-        event->events.create_net.tool = va_arg(args, enum TOOL);
-    }
-    break;
-    case TOOL_SELECTED:
-    {
-        event->events.button_event.tool = va_arg(args, enum TOOL);
-    }
-    break;
-    case DRAW_REQUESTED:
-    {
-        event->events.draw_event.canvas = va_arg(args, cairo_t *);
-        event->events.draw_event.width = va_arg(args, int);
-        event->events.draw_event.height = va_arg(args, int);
-    }
-    break;
-    case CREATE_NODE:
-    {
-        event->events.create_node.n_times = va_arg(args, int);
-        event->events.create_node.x = va_arg(args, double);
-        event->events.create_node.y = va_arg(args, double);
-    }
-    break;
-    case START_DRAG:
-    {
-        event->events.start_drag_event.x = va_arg(args, double);
-        event->events.start_drag_event.y = va_arg(args, double);
-        event->events.start_drag_event.mode = va_arg(args, int);
-    }
-    break;
-    case UPDATE_DRAG:
-    {
-        event->events.update_drag_event.offset_x = va_arg(args, double);
-        event->events.update_drag_event.offset_y = va_arg(args, double);
-        event->events.update_drag_event.mode = va_arg(args, int);
-    }
-    break;
-    case END_DRAG:
-    {
-        event->events.end_drag_event.offset_x = va_arg(args, double);
-        event->events.end_drag_event.offset_y = va_arg(args, double);
-        event->events.end_drag_event.mode = va_arg(args, int);
-    }
-    break;
-    case CONNECT_NODES:
-    {
-        event->events.connect_event.source = va_arg(args, NODE *);
-        event->events.connect_event.target = va_arg(args, POINT *);
-    }
-    break;
+        case CREATE_NET:
+        {
+            event->events.create_net.tool = va_arg(args, enum TOOL);
+        }
+        break;
+        case TOOL_SELECTED:
+        {
+            event->events.button_event.tool = va_arg(args, enum TOOL);
+        }
+        break;
+        case DRAW_REQUESTED:
+        {
+            event->events.draw_event.canvas = va_arg(args, cairo_t *);
+            event->events.draw_event.width = va_arg(args, int);
+            event->events.draw_event.height = va_arg(args, int);
+        }
+        break;
+        case CREATE_NODE:
+        {
+            event->events.create_node.n_times = va_arg(args, int);
+            event->events.create_node.x = va_arg(args, double);
+            event->events.create_node.y = va_arg(args, double);
+        }
+        break;
+        case START_DRAG:
+        {
+            event->events.start_drag_event.x = va_arg(args, double);
+            event->events.start_drag_event.y = va_arg(args, double);
+            event->events.start_drag_event.mode = va_arg(args, int);
+        }
+        break;
+        case UPDATE_DRAG:
+        {
+            event->events.update_drag_event.offset_x = va_arg(args, double);
+            event->events.update_drag_event.offset_y = va_arg(args, double);
+            event->events.update_drag_event.mode = va_arg(args, int);
+        }
+        break;
+        case END_DRAG:
+        {
+            event->events.end_drag_event.offset_x = va_arg(args, double);
+            event->events.end_drag_event.offset_y = va_arg(args, double);
+            event->events.end_drag_event.mode = va_arg(args, int);
+        }
+        break;
+        case CONNECT_NODES:
+        {
+            event->events.connect_event.source = va_arg(args, NODE *);
+            event->events.connect_event.target = va_arg(args, POINT *);
+        }
+        break;
+        case ACTIVE_TOOLBAR:
+        {
+            event->events.activate_toolbar.activate = va_arg(args, int);
+        }
+        break;
     }
 
     va_end(args);

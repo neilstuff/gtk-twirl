@@ -31,10 +31,12 @@ void destroy_vertex(VERTEX *vertex)
  * @brief vertex constructor
  *
  */
-VERTEX *create_vertex(POINT * point)
+VERTEX *create_vertex(enum POSITION position, POINT * point)
 {
     VERTEX *vertex = g_malloc(sizeof(VERTEX));
 
+    vertex->position = position;
+    
     copy_point(point, &vertex->point);   
 
     vertex->destroy = destroy_vertex;
