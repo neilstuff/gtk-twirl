@@ -26,15 +26,15 @@ typedef struct _ARC
 
     struct _PAINTER painter;
 
-    int (*isArcAtPoint)(struct _ARC *arc,  POINT * point);
     void (*destroy)(struct _ARC * arc);
+    int (*isArcAtPoint)(struct _ARC *arc,  POINT * point);
     void (*setBounds)(struct _ARC * arc);
     void (*draw)(struct _ARC * arc, cairo_t * cr);
 
     struct _NODE * source;
     struct _NODE * target;
 
-    GPtrArray * points;
+    GPtrArray * vertices;
 
     int weight;
 

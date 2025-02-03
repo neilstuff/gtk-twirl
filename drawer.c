@@ -19,6 +19,8 @@
 #include "node.h"
 #include "event.h"
 #include "controller.h"
+
+#include "vertex.h"
 #include "arc.h"
 #include "net.h"
 #include "connector.h"
@@ -181,7 +183,7 @@ void drawer_draw(DRAWER *drawer, PAINTER *painter)
 void draw_arc(DRAWER *drawer, PAINTER *painter)
 {
     ARC *arc = painter->painters.arc_painter.arc;
-    int iPoint = 0;
+    int iVertex = 0;
     const double dashes[] = {1.0, 1.0, 1.0};
 
     if (arc->artifact.selected)
@@ -197,30 +199,30 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
         cairo_set_line_width(drawer->canvas, 1);
     }
 
-    for (iPoint = 0; iPoint < arc->points->len; iPoint++)
+    for (iVertex = 0; iVertex < arc->vertices->len; iVertex++)
     {
 
-        if (iPoint % 2 == 0)
+        if (iVertex % 2 == 0)
         {
 
-            printf("draw_arc: from: %d:%d\n", (int)TO_POINT(arc->points->pdata[iPoint])->x,
-                   (int)TO_POINT(arc->points->pdata[iPoint])->y);
-            cairo_move_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[iPoint])->x,
-                          (int)TO_POINT(arc->points->pdata[iPoint])->y);
+            printf("draw_arc: from: %d:%d\n", (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
+                   (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
+            cairo_move_to(drawer->canvas, (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
+                                          (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
         }
         else
         {
 
-            printf("draw_arc: to: %d:%d\n", (int)TO_POINT(arc->points->pdata[iPoint])->x,
-                   (int)TO_POINT(arc->points->pdata[iPoint])->y);
+            printf("draw_arc: to: %d:%d\n", (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
+                                            (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
 
-            cairo_line_to(drawer->canvas, (int)TO_POINT(arc->points->pdata[iPoint])->x,
-                          (int)TO_POINT(arc->points->pdata[iPoint])->y);
+            cairo_line_to(drawer->canvas, (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
+                                          (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
 
             cairo_stroke(drawer->canvas);
 
-            draw_arrow_head(arc, TO_POINT(arc->points->pdata[iPoint - 1]),
-                            TO_POINT(arc->points->pdata[iPoint]),
+            draw_arrow_head(arc, &TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,
+                                 &TO_VERTEX(arc->vertices->pdata[iVertex])->point,
                             drawer->canvas);
         }
     }

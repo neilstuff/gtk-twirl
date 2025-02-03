@@ -140,15 +140,13 @@ LINE *set_line(LINE *line, POINT *source, POINT *target)
 }
 
 /**
- * @brief clone a point
+ * @brief copy a point
  *
  */
-POINT *clone_point(POINT *clone)
+void copy_point(POINT *from, POINT *to)
 {
-    POINT *point = g_malloc(sizeof(POINT));
-    
-    point->x = clone->x;
-    point->y = clone->y;
+   
+    to->x = from->x;
+    to->y = from->y;
 
-    return point;
 }

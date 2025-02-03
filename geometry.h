@@ -91,6 +91,6 @@ extern int point_in_bounds(POINT * point, BOUNDS * bounds);
 extern POINT * get_midpoint(POINT *source, POINT *target, POINT *midpoint);
 extern POINT * set_point(POINT * point, double x, double y);
 extern LINE * set_line(LINE * line, POINT * source, POINT * target);
-extern POINT *clone_point(POINT *clone);
+extern void copy_point(POINT *from, POINT *to);
 
 #endif // POINT_H_INCLUDED

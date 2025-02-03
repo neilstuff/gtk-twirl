@@ -1,7 +1,7 @@
 /**
  * @file arc.c
  * @author Dr. Neil Brittliff (brittliff.org)
- * @brief  prototype - an arc joins places to transitions or transitions to places
+ * @brief  an arc joins places to transitions or transitions to places
  * @version 0.1
  * @date 2025-01-18
  *
@@ -17,6 +17,7 @@
 
 #include "artifact.h"
 #include "drawer.h"
+#include "vertex.h"
 #include "arc.h"
 #include "node.h"
 
@@ -26,15 +27,17 @@
  */
 int is_arc_at_point(ARC *arc, POINT *point)
 {
-    int iPoint = 0;
+    int iVertex = 0;
  
-    for (iPoint = 0; iPoint < arc->points->len; iPoint++)
+    for (iVertex = 0; iVertex < arc->vertices->len; iVertex++)
     {
         POINT *source;
 
-        if (iPoint % 2 != 0)
+        if (iVertex % 2 != 0)
         {
-            int intersects = point_on_line(TO_POINT(arc->points->pdata[iPoint - 1]),  TO_POINT(arc->points->pdata[iPoint]), point, 8);
+            int intersects = point_on_line(&TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,  
+                                           &TO_VERTEX(arc->vertices->pdata[iVertex])->point, 
+                                           point, 4);
 
             printf("Intersects: %d\n", intersects);
 
@@ -72,10 +75,10 @@ ARC *create_arc(NODE *source, NODE *target)
     arc->painter.type = ARC_PAINTER;
     arc->painter.painters.arc_painter.arc = arc;
 
-    arc->points = g_ptr_array_new();
+    arc->vertices = g_ptr_array_new();
 
-    g_ptr_array_add(arc->points, clone_point(&source->position));
-    g_ptr_array_add(arc->points, clone_point(&target->position));
+    g_ptr_array_add(arc->vertices, create_vertex(&source->position));
+    g_ptr_array_add(arc->vertices, create_vertex(&target->position));
 
     arc->destroy = destroy_arc;
     arc->isArcAtPoint = is_arc_at_point;
