@@ -70,6 +70,9 @@ typedef struct _CONTROLLER
     GtkWidget *placeButton;
     GtkWidget *transitionButton;
 
+    GtkWidget *saveToolbarButton;
+    GtkWidget *saveAsToolbarButton;
+
     GPtrArray * handlers;
 
     enum MODES mode;
@@ -91,6 +94,12 @@ typedef struct _CONTROLLER
  * 
  */
    void (*notify) (struct _CONTROLLER * controller, EVENT * event);  
+
+/**
+ * @brief this is called GTK to call all handlers to respond to the 'draw' event
+ * 
+ */
+   void (*process) (struct _CONTROLLER * controller, EVENT * event);
 
 /**
  * @brief this is called GTK to call all handlers to respond to the 'draw' event

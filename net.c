@@ -335,6 +335,16 @@ void net_select_node_processor(NET *net, EVENT *event)
             node->setPosition(node, cx, cy);
 
             g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
+
+            {
+                EVENT *activate = create_event(ACTIVATE_TOOLBAR, TRUE);
+                
+                net->controller->process(net->controller, activate);
+
+                activate->release(activate);
+
+            }
+
         }
         else
         {
@@ -351,6 +361,11 @@ void net_select_node_processor(NET *net, EVENT *event)
  */
 void net_start_drag_processor(NET *net, EVENT *event)
 {
+
+    if (event->events.start_drag_event.mode != CONNECT) {
+        return;
+    }
+
     POINT point;
 
     set_point(&point, event->events.start_drag_event.x, event->events.start_drag_event.y);
@@ -422,6 +437,7 @@ NET *net_create(CONTROLLER *controller)
     net->handler.processor = net;
 
     net->controller = controller;
+
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;
     net->processors[CREATE_NODE] = net_select_node_processor;

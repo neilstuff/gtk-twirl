@@ -94,7 +94,7 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
             event->events.connect_event.target = va_arg(args, POINT *);
         }
         break;
-        case ACTIVE_TOOLBAR:
+        case ACTIVATE_TOOLBAR:
         {
             event->events.activate_toolbar.activate = va_arg(args, int);
         }

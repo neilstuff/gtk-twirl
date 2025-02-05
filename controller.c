@@ -33,13 +33,32 @@ void controller_handler_iterator(gpointer handler, gpointer event)
 }
 
 /**
- * @brief notify the event handlers with a new event
+ * @brief notify the event handlers with the event
  *
  */
 void controller_notify(CONTROLLER *controller, EVENT *event)
 {
     g_ptr_array_foreach(controller->handlers,
                         controller_handler_iterator, event);
+}
+
+/**
+ * @brief send an event to the controller to process
+ *
+ */
+void controller_process(CONTROLLER *controller, EVENT *event)
+{
+
+    switch (event->notification)
+    {
+        case ACTIVATE_TOOLBAR:
+        {
+            gtk_widget_set_sensitive(controller->saveToolbarButton, event->events.activate_toolbar.activate);
+            gtk_widget_set_sensitive(controller->saveAsToolbarButton, event->events.activate_toolbar.activate);
+        }
+        break;
+    };
+
 }
 
 /**
@@ -233,6 +252,7 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         controller->unmonitor = controller_unmonitor;
         controller->redraw = controller_redraw;
         controller->notify = controller_notify;
+        controller->process = controller_process;
 
         controller->handlers = g_ptr_array_new();
     }
@@ -254,6 +274,11 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
             GTK_WIDGET(gtk_builder_get_object(builder, "placeButton"));
         controller->transitionButton =
             GTK_WIDGET(gtk_builder_get_object(builder, "transitionButton"));
+
+        controller->saveToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "saveToolbarButton"));
+        controller->saveAsToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "saveAsToolbarButton"));
     }
     {
         g_signal_connect(controller->selectButton, "clicked",
