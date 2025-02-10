@@ -51,14 +51,19 @@ void controller_process(CONTROLLER *controller, EVENT *event)
 
     switch (event->notification)
     {
-        case ACTIVATE_TOOLBAR:
-        {
-            gtk_widget_set_sensitive(controller->saveToolbarButton, event->events.activate_toolbar.activate);
-            gtk_widget_set_sensitive(controller->saveAsToolbarButton, event->events.activate_toolbar.activate);
-        }
-        break;
+    case ACTIVATE_TOOLBAR:
+    {
+        gtk_widget_set_sensitive(controller->saveToolbarButton, event->events.activate_toolbar.activate);
+        gtk_widget_set_sensitive(controller->saveAsToolbarButton, event->events.activate_toolbar.activate);
+    }
+    break;
+    case SET_VIEW_SIZE:
+    {
+        gtk_widget_set_size_request(controller->drawingArea, event->events.set_view_size.size.w + 64,
+                                    event->events.set_view_size.size.h + 64);
+    }
+    break;
     };
-
 }
 
 /**
@@ -260,10 +265,13 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         GtkBuilder *builder = gtk_builder_new_from_resource(resourceURL);
 
         controller->window = GTK_WIDGET(gtk_builder_get_object(builder, "main"));
+
         controller->scrolledWindow =
             GTK_WIDGET(gtk_builder_get_object(builder, "scrolledWindow"));
         controller->drawingArea =
             GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
+        controller->viewPort =
+            GTK_WIDGET(gtk_builder_get_object(builder, "viewPort"));
 
         gtk_window_set_application(GTK_WINDOW(controller->window),
                                    GTK_APPLICATION(gtkAppication));

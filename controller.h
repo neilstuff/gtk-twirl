@@ -62,6 +62,7 @@ typedef struct _CONTROLLER
     GtkWidget *window;
     GtkWidget *scrolledWindow;
     GtkWidget *drawingArea;
+    GtkWidget *viewPort;
     GtkGesture *click;
     GtkGesture *drag;
     GtkEventController * keyController;

@@ -93,20 +93,6 @@
               </object>
             </child>
             <child>
-              <object class="GtkButton" id="playToolbarButton">
-                <property name="has_frame">false</property>
-                <property name="sensitive">false</property>
-                <property name="icon-name">system-run</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkButton" id="stopToolbarButton">
-                <property name="has_frame">false</property>
-                <property name="sensitive">false</property>
-                <property name="icon-name">process-stop</property>
-              </object>
-            </child>
-            <child>
               <object class="GtkButton" id="aboutToolbarItem">
                 <property name="has_frame">false</property>
                 <property name="icon-name">help-about</property>
@@ -172,7 +158,8 @@
                 <property name="vexpand">1</property>
                 <property name="hexpand">1</property>
                 <property name="margin_end">14</property>
-
+                <property name="hscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
+                <property name="vscrollbar-policy">GTK_POLICY_AUTOMATIC</property>
                 <child>
                   <object class="GtkViewport" id="viewport">
                     <property name="visible">true</property>

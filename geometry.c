@@ -125,6 +125,18 @@ POINT *set_point(POINT *point, double x, double y)
 }
 
 /**
+ * @brief set (width, height) size and return the size
+ *
+ */
+SIZE * set_size(SIZE * size, double w, double h)
+{
+    size->w = w;
+    size->h = h;
+
+    return size;
+}
+
+/**
  * @brief set the source and target of a line and return that line
  *
  */
@@ -148,5 +160,17 @@ void copy_point(POINT *from, POINT *to)
    
     to->x = from->x;
     to->y = from->y;
+
+}
+
+/**
+ * @brief copy a size
+ *
+ */
+void copy_size(SIZE *from, SIZE *to)
+{
+   
+    to->h = from->h;
+    to->w = from->w;
 
 }

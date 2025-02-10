@@ -99,6 +99,11 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
             event->events.activate_toolbar.activate = va_arg(args, int);
         }
         break;
+        case SET_VIEW_SIZE:
+        {
+            copy_size(va_arg(args, SIZE*), &event->events.set_view_size.size);
+        }
+        break;
     }
 
     va_end(args);

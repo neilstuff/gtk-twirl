@@ -33,6 +33,7 @@ enum NOTIFICATION
     END_DRAG,
     CONNECT_NODES,
     ACTIVATE_TOOLBAR,
+    SET_VIEW_SIZE,
     END_NOTIFICATION
 
 };
@@ -133,6 +134,13 @@ typedef struct _EVENT
             int activate;
 
         } activate_toolbar;
+
+        struct
+        {
+
+            SIZE size;
+
+        } set_view_size;
 
     } events;
 

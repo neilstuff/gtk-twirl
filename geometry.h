@@ -88,9 +88,13 @@ extern double get_length(LINE * line);
 extern int point_on_line(POINT * source, POINT * target, POINT * point, double tolerate);
 extern POINT * get_point_on_line(LINE *line, int distance, POINT *point);
 extern int point_in_bounds(POINT * point, BOUNDS * bounds);
+
 extern POINT * get_midpoint(POINT *source, POINT *target, POINT *midpoint);
 extern POINT * set_point(POINT * point, double x, double y);
+extern SIZE * set_size(SIZE * size, double w, double h);
 extern LINE * set_line(LINE * line, POINT * source, POINT * target);
+
 extern void copy_point(POINT *from, POINT *to);
+extern void copy_size(SIZE *from, SIZE *to);
 
 #endif // POINT_H_INCLUDED

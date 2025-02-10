@@ -151,7 +151,6 @@ void draw_transition(DRAWER *drawer, PAINTER *painter)
 {
     NODE *node = painter->painters.place_painter.node;
 
-    printf("draw_transition: from: %s\n", node->name->str);
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_source_rgb(drawer->canvas, 0.75, 0.75, 0.75);
 

@@ -39,6 +39,7 @@ enum ACTION
     POINT_IN_ARC = 6,
     UNSELECT_ALL_ARCS = 7,
     SELECT_ARC_BY_POINT,
+    GET_VIEW_SIZE,
     EOF_ACTIONS
 };
 
@@ -71,6 +72,12 @@ typedef struct _CONTEXT
             int id;
 
         } id_context;
+        struct
+        {
+
+            SIZE size;
+
+        } view_size;
     };
 
 } CONTEXT, *CONTEXT_P;
@@ -86,7 +93,7 @@ gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
 }
 
 /**
- * @brief 
+ * @brief
  *
  */
 gboolean net_arc_find_by_point(gconstpointer node, gconstpointer point)
@@ -114,7 +121,7 @@ void net_artifact_iterator(gpointer artifcat, gpointer context)
             TO_NODE(artifcat)->artifact.selected = FALSE;
         }
         break;
-    case SELECT_ARC_BY_POINT: 
+    case SELECT_ARC_BY_POINT:
         if (TO_ARC(artifcat)->isArcAtPoint(TO_ARC(artifcat), &TO_CONTEXT(context)->point_context.point))
         {
             TO_ARC(artifcat)->artifact.selected = TRUE;
@@ -123,7 +130,7 @@ void net_artifact_iterator(gpointer artifcat, gpointer context)
         {
             TO_ARC(artifcat)->artifact.selected = FALSE;
         }
-        break;       
+        break;
     case DRAW_ARC:
         TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
                                                        &TO_ARC(artifcat)->painter);
@@ -143,6 +150,24 @@ void net_artifact_iterator(gpointer artifcat, gpointer context)
                                                  ? TO_NODE(artifcat)->id + 1
                                                  : TO_CONTEXT(context)->id_context.id;
         break;
+    case GET_VIEW_SIZE:
+        {
+            double w = TO_NODE(artifcat)->bounds.point.x + TO_NODE(artifcat)->bounds.size.w;
+            double h = TO_NODE(artifcat)->bounds.point.y + TO_NODE(artifcat)->bounds.size.h;
+
+            if (TO_CONTEXT(context)->view_size.size.w < w)
+            {
+                TO_CONTEXT(context)->view_size.size.w = w;
+            }
+            if (TO_CONTEXT(context)->view_size.size.h < h)
+            {
+                TO_CONTEXT(context)->view_size.size.h = h;
+            }
+
+            printf("w: %f, h: %f\n", TO_CONTEXT(context)->view_size.size.w, TO_CONTEXT(context)->view_size.size.h);
+        }
+        break;
+
     }
 }
 
@@ -221,7 +246,6 @@ void net_apply_action_all_nodes(NET *net, enum ACTION action)
 
     net_apply_context_all_nodes(net, &context);
 }
-
 
 /**
  * @brief apply an action on all the arcs
@@ -337,12 +361,26 @@ void net_select_node_processor(NET *net, EVENT *event)
             g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
 
             {
-                EVENT *activate = create_event(ACTIVATE_TOOLBAR, TRUE);
+                CONTEXT context;
+
+                context.action = GET_VIEW_SIZE;
+                context.view_size.size.w = 0;
+                context.view_size.size.h = 0;
                 
+                net_apply_context_all_nodes(net, &context);
+
+                EVENT *resize = create_event(SET_VIEW_SIZE, &context.view_size.size);
+
+                net->controller->process(net->controller, resize);
+
+                resize->release(resize);
+            }
+            {
+                EVENT *activate = create_event(ACTIVATE_TOOLBAR, TRUE);
+
                 net->controller->process(net->controller, activate);
 
                 activate->release(activate);
-
             }
 
         }
@@ -362,7 +400,8 @@ void net_select_node_processor(NET *net, EVENT *event)
 void net_start_drag_processor(NET *net, EVENT *event)
 {
 
-    if (event->events.start_drag_event.mode != CONNECT) {
+    if (event->events.start_drag_event.mode != CONNECT)
+    {
         return;
     }
 
