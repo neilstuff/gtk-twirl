@@ -10,7 +10,7 @@
  */
 
 #ifndef DRAWER_H_INCLUDED
-#define DRAWER_H_INCLUDEDmake
+#define DRAWER_H_INCLUDED
 
 enum PAINTER_TYPE
 {
