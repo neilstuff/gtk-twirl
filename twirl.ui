@@ -185,7 +185,7 @@
                   <object class="GtkViewport" id="viewpor:isBox">
                     <property name="visible">true</property>
                     <child>
-                      <object class="GtkListBox">
+                      <object class="GtkListBox" id="fieldEditor">
                         <property name="selection-mode">none</property>
                         <style>
                           <class name="rich-list"/>

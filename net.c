@@ -21,7 +21,9 @@
 #include "arc.h"
 
 #include "event.h"
+#include "editor.h"
 #include "controller.h"
+
 #include "net.h"
 
 #include "connector.h"

@@ -24,14 +24,22 @@ enum FIELD
 
 
 /**
- * @brief an event structure is a union of the object editor
+ * @brief an editor structure 
  * 
  */
 typedef struct _EDITOR
 {
 
+    void (*listener)(int id, char * value);
+
+    void (*init)(enum FIELD field, ...);
+
     void (*release)(struct _EDITOR *editor);
 
+    GtkListBox * listBox;
+
 } EDITOR, *EDITOR_P;
+
+extern EDITOR *create_editor(GtkListBox * listBox);
 
 #endif // EDITOR_H_INCLUDED

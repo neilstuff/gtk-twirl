@@ -18,6 +18,7 @@
 
 #include "node.h"
 #include "event.h"
+#include "editor.h"
 #include "controller.h"
 
 #include "vertex.h"

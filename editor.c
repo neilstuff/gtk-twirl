@@ -14,6 +14,38 @@
 #include <gtk/gtk.h>
 
 #include "editor.h"
+#include "editor.h"
+
+
+/**
+ * @brief initialise the field editor
+ *
+ */
+void editor_init(EDITOR *editor, enum FIELD field, ...)
+{
+    va_list args;
+
+    va_start(args, field);
+
+    while (field != END_FIELD) {
+        switch (notification)
+        {
+            case TEXT_FIELD:
+            {
+               GtkListBoxRow* listBoxRow =  gtk_list_box_row_new();
+               GtkWidget* box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
+
+               GtkWidget* label = gtk_label_new (va_arg(args, char*));
+               GtkWidget* entry = gtk_label_new (va_arg(args, char*));
+
+            }
+            break;
+        }
+
+        field = va_arg(args, enum FIELD);
+    }
+
+}
 
 /**
  * @brief deallocate an editor's storage
@@ -24,18 +56,20 @@ void editor_release(EDITOR *editor)
     g_free(editor);
 }
 
-
 /**
  * @brief event constructor - based on the notification type
  *
  */
-EDITOR *create_editor(GtkListBox *listBox, ...) 
+EDITOR *create_editor(GtkListBox *listBox) 
 {
 
     EDITOR *editor = g_malloc(sizeof(EDITOR));
 
+    editor->listBox = listBox;
+
     editor->release = editor_release;
 
     gtk_list_box_remove_all(listBox);
+
 
 }

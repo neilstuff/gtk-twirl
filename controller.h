@@ -74,6 +74,8 @@ typedef struct _CONTROLLER
     GtkWidget *saveToolbarButton;
     GtkWidget *saveAsToolbarButton;
 
+    GtkListBox *fieldEditor;
+
     GPtrArray * handlers;
 
     enum MODES mode;
@@ -107,6 +109,13 @@ typedef struct _CONTROLLER
  * 
  */
    void (*redraw) (struct _CONTROLLER * controller);
+
+
+/**
+ * @brief this is called to get a field editor
+ * 
+ */
+   EDITOR * (*edit) (struct _CONTROLLER * controller);
 
 /**
  * @brief release the controller and return all resources

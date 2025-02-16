@@ -19,6 +19,7 @@
 #include "node.h"
 #include "event.h"
 
+#include "editor.h"
 #include "controller.h"
 #include "net.h"
 
@@ -229,6 +230,14 @@ void controller_unmonitor(CONTROLLER *controller, HANDLER *handler)
 }
 
 /**
+ * @brief get a field editor
+ */
+EDITOR *  controller_edit(CONTROLLER *controller)
+{
+    return create_editor(controller->fieldEditor);   
+}
+
+/**
  * @brief release the controller and free any resources
  *
  */
@@ -272,6 +281,9 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
             GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
         controller->viewPort =
             GTK_WIDGET(gtk_builder_get_object(builder, "viewPort"));
+
+        controller->fieldEditor =
+            GTK_LIST_BOX(gtk_builder_get_object(builder, "fieldEditor"));
 
         gtk_window_set_application(GTK_WINDOW(controller->window),
                                    GTK_APPLICATION(gtkAppication));

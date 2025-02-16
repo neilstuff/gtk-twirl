@@ -20,9 +20,10 @@
 
 #include "node.h"
 #include "event.h"
+#include "editor.h"
 #include "controller.h"
-#include "net.h"
 
+#include "net.h"
 #include "connector.h"
 
 /**
