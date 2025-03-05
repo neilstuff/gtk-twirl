@@ -132,6 +132,12 @@ typedef struct _NODE
     int (*isNodeAtPoint)(struct _NODE *node,  POINT * point);
 
     /**
+     * @brief edit the node's properties and attributes
+     * 
+     */
+    void (*edit)(struct _NODE *node,  EDITOR * editor);
+
+    /**
      * @brief private (the nodes type - place/transition)
      * 
      */

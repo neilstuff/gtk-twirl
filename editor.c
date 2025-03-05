@@ -14,8 +14,7 @@
 #include <gtk/gtk.h>
 
 #include "editor.h"
-#include "editor.h"
-
+ 
 /**
  * @brief initialise the field editor
  *
@@ -23,6 +22,8 @@
 void editor_init(EDITOR *editor, enum FIELD field, ...)
 {
     va_list args;
+
+    gtk_list_box_remove_all(editor->listBox);
 
     va_start(args, field);
 
@@ -40,6 +41,13 @@ void editor_init(EDITOR *editor, enum FIELD field, ...)
             GtkWidget *entry = gtk_entry_new();
 
             gtk_entry_set_placeholder_text(GTK_ENTRY(entry), va_arg(args, char *));
+
+            gtk_box_append(GTK_BOX(box), label);
+            gtk_box_append(GTK_BOX(box), entry);
+
+            gtk_list_box_row_set_child(GTK_LIST_BOX_ROW(listBoxRow), box);
+
+            gtk_list_box_append(editor->listBox, listBoxRow);
         }
         break;
         }
@@ -69,6 +77,6 @@ EDITOR *create_editor(GtkListBox *listBox)
     editor->listBox = listBox;
 
     editor->release = editor_release;
+    editor->init = editor_init;
 
-    gtk_list_box_remove_all(listBox);
 }

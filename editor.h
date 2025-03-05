@@ -32,7 +32,7 @@ typedef struct _EDITOR
 
     void (*listener)(int id, char * value);
 
-    void (*init)(enum FIELD field, ...);
+    void (*init)(struct _EDITOR *editor, enum FIELD field, ...);
 
     void (*release)(struct _EDITOR *editor);
 

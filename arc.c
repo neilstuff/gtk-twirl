@@ -16,6 +16,7 @@
 #include <gdk/gdk.h>
 
 #include "artifact.h"
+#include "editor.h"
 #include "drawer.h"
 #include "vertex.h"
 #include "arc.h"

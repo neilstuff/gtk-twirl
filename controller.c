@@ -14,12 +14,12 @@
 #include <gtk/gtk.h>
 
 #include "artifact.h"
+#include "editor.h"
 #include "drawer.h"
 
 #include "node.h"
 #include "event.h"
 
-#include "editor.h"
 #include "controller.h"
 #include "net.h"
 
@@ -267,6 +267,7 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         controller->redraw = controller_redraw;
         controller->notify = controller_notify;
         controller->process = controller_process;
+        controller->edit = controller_edit;
 
         controller->handlers = g_ptr_array_new();
     }

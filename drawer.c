@@ -15,6 +15,7 @@
 
 #include "artifact.h"
 #include "drawer.h"
+#include "editor.h"
 
 #include "node.h"
 #include "event.h"

@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 
 #include "artifact.h"
+#include "editor.h"
 #include "drawer.h"
 
 #include "node.h"

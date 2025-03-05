@@ -15,6 +15,7 @@
 #include <gtk/gtk.h>
 
 #include "artifact.h"
+#include "editor.h"
 #include "drawer.h"
 
 #include "node.h"
@@ -359,6 +360,8 @@ void net_select_node_processor(NET *net, EVENT *event)
             context.action = DRAW_NODE;
 
             node->setPosition(node, cx, cy);
+
+            EDITOR * editor = net->controller->edit(net->controller);
 
             g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
 
