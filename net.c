@@ -67,6 +67,8 @@ typedef struct _CONTEXT
 
             POINT point;
             int found;
+            GPtrArray * nodes;
+            GPtrArray * arcs;
 
         } point_context;
         struct
@@ -108,55 +110,57 @@ gboolean net_arc_find_by_point(gconstpointer node, gconstpointer point)
  * @brief  iterator of nodes and arcs - the context determines the processor to apply to the artifact
  *
  */
-void net_artifact_iterator(gpointer artifcat, gpointer context)
+void net_artifact_iterator(gpointer artifact, gpointer context)
 {
 
     switch (TO_CONTEXT(context)->action)
     {
     case SELECT_NODE_BY_POINT:
-        if (TO_NODE(artifcat)->isNodeAtPoint(TO_NODE(artifcat), &TO_CONTEXT(context)->point_context.point))
+        if (TO_NODE(artifact)->isNodeAtPoint(TO_NODE(artifact), &TO_CONTEXT(context)->point_context.point))
         {
-            TO_NODE(artifcat)->artifact.selected = TRUE;
-            TO_CONTEXT(context)->point_context.found = TRUE;
+            TO_NODE(artifact)->artifact.selected = TRUE;
+            g_ptr_array_add(TO_CONTEXT(context)->point_context.nodes, artifact);
+            TO_CONTEXT(context)->point_context.found += 1;
         }
         else
         {
-            TO_NODE(artifcat)->artifact.selected = FALSE;
+            TO_NODE(artifact)->artifact.selected = FALSE;
         }
         break;
     case SELECT_ARC_BY_POINT:
-        if (TO_ARC(artifcat)->isArcAtPoint(TO_ARC(artifcat), &TO_CONTEXT(context)->point_context.point))
+        if (TO_ARC(artifact)->isArcAtPoint(TO_ARC(artifact), &TO_CONTEXT(context)->point_context.point))
         {
-            TO_ARC(artifcat)->artifact.selected = TRUE;
+            g_ptr_array_add(TO_CONTEXT(context)->point_context.arcs, artifact);
+            TO_ARC(artifact)->artifact.selected = TRUE;
         }
         else
         {
-            TO_ARC(artifcat)->artifact.selected = FALSE;
+            TO_ARC(artifact)->artifact.selected = FALSE;
         }
         break;
     case DRAW_ARC:
         TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
-                                                       &TO_ARC(artifcat)->painter);
+                                                       &TO_ARC(artifact)->painter);
         break;
     case DRAW_NODE:
         TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
-                                                       &TO_NODE(artifcat)->painter);
+                                                       &TO_NODE(artifact)->painter);
         break;
     case UNSELECT_ALL_NODES:
-        TO_NODE(artifcat)->artifact.selected = FALSE;
+        TO_NODE(artifact)->artifact.selected = FALSE;
         break;
     case UNSELECT_ALL_ARCS:
-        TO_ARC(artifcat)->artifact.selected = FALSE;
+        TO_ARC(artifact)->artifact.selected = FALSE;
         break;
     case GET_NEXT_NODE_ID:
-        TO_CONTEXT(context)->id_context.id = TO_NODE(artifcat)->id >= TO_CONTEXT(context)->id_context.id
-                                                 ? TO_NODE(artifcat)->id + 1
+        TO_CONTEXT(context)->id_context.id = TO_NODE(artifact)->id >= TO_CONTEXT(context)->id_context.id
+                                                 ? TO_NODE(artifact)->id + 1
                                                  : TO_CONTEXT(context)->id_context.id;
         break;
     case GET_VIEW_SIZE:
         {
-            double w = TO_NODE(artifcat)->bounds.point.x + TO_NODE(artifcat)->bounds.size.w;
-            double h = TO_NODE(artifcat)->bounds.point.y + TO_NODE(artifcat)->bounds.size.h;
+            double w = TO_NODE(artifact)->bounds.point.x + TO_NODE(artifact)->bounds.size.w;
+            double h = TO_NODE(artifact)->bounds.point.y + TO_NODE(artifact)->bounds.size.h;
 
             if (TO_CONTEXT(context)->view_size.size.w < w)
             {
@@ -188,7 +192,7 @@ void net_tool_event_processor(NET *net, EVENT *event)
  * @brief find a node given a point
  *
  */
-NODE *net_find_node_by_point(NET *net, POINT *point)
+NODE * net_find_node_by_point(NET *net, POINT *point)
 {
     NODE *node = NULL;
     guint index;
@@ -314,7 +318,9 @@ void net_select_node_processor(NET *net, EVENT *event)
         CONTEXT context;
 
         context.action = SELECT_NODE_BY_POINT;
-        context.point_context.found = FALSE;
+        context.point_context.found = 0;
+        context.point_context.nodes = g_ptr_array_new();
+        context.point_context.arcs = g_ptr_array_new();
         context.point_context.point.x = event->events.create_node.x;
         context.point_context.point.y = event->events.create_node.y;
 
@@ -323,10 +329,11 @@ void net_select_node_processor(NET *net, EVENT *event)
         if (!context.point_context.found)
         {
             context.action = SELECT_ARC_BY_POINT;
-            context.point_context.found = FALSE;
+            context.point_context.found = 0;
             net_apply_context_all_arcs(net, &context);
         }
-        net->controller->redraw(net->controller);
+
+        net->redraw(net);
     }
     else
     {
@@ -339,7 +346,7 @@ void net_select_node_processor(NET *net, EVENT *event)
             context.action = GET_NEXT_NODE_ID;
             context.id_context.id = 0;
 
-            node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE);
+            node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE, net);
 
             g_ptr_array_foreach((net->tool == PLACE_TOOL) ? net->places : net->transitions,
                                 net_artifact_iterator, &context);
@@ -393,11 +400,18 @@ void net_select_node_processor(NET *net, EVENT *event)
         }
         else
         {
+            EDITOR * editor = net->controller->edit(net->controller);
+
+            node->edit(node, editor);
+
             node->artifact.selected = TRUE;
+            
         }
 
-        net->controller->redraw(net->controller);
+        net->redraw(net);
+
     }
+
 }
 
 /**
@@ -463,6 +477,18 @@ void net_event_handler(EVENT *event, void *processor)
 }
 
 /**
+ * @brief redraw the net
+ * 
+ */
+
+void net_redraw(NET * net) 
+{
+
+    net->controller->redraw(net->controller);
+
+}
+
+/**
  * @brief release/free the net object
  *
  */
@@ -483,6 +509,7 @@ NET *net_create(CONTROLLER *controller)
     net->handler.processor = net;
 
     net->controller = controller;
+    net->redraw = net_redraw;
 
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;

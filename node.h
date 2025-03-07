@@ -138,6 +138,12 @@ typedef struct _NODE
     void (*edit)(struct _NODE *node,  EDITOR * editor);
 
     /**
+     * @brief the owning 'net'
+     * 
+     */
+    struct _NET * net;
+
+    /**
      * @brief private (the nodes type - place/transition)
      * 
      */
@@ -185,6 +191,6 @@ typedef struct _NODE
 
 } NODE, *NODE_P;
 
-extern NODE *create_node(int type);
+extern NODE *create_node(int type, struct _NET * net);
 
 #endif // NODE_H_INCLUDED

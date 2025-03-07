@@ -15,10 +15,27 @@
 
 #include "editor.h"
 
-void edit_on_entry_changed(
-    GtkEditable *self,
-    gpointer user_data)
+
+/**
+ * @brief private structure used to call functions with a general parameter container
+ *
+ */
+typedef struct _LISTENER
 {
+
+    Handler handler;
+    void * object;
+
+    int id;
+
+
+} LISTENER, * LISTENER_P;
+
+void edit_on_entry_changed(GtkEditable *self, gpointer user_data)
+{
+    LISTENER * listener =  (LISTENER *)user_data;
+
+    listener->handler(listener->id, gtk_editable_get_text(self), listener->object);
 
 }
 
@@ -26,7 +43,7 @@ void edit_on_entry_changed(
  * @brief initialise the field editor
  *
  */
-void editor_init(EDITOR *editor, enum FIELD field, ...)
+void editor_init(EDITOR *editor, void* object, Handler handler, enum FIELD field, ...)
 {
     va_list args;
 
@@ -57,7 +74,16 @@ void editor_init(EDITOR *editor, enum FIELD field, ...)
 
             gtk_list_box_append(editor->listBox, listBoxRow);
 
-            g_signal_connect(GTK_EDITABLE(entry), "changed", G_CALLBACK(edit_on_entry_changed), NULL);
+            {
+                LISTENER * listener =  g_malloc(sizeof(LISTENER));
+                
+                listener->id = id;
+                listener->object = object;
+                listener->handler = handler;
+
+                g_signal_connect(GTK_EDITABLE(entry), "changed", G_CALLBACK(edit_on_entry_changed), listener);
+
+            }
         }
         break;
         }
@@ -88,4 +114,5 @@ EDITOR *create_editor(GtkListBox *listBox)
 
     editor->release = editor_release;
     editor->init = editor_init;
+
 }

@@ -22,6 +22,26 @@
 
 #include "node.h"
 #include "event.h"
+#include "controller.h"
+#include "net.h"
+
+void edit_handler(int id, const char * value, void * object)
+{
+
+    printf("%d:%s\n", id, value);
+
+    switch (id) {
+        case 0:
+            {
+                TO_NODE(object)->setName(TO_NODE(object), value);
+                TO_NODE(object)->net->redraw(TO_NODE(object)->net);
+  
+            }
+            break;
+
+    }
+
+}
 
 /**
  * @brief deallocate the node storage
@@ -160,16 +180,15 @@ NODE *new_node()
 
  void node_place_editor(NODE* node, EDITOR * editor)
  {
-    editor->init(editor, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
+    editor->init(editor, node, edit_handler, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
  }
 
 /**
  * @brief create an initialised "place" node
  *
  */
-NODE *new_place()
+NODE *new_place(NODE * node)
 {
-    NODE *node = new_node();
 
     node->place.marked = 0;
     node->place.occupied = FALSE;
@@ -193,16 +212,15 @@ NODE *new_place()
 
  void node_transition_editor(NODE* node, EDITOR * editor)
  {
-    editor->init(editor, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
+    editor->init(editor, node, edit_handler, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
  }
 
 /**
  * @brief create an initialised "transition" node
  *
  */
-NODE *new_transition()
+NODE *new_transition(NODE *node)
 {
-    NODE *node = new_node();
 
     node->transition.duration = 0;
 
@@ -223,8 +241,11 @@ NODE *new_transition()
  * @brief create an initialised node common to both a place and transition node
  *
  */
-NODE *create_node(int type)
+NODE *create_node(int type, NET * net)
 {
+    NODE *node = new_node();
 
-    return type == PLACE_NODE ? new_place() : new_transition();
+    node->net = net;
+
+    return type == PLACE_NODE ? new_place(node) : new_transition(node);
 }

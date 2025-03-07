@@ -36,6 +36,8 @@ typedef struct _NET {
 
     void (*processors[END_NOTIFICATION]) (struct _NET * net, EVENT * event);
 
+    void (*redraw) (struct _NET * net);
+
     void (*release) (struct _NET * net);
 
 } NET, * NET_P;
