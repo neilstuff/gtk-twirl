@@ -33,6 +33,7 @@ void editor_init(EDITOR *editor, enum FIELD field, ...)
         {
         case TEXT_FIELD:
         {
+            
             GtkWidget *listBoxRow = gtk_list_box_row_new();
             GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
             int id = va_arg(args, int);
@@ -40,7 +41,7 @@ void editor_init(EDITOR *editor, enum FIELD field, ...)
             GtkWidget *label = gtk_label_new(va_arg(args, char *));
             GtkWidget *entry = gtk_entry_new();
 
-            gtk_entry_set_placeholder_text(GTK_ENTRY(entry), va_arg(args, char *));
+            gtk_editable_set_text(GTK_EDITABLE(entry), va_arg(args, char *));
 
             gtk_box_append(GTK_BOX(box), label);
             gtk_box_append(GTK_BOX(box), entry);

@@ -179,7 +179,6 @@ typedef struct _NODE
      */
     union
     {
-
         PLACE place;
         TRANSITION transition;
     };

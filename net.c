@@ -363,6 +363,8 @@ void net_select_node_processor(NET *net, EVENT *event)
 
             EDITOR * editor = net->controller->edit(net->controller);
 
+            node->edit(node, editor);
+
             g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
 
             {

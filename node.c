@@ -154,6 +154,16 @@ NODE *new_node()
 }
 
 /**
+ * @brief edit place node
+ *
+ */
+
+ void node_place_editor(NODE* node, EDITOR * editor)
+ {
+    editor->init(editor, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
+ }
+
+/**
  * @brief create an initialised "place" node
  *
  */
@@ -169,11 +179,22 @@ NODE *new_place()
 
     node->painter.type = PLACE_PAINTER;
     node->painter.painters.place_painter.node = node;
+    node->edit = node_place_editor;
 
     set_default_name(node);
 
     return node;
 }
+
+/**
+ * @brief edit place node
+ *
+ */
+
+ void node_transition_editor(NODE* node, EDITOR * editor)
+ {
+    editor->init(editor, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
+ }
 
 /**
  * @brief create an initialised "transition" node
@@ -190,6 +211,8 @@ NODE *new_transition()
 
     node->painter.type = TRANSITION_PAINTER;
     node->painter.painters.transition_painter.node = node;
+
+    node->edit = node_transition_editor;
 
     set_default_name(node);
 
