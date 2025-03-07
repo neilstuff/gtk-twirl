@@ -14,7 +14,14 @@
 #include <gtk/gtk.h>
 
 #include "editor.h"
- 
+
+void edit_on_entry_changed(
+    GtkEditable *self,
+    gpointer user_data)
+{
+
+}
+
 /**
  * @brief initialise the field editor
  *
@@ -33,7 +40,7 @@ void editor_init(EDITOR *editor, enum FIELD field, ...)
         {
         case TEXT_FIELD:
         {
-            
+
             GtkWidget *listBoxRow = gtk_list_box_row_new();
             GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
             int id = va_arg(args, int);
@@ -49,6 +56,8 @@ void editor_init(EDITOR *editor, enum FIELD field, ...)
             gtk_list_box_row_set_child(GTK_LIST_BOX_ROW(listBoxRow), box);
 
             gtk_list_box_append(editor->listBox, listBoxRow);
+
+            g_signal_connect(GTK_EDITABLE(entry), "changed", G_CALLBACK(edit_on_entry_changed), NULL);
         }
         break;
         }
@@ -79,5 +88,4 @@ EDITOR *create_editor(GtkListBox *listBox)
 
     editor->release = editor_release;
     editor->init = editor_init;
-
 }
