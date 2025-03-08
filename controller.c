@@ -52,18 +52,23 @@ void controller_process(CONTROLLER *controller, EVENT *event)
 
     switch (event->notification)
     {
-    case ACTIVATE_TOOLBAR:
-    {
-        gtk_widget_set_sensitive(controller->saveToolbarButton, event->events.activate_toolbar.activate);
-        gtk_widget_set_sensitive(controller->saveAsToolbarButton, event->events.activate_toolbar.activate);
-    }
-    break;
-    case SET_VIEW_SIZE:
-    {
-        gtk_widget_set_size_request(controller->drawingArea, event->events.set_view_size.size.w + 64,
-                                    event->events.set_view_size.size.h + 64);
-    }
-    break;
+        case ACTIVATE_TOOLBAR:
+        {
+            gtk_widget_set_sensitive(controller->saveToolbarButton, event->events.activate_toolbar.activate);
+            gtk_widget_set_sensitive(controller->saveAsToolbarButton, event->events.activate_toolbar.activate);
+        }
+        break;
+        case SET_VIEW_SIZE:
+        {
+            gtk_widget_set_size_request(controller->drawingArea, event->events.set_view_size.size.w + 64,
+                                        event->events.set_view_size.size.h + 64);
+        }
+        break;
+        case CLEAR_EDITOR:
+        {
+            gtk_list_box_remove_all(controller->fieldEditor);
+        }
+        break;
     };
 }
 
@@ -232,7 +237,7 @@ void controller_unmonitor(CONTROLLER *controller, HANDLER *handler)
 /**
  * @brief get a field editor
  */
-EDITOR *  controller_edit(CONTROLLER *controller)
+EDITOR * controller_edit(CONTROLLER *controller)
 {
     return create_editor(controller->fieldEditor);   
 }

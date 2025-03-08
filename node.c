@@ -27,20 +27,18 @@
 
 void edit_handler(int id, const char * value, void * object)
 {
-
-    printf("%d:%s\n", id, value);
-
+ 
     switch (id) {
         case 0:
             {
-                TO_NODE(object)->setName(TO_NODE(object), value);
+                TO_NODE(object)->setName(TO_NODE(object), (char *)value);
                 TO_NODE(object)->net->redraw(TO_NODE(object)->net);
   
             }
             break;
 
     }
-
+ 
 }
 
 /**

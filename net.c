@@ -67,8 +67,8 @@ typedef struct _CONTEXT
 
             POINT point;
             int found;
-            GPtrArray * nodes;
-            GPtrArray * arcs;
+            GPtrArray *nodes;
+            GPtrArray *arcs;
 
         } point_context;
         struct
@@ -158,23 +158,22 @@ void net_artifact_iterator(gpointer artifact, gpointer context)
                                                  : TO_CONTEXT(context)->id_context.id;
         break;
     case GET_VIEW_SIZE:
+    {
+        double w = TO_NODE(artifact)->bounds.point.x + TO_NODE(artifact)->bounds.size.w;
+        double h = TO_NODE(artifact)->bounds.point.y + TO_NODE(artifact)->bounds.size.h;
+
+        if (TO_CONTEXT(context)->view_size.size.w < w)
         {
-            double w = TO_NODE(artifact)->bounds.point.x + TO_NODE(artifact)->bounds.size.w;
-            double h = TO_NODE(artifact)->bounds.point.y + TO_NODE(artifact)->bounds.size.h;
-
-            if (TO_CONTEXT(context)->view_size.size.w < w)
-            {
-                TO_CONTEXT(context)->view_size.size.w = w;
-            }
-            if (TO_CONTEXT(context)->view_size.size.h < h)
-            {
-                TO_CONTEXT(context)->view_size.size.h = h;
-            }
-
-            printf("w: %f, h: %f\n", TO_CONTEXT(context)->view_size.size.w, TO_CONTEXT(context)->view_size.size.h);
+            TO_CONTEXT(context)->view_size.size.w = w;
         }
-        break;
+        if (TO_CONTEXT(context)->view_size.size.h < h)
+        {
+            TO_CONTEXT(context)->view_size.size.h = h;
+        }
 
+        printf("w: %f, h: %f\n", TO_CONTEXT(context)->view_size.size.w, TO_CONTEXT(context)->view_size.size.h);
+    }
+    break;
     }
 }
 
@@ -192,7 +191,7 @@ void net_tool_event_processor(NET *net, EVENT *event)
  * @brief find a node given a point
  *
  */
-NODE * net_find_node_by_point(NET *net, POINT *point)
+NODE *net_find_node_by_point(NET *net, POINT *point)
 {
     NODE *node = NULL;
     guint index;
@@ -313,6 +312,12 @@ void net_select_node_processor(NET *net, EVENT *event)
     net_apply_action_all_nodes(net, UNSELECT_ALL_NODES);
     net_apply_action_all_arcs(net, UNSELECT_ALL_ARCS);
 
+    EVENT * clearEvent = create_event(CLEAR_EDITOR);
+
+    net->controller->process(net->controller, clearEvent);
+
+    clearEvent->release(clearEvent);
+
     if (net->tool == SELECT_TOOL)
     {
         CONTEXT context;
@@ -326,7 +331,13 @@ void net_select_node_processor(NET *net, EVENT *event)
 
         net_apply_context_all_nodes(net, &context);
 
-        if (!context.point_context.found)
+        if (context.point_context.found == 1)
+        {
+            EDITOR *editor = net->controller->edit(net->controller);
+
+            TO_NODE(g_ptr_array_index(context.point_context.nodes, 0))->edit(g_ptr_array_index(context.point_context.nodes, 0), editor);
+        }
+        else if (!context.point_context.found)
         {
             context.action = SELECT_ARC_BY_POINT;
             context.point_context.found = 0;
@@ -368,7 +379,7 @@ void net_select_node_processor(NET *net, EVENT *event)
 
             node->setPosition(node, cx, cy);
 
-            EDITOR * editor = net->controller->edit(net->controller);
+            EDITOR *editor = net->controller->edit(net->controller);
 
             node->edit(node, editor);
 
@@ -380,7 +391,7 @@ void net_select_node_processor(NET *net, EVENT *event)
                 context.action = GET_VIEW_SIZE;
                 context.view_size.size.w = 0;
                 context.view_size.size.h = 0;
-                
+
                 net_apply_context_all_nodes(net, &context);
 
                 EVENT *resize = create_event(SET_VIEW_SIZE, &context.view_size.size);
@@ -396,22 +407,18 @@ void net_select_node_processor(NET *net, EVENT *event)
 
                 activate->release(activate);
             }
-
         }
         else
         {
-            EDITOR * editor = net->controller->edit(net->controller);
+            EDITOR *editor = net->controller->edit(net->controller);
 
             node->edit(node, editor);
 
             node->artifact.selected = TRUE;
-            
         }
 
         net->redraw(net);
-
     }
-
 }
 
 /**
@@ -478,14 +485,13 @@ void net_event_handler(EVENT *event, void *processor)
 
 /**
  * @brief redraw the net
- * 
+ *
  */
 
-void net_redraw(NET * net) 
+void net_redraw(NET *net)
 {
 
     net->controller->redraw(net->controller);
-
 }
 
 /**
