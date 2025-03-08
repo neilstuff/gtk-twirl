@@ -334,8 +334,14 @@ void net_select_node_processor(NET *net, EVENT *event)
         if (context.point_context.found == 1)
         {
             EDITOR *editor = net->controller->edit(net->controller);
+            int iNode = 0;
 
-            TO_NODE(g_ptr_array_index(context.point_context.nodes, 0))->edit(g_ptr_array_index(context.point_context.nodes, 0), editor);
+            for (;iNode < context.point_context.nodes->len; iNode++) 
+            {
+                NODE * node = g_ptr_array_index(context.point_context.nodes, iNode);
+                node->edit(node, editor);
+
+            }          
         }
         else if (!context.point_context.found)
         {

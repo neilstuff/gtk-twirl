@@ -14,11 +14,15 @@ else
 	WINDOWS=
 endif
 
+MSYSINC = C:/msys64/mingw64/include
+
 COMPILE_RESOURCES = glib-compile-resources
 CFLAGS = $(shell $(PKGCONFIG) --cflags gtk4)
 LIBS = $(shell $(PKGCONFIG)  --libs gtk4)
 
 PROD = -mwindows
+XMLINC = -I$(MSYSINC)/libxml2
+XMLLIB = -llibxml2
 
 SRC = geometry.c drawer.c editor.c artifact.c event.c vertex.c node.c arc.c connector.c net.c controller.c main.c
 BUILT_SRC = resource.c
@@ -31,10 +35,10 @@ resource.c: twirl.gresource.xml twirl.ui
 	$(COMPILE_RESOURCES) twirl.gresource.xml --target=$@ --sourcedir=. --generate-source
 
 %.o: %.c
-	$(CC) -c -o $(@F) $(CFLAGS) $<
+	$(CC) -c -o $(@F) $(CFLAGS) $(XMLINC) $<
 
 twirl: $(OBJS)
-	$(CC) -o $(@F) $(WINDOWS) $(OBJS) $(LIBS)
+	$(CC) -o $(@F) $(WINDOWS) $(OBJS) $(LIBS) $(XMLLIB)
 
 clean:
 	$(DELETE) $(OBJS)
