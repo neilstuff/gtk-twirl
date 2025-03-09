@@ -24,7 +24,7 @@ PROD = -mwindows
 XMLINC = -I$(MSYSINC)/libxml2
 XMLLIB = -llibxml2
 
-SRC = geometry.c drawer.c editor.c artifact.c event.c vertex.c node.c arc.c connector.c net.c controller.c main.c
+SRC = writer.c geometry.c drawer.c editor.c artifact.c event.c vertex.c node.c arc.c connector.c net.c controller.c main.c
 BUILT_SRC = resource.c
 
 OBJS = $(BUILT_SRC:.c=.o) $(SRC:.c=.o)

@@ -178,7 +178,10 @@ NODE *new_node()
 
  void node_place_editor(NODE* node, EDITOR * editor)
  {
-    editor->init(editor, node, edit_handler, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
+    editor->init(editor, node, edit_handler, 
+                 TEXT_FIELD, 0, "Name", node->name->str, 
+                 SPIN_BUTTON, 1, "Tokens", node->place.marked,
+                 END_FIELD);
  }
 
 /**
