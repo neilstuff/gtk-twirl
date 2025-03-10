@@ -27,12 +27,13 @@ enum MODES
 {
     NORMAL = 0,
     CONNECT,
+    MOVE,
     END_MODES
     
 };
 
 /**
- * @brief an handler is an interface for implementation to processor events
+ * @brief a handler is an interface for implementation to processor events
  * 
  */
 typedef struct _HANDLER

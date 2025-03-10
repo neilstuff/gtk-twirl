@@ -158,6 +158,11 @@ gboolean controller_key_pressed(GtkEventControllerKey *self,
         TO_CONTROLLER(user_data)->mode = CONNECT;
     }
 
+    if (state & (GDK_SHIFT_MASK))
+    {
+        TO_CONTROLLER(user_data)->mode = MOVE;
+    }
+    
     return TRUE;
 }
 

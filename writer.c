@@ -22,7 +22,6 @@ void destroy_writer (WRITER * writer)
 /**
  * Create a Writer
  *
- *
  */
 WRITER * create_writer ()
 {
