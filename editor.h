@@ -22,7 +22,7 @@ enum FIELD
     END_FIELD
 };
 
-typedef void (*Handler)(int id, const char * value, void * object);
+typedef void (*Handler)(int id, void * value, void * object);
 
 /**
  * @brief an editor structure 
@@ -30,7 +30,6 @@ typedef void (*Handler)(int id, const char * value, void * object);
  */
 typedef struct _EDITOR
 {
-
 
     void (*init)(struct _EDITOR *editor, void* object, Handler handler, enum FIELD field, ...);
 

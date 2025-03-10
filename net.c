@@ -170,8 +170,6 @@ void net_artifact_iterator(gpointer artifact, gpointer context)
         {
             TO_CONTEXT(context)->view_size.size.h = h;
         }
-
-        printf("w: %f, h: %f\n", TO_CONTEXT(context)->view_size.size.w, TO_CONTEXT(context)->view_size.size.h);
     }
     break;
     }

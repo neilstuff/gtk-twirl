@@ -25,7 +25,7 @@
 #include "controller.h"
 #include "net.h"
 
-void edit_handler(int id, const char * value, void * object)
+void edit_handler(int id, void * value, void * object)
 {
  
     switch (id) {
@@ -36,6 +36,13 @@ void edit_handler(int id, const char * value, void * object)
   
             }
             break;
+
+        case 1: {
+            int * tokens = (int*)value;
+            TO_NODE(object)->place.marked = *tokens;
+            TO_NODE(object)->net->redraw(TO_NODE(object)->net);
+        }
+        break;
 
     }
  
@@ -178,6 +185,7 @@ NODE *new_node()
 
  void node_place_editor(NODE* node, EDITOR * editor)
  {
+
     editor->init(editor, node, edit_handler, 
                  TEXT_FIELD, 0, "Name", node->name->str, 
                  SPIN_BUTTON, 1, "Tokens", node->place.marked,

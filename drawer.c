@@ -135,10 +135,35 @@ void draw_place(DRAWER *drawer, PAINTER *painter)
     // Draw the marking
     if ((node->place.marked && node->artifact.state == INACTIVE) || node->place.occupied && node->artifact.state == ACTIVE)
     {
+        cairo_text_extents_t extents;
+ 
         cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
 
-        cairo_arc(drawer->canvas, node->position.x, node->position.y, 4, 0, 2 * M_PI);
-        cairo_fill(drawer->canvas);
+        if (node->place.marked == 1) {
+            cairo_arc(drawer->canvas, node->position.x, node->position.y, 4, 0, 2 * M_PI);
+            cairo_fill(drawer->canvas);
+        } else {
+            GString *tokens = g_string_new("");
+
+            g_string_printf(tokens, "%d", node->place.marked);
+
+            cairo_arc(drawer->canvas, node->position.x, node->position.y - 4, 3, 0, 2 * M_PI);
+            cairo_fill(drawer->canvas);
+
+            cairo_set_source_rgb(drawer->canvas, 0.3, 0.3, 0.3);
+            cairo_select_font_face(drawer->canvas, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+            cairo_set_font_size(drawer->canvas, 10);
+    
+            cairo_text_extents(drawer->canvas, tokens->str, &extents);
+        
+            cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 7);
+            cairo_show_text(drawer->canvas, tokens->str);
+            
+            g_string_free(tokens, TRUE);
+
+        }
+
+  
     }
 
     draw_selection_box(drawer, node);
@@ -206,16 +231,11 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
         if (iVertex % 2 == 0)
         {
 
-            printf("draw_arc: from: %d:%d\n", (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
-                   (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
             cairo_move_to(drawer->canvas, (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
                                           (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
         }
         else
         {
-
-            printf("draw_arc: to: %d:%d\n", (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
-                                            (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
 
             cairo_line_to(drawer->canvas, (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
                                           (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);

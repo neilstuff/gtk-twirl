@@ -33,12 +33,16 @@ void edit_on_entry_changed(GtkEditable *self, gpointer user_data)
 {
     LISTENER *listener = (LISTENER *)user_data;
 
-    listener->handler(listener->id, gtk_editable_get_text(self), listener->object);
+    listener->handler(listener->id, (void*)gtk_editable_get_text(self), listener->object);
 }
 
-void edit_on_value_changed (GtkSpinButton* self, gpointer user_data)
+void edit_on_value_changed(GtkSpinButton* self, gpointer user_data)
 {
+    LISTENER *listener = (LISTENER *)user_data;
+    int value = (int) gtk_spin_button_get_value(self);
 
+    listener->handler(listener->id, (void*)&value, listener->object);
+    
 }
 
 /**
@@ -103,7 +107,7 @@ void editor_init(EDITOR *editor, void *object, Handler handler, enum FIELD field
 
             gtk_label_set_xalign(GTK_LABEL(label), 0);
 
-            GtkAdjustment *adjustment = gtk_adjustment_new (va_arg(args, double), 0.0, 1000, 1, 0.1, 0.0);
+            GtkAdjustment *adjustment = gtk_adjustment_new ((double)va_arg(args, int), 0.0, 1000, 1, 0.1, 0.0);
 
             GtkWidget *button = gtk_spin_button_new (adjustment, 1.0, 0);    
             gtk_widget_set_hexpand (button, 1);  
@@ -130,6 +134,7 @@ void editor_init(EDITOR *editor, void *object, Handler handler, enum FIELD field
 
         field = va_arg(args, enum FIELD);
     }
+
 }
 
 /**
