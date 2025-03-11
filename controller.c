@@ -19,6 +19,7 @@
 
 #include "node.h"
 #include "event.h"
+#include "handler.h"
 
 #include "controller.h"
 #include "net.h"

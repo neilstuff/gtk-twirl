@@ -117,7 +117,7 @@ typedef struct _EVENT
 
         struct
         {
-            NODE * source;
+            struct _NODE * source;
             POINT * target;
 
         } connect_event;

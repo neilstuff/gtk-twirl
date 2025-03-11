@@ -22,6 +22,7 @@
 #include "arc.h"
 
 #include "event.h"
+#include "handler.h"
 #include "editor.h"
 #include "controller.h"
 
@@ -87,6 +88,8 @@ typedef struct _CONTEXT
 
 } CONTEXT, *CONTEXT_P;
 
+GPtrArray * nodes = NULL;
+
 /**
  * @brief find a node (place or transition)
  *
@@ -98,7 +101,7 @@ gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
 }
 
 /**
- * @brief
+ * @brieffind the arc by a given point
  *
  */
 gboolean net_arc_find_by_point(gconstpointer node, gconstpointer point)
@@ -270,6 +273,7 @@ void net_apply_action_all_arcs(NET *net, enum ACTION action)
  */
 void net_draw_event_processor(NET *net, EVENT *event)
 {
+
     {
         CONTEXT context;
 
@@ -295,6 +299,7 @@ void net_draw_event_processor(NET *net, EVENT *event)
 
         context.draw_context.drawer->release(context.draw_context.drawer);
     }
+
 }
 
 /**
@@ -347,6 +352,7 @@ void net_select_node_processor(NET *net, EVENT *event)
             context.point_context.found = 0;
             net_apply_context_all_arcs(net, &context);
         }
+
 
         net->redraw(net);
     }
@@ -423,6 +429,7 @@ void net_select_node_processor(NET *net, EVENT *event)
 
         net->redraw(net);
     }
+
 }
 
 /**
@@ -432,21 +439,51 @@ void net_select_node_processor(NET *net, EVENT *event)
 void net_start_drag_processor(NET *net, EVENT *event)
 {
 
-    if (event->events.start_drag_event.mode != CONNECT)
-    {
-        return;
-    }
-
     POINT point;
 
     set_point(&point, event->events.start_drag_event.x, event->events.start_drag_event.y);
 
-    NODE *node = net_find_node_by_point(net, &point);
-
-    if (node != NULL)
+    if (event->events.start_drag_event.mode == CONNECT ) 
     {
-        create_connector(net->controller, net, node);
+ 
+        NODE *node = net_find_node_by_point(net, &point);
+
+        if (node != NULL)
+        {
+            create_connector(net->controller, net, node);
+        } 
+
+    } 
+    else if (event->events.start_drag_event.mode == MOVE) 
+    {
+        NODE *node = net_find_node_by_point(net, &point);
+
+        printf("Node is NULL: %s\n", (node == NULL ? "NULL" : node->name->str));
+
+        if (nodes != NULL) {
+            g_ptr_array_free(nodes, TRUE);
+        }
+
+        nodes = g_ptr_array_new();
+
+        g_ptr_array_add(nodes, node);
+
     }
+
+}
+
+/**
+ * @brief start a drag (connecting nodes)
+ *
+ */
+void net_update_drag_processor(NET *net, EVENT *event)
+{
+    if (event->events.start_drag_event.mode == MOVE) 
+    {
+        printf("Dragging\n");
+   
+    }
+
 }
 
 /**
@@ -459,7 +496,6 @@ void net_connect_processor(NET *net, EVENT *event)
 
     if (target != NULL && event->events.connect_event.source->type != target->type)
     {
-
         g_ptr_array_add(net->arcs, create_arc(event->events.connect_event.source, target));
     }
 }
@@ -526,7 +562,7 @@ NET *net_create(CONTROLLER *controller)
     net->processors[CREATE_NODE] = net_select_node_processor;
     net->processors[CREATE_NET] = net_create_processor;
     net->processors[START_DRAG] = net_start_drag_processor;
-    net->processors[UPDATE_DRAG] = NULL;
+    net->processors[UPDATE_DRAG] = net_update_drag_processor;
     net->processors[CONNECT_NODES] = net_connect_processor;
     net->processors[END_DRAG] = NULL;
 

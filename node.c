@@ -22,6 +22,7 @@
 
 #include "node.h"
 #include "event.h"
+#include "handler.h"
 #include "controller.h"
 #include "net.h"
 
@@ -52,15 +53,15 @@ void edit_handler(int id, void * value, void * object)
  * @brief deallocate the node storage
  *
  */
-void destroy_node(NODE *node)
+void release_node(NODE *node)
 {
 
     if (node->name != NULL)
     {
-
         g_string_free(node->name, TRUE);
     }
 
+    node->handler->release(node->handler);
     g_free(node);
 }
 
@@ -160,7 +161,7 @@ NODE *new_node()
 
     node->id = 0;
 
-    node->destroy = destroy_node;
+    node->release = release_node;
     node->setPosition = set_position;
     node->getBounds = get_bounds;
     node->isNodeAtPoint = is_node_at_point;
@@ -244,6 +245,16 @@ NODE *new_transition(NODE *node)
     set_default_name(node);
 
     return node;
+}
+
+
+/**
+ * @brief release/free the node object
+ *
+ */
+void node_release(NODE *node)
+{
+    g_free(node);
 }
 
 /**

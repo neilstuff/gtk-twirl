@@ -31,9 +31,8 @@
 #define NODE_ID_ATTRIBUTE "id"
 
 /**
- * Node Definition File
+ * @brief node type
  *
- * @author Neil Brittliff
  */
 
 enum TYPE
@@ -43,7 +42,7 @@ enum TYPE
     END_NODE_TYPES
 
 };
-
+ 
 /**
  * @brief a place node (state container)
  * 
@@ -67,7 +66,6 @@ typedef struct
 
 } TRANSITION;
 
-
 typedef struct _NODE
 {
     
@@ -82,12 +80,12 @@ typedef struct _NODE
      * 
      */
     struct _PAINTER painter;
-
+    
     /**
      * @brief node's destructor
      * 
      */
-    void (*destroy)(struct _NODE *node);
+    void (*release)(struct _NODE *node);
 
     /**
      * @brief set the nodes position within the drawing canvas
@@ -142,6 +140,12 @@ typedef struct _NODE
      * 
      */
     struct _NET * net;
+
+    /**
+     * @brief the owning 'handler'
+     * 
+     */
+    struct _HANDLER * handler;
 
     /**
      * @brief private (the nodes type - place/transition)

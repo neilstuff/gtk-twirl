@@ -1,8 +1,3 @@
-#ifndef WRITER_H_INCLUDED
-#define WRITER_H_INCLUDED
-
-#define TO_WRITER(writer) ((WRITER*)(writer))
-
 /**
  * Writer - prototype
  *
@@ -13,6 +8,11 @@
  * (c) Neil Brittliff - all rights reserved
  *
  */
+
+ #ifndef WRITER_H_INCLUDED
+#define WRITER_H_INCLUDED
+
+#define TO_WRITER(writer) ((WRITER*)(writer))
 
 typedef struct _WRITER {
 

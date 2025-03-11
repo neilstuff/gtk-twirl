@@ -21,6 +21,7 @@
 
 #include "node.h"
 #include "event.h"
+#include "handler.h"
 #include "editor.h"
 #include "controller.h"
 
@@ -85,6 +86,7 @@ void connector_event_handler(EVENT *event, void *processor)
 
     break;
     }
+    
 }
 
 /**

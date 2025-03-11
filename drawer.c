@@ -17,9 +17,12 @@
 #include "drawer.h"
 #include "editor.h"
 
+
 #include "node.h"
 #include "event.h"
+
 #include "editor.h"
+#include "handler.h"
 #include "controller.h"
 
 #include "vertex.h"

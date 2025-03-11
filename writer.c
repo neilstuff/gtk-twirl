@@ -1,3 +1,14 @@
+/**
+ * @file writer.h
+ * @author Dr. Neil Brittliff (brittliff.org)
+ * @brief prototype - writes a net to a file or memory
+ * @version 0.1
+ * @date 2025-01-18
+ *
+ * @copyright Copyright (c) 2025
+ *
+ */
+
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
@@ -6,6 +17,7 @@
 #include <libxml/xmlwriter.h>
 
 #include "writer.h"
+
 /**
  * Free the writer resources
  *
