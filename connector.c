@@ -130,4 +130,5 @@ CONNECTOR *create_connector(CONTROLLER *controller, NET *net, NODE *source)
     net->controller->monitor(controller, &connector->handler);
 
     return connector;
+    
 }
