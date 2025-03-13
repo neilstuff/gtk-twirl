@@ -43,6 +43,7 @@ void mover_event_handler(EVENT *event, void *processor)
 
     case END_DRAG:
     {
+        release_mover(TO_MOVER(processor));
     }
     break;
     }

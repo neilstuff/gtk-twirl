@@ -29,6 +29,7 @@
 #include "net.h"
 
 #include "connector.h"
+#include "mover.h"
 
 #define TO_CONTEXT(context) ((CONTEXT *)(context))
 
@@ -448,6 +449,8 @@ void net_start_drag_processor(NET *net, EVENT *event)
     {
 
         printf("Node is NULL: %s\n", (node == NULL ? "NULL" : node->name->str));
+
+        create_mover(net->controller, net, node);
 
 
     }
