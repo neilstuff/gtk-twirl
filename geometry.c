@@ -124,6 +124,23 @@ POINT *set_point(POINT *point, double x, double y)
     return point;
 }
 
+
+/**
+ * @brief adjust the point
+ *
+ */
+POINT *adjust_point(POINT *point, double adjustment)
+{
+
+    double cx = point->x - ((int)point->x % 15);
+    double cy = point->y - ((int)point->y % 15);
+
+    point->x = cx < adjustment ? adjustment : cx;
+    point->y = cy < adjustment ? adjustment : cy;
+
+    return point;
+}
+
 /**
  * @brief set (width, height) size and return the size
  *

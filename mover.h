@@ -30,6 +30,7 @@ typedef struct _MOVER {
      * 
      */
     void (*release)(struct _MOVER * mover);
+    void (*addNode)(struct _MOVER * mover, NODE *node);
 
     HANDLER handler;
 
@@ -46,6 +47,6 @@ typedef struct _MOVER {
  * @brief create a mover object
  *  
  */
-extern MOVER * create_mover(CONTROLLER *controller, NET *net, NODE *source);
+extern MOVER *create_mover(CONTROLLER *controller, POINT * point, NET *net);
 
 #endif // MOVER_H_INCLUDED

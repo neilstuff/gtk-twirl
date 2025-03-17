@@ -337,9 +337,8 @@ void net_select_node_processor(NET *net, EVENT *event)
         if (context.point_context.found == 1)
         {
             EDITOR *editor = net->controller->edit(net->controller);
-            int iNode = 0;
 
-            for (; iNode < context.point_context.nodes->len; iNode++)
+            for (int iNode = 0; iNode < context.point_context.nodes->len; iNode++)
             {
                 NODE *node = g_ptr_array_index(context.point_context.nodes, iNode);
                 node->edit(node, editor);
@@ -372,20 +371,13 @@ void net_select_node_processor(NET *net, EVENT *event)
             node->id = context.id_context.id;
             node->setDefaultName(node);
 
-            int x = (int)event->events.create_node.x;
-            int y = (int)event->events.create_node.y;
+            POINT point;
 
-            int cx = x - (x % 30);
-            int cy = y - (y % 30);
+            set_point(&point, event->events.create_node.x, event->events.create_node.y);
 
-            cx = cx < 30 ? 30 : cx;
-            cy = cy < 30 ? 30 : cy;
-
-            printf("Coordinates %d, %d, %d, %d\n", x, y, cx, cy);
+            node->setPosition(node, point.x, point.y);
 
             context.action = DRAW_NODE;
-
-            node->setPosition(node, cx, cy);
 
             EDITOR *editor = net->controller->edit(net->controller);
 
@@ -439,6 +431,7 @@ void net_start_drag_processor(NET *net, EVENT *event)
     POINT point;
 
     set_point(&point, event->events.start_drag_event.x, event->events.start_drag_event.y);
+
     NODE *node = net_find_node_by_point(net, &point);
 
     if (event->events.start_drag_event.mode == CONNECT && node != NULL)
@@ -447,11 +440,9 @@ void net_start_drag_processor(NET *net, EVENT *event)
     }
     else if (event->events.start_drag_event.mode == MOVE && node != NULL)
     {
+        MOVER * mover = create_mover(net->controller, &point, net);
 
-        printf("Node is NULL: %s\n", (node == NULL ? "NULL" : node->name->str));
-
-        create_mover(net->controller, net, node);
-
+        mover->addNode(mover, node);
 
     }
 }

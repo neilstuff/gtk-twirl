@@ -38,12 +38,44 @@ void mover_event_handler(EVENT *event, void *processor)
     {
     case UPDATE_DRAG:
     {
+        for (int iNode = 0; iNode < TO_MOVER(processor)->nodes->len; iNode++) 
+        {
+            NODE *node = g_ptr_array_index(TO_MOVER(processor)->nodes, iNode);
+
+            int x = TO_MOVER(processor)->offset.x + event->events.update_drag_event.offset_x;
+            int y = TO_MOVER(processor)->offset.y + event->events.update_drag_event.offset_y;
+
+            node->setPosition(node, x, y);
+
+            
+        }
+
+        TO_MOVER(processor)->controller->redraw(TO_MOVER(processor)->controller);
+
     }
     break;
 
     case END_DRAG:
     {
-        release_mover(TO_MOVER(processor));
+        
+        for (int iNode = 0; iNode < TO_MOVER(processor)->nodes->len; iNode++) 
+        {
+            NODE *node = g_ptr_array_index(TO_MOVER(processor)->nodes, iNode);
+            POINT point; 
+            
+            set_point(&point, 
+                TO_MOVER(processor)->offset.x + event->events.update_drag_event.offset_x,
+                TO_MOVER(processor)->offset.y + event->events.update_drag_event.offset_y);
+
+            adjust_point(&point, 15);
+
+            node->setPosition(node, point.x, point.y);
+
+        }
+
+        TO_MOVER(processor)->controller->redraw(TO_MOVER(processor)->controller);
+
+        TO_MOVER(processor)->release(TO_MOVER(processor));
     }
     break;
     }
@@ -60,12 +92,20 @@ void release_mover(MOVER *mover)
 
     g_free(mover);
 }
-
 /**
- * @brief create a coonector for a specific node
+ * @brief move nodes and points
  *
  */
-MOVER *create_mover(CONTROLLER *controller, NET *net, NODE *source)
+void mover_add_node(MOVER *mover, NODE *node) 
+{
+    g_ptr_array_add(mover->nodes, node);
+}
+
+/**
+ * @brief create a mover for nodes and points
+ *
+ */
+MOVER * create_mover(CONTROLLER *controller, POINT *point, NET *net)
 {
     MOVER *mover = g_malloc(sizeof(MOVER));
 
@@ -73,12 +113,15 @@ MOVER *create_mover(CONTROLLER *controller, NET *net, NODE *source)
     mover->handler.processor = mover;
 
     mover->release = release_mover;
+    mover->addNode = mover_add_node;
 
     mover->controller = controller;
     mover->net = net;
 
-    mover->offset.x = 0;
-    mover->offset.y = 0;
+    mover->offset.x = point->x;
+    mover->offset.y = point->y;
+
+    mover->nodes = g_ptr_array_new();
 
     net->controller->monitor(controller, &mover->handler);
 

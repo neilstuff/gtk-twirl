@@ -91,6 +91,7 @@ extern int point_in_bounds(POINT * point, BOUNDS * bounds);
 
 extern POINT * get_midpoint(POINT *source, POINT *target, POINT *midpoint);
 extern POINT * set_point(POINT * point, double x, double y);
+extern POINT *adjust_point(POINT *point, double adjustment);
 extern SIZE * set_size(SIZE * size, double w, double h);
 extern LINE * set_line(LINE * line, POINT * source, POINT * target);
 
