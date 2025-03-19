@@ -26,7 +26,35 @@
 #include "controller.h"
 
 #include "net.h"
+#include "vertex.h"
+#include "arc.h"
 #include "mover.h"
+
+
+/**
+ * @brief  iterator through the nodes to adjust the first line's point
+ *
+ */
+void mover_source_arc_iterator(gpointer artifact, gpointer node)
+{
+
+    VERTEX *vertex = g_ptr_array_index(TO_ARC(artifact)->vertices, 0);
+ 
+    copy_point(&TO_NODE(node)->position, &vertex->point);  
+
+}
+
+/**
+ * @brief  iterator through the nodes to adjust the last line's point 
+ *
+ */
+void mover_target_arc_iterator(gpointer artifact, gpointer node)
+{
+    VERTEX *vertex = g_ptr_array_index(TO_ARC(artifact)->vertices, TO_ARC(artifact)->vertices->len - 1);
+ 
+    copy_point(&TO_NODE(node)->position, &vertex->point);  
+
+}
 
 /**
  * @brief event handler for a mover
@@ -47,6 +75,8 @@ void mover_event_handler(EVENT *event, void *processor)
 
             node->setPosition(node, x, y);
 
+            g_ptr_array_foreach(TO_MOVER(processor)->sources, mover_source_arc_iterator, node);
+            g_ptr_array_foreach(TO_MOVER(processor)->targets, mover_target_arc_iterator, node);
             
         }
 
@@ -70,6 +100,9 @@ void mover_event_handler(EVENT *event, void *processor)
             adjust_point(&point, 15);
 
             node->setPosition(node, point.x, point.y);
+
+            g_ptr_array_foreach(TO_MOVER(processor)->sources, mover_source_arc_iterator, node);
+            g_ptr_array_foreach(TO_MOVER(processor)->targets, mover_target_arc_iterator, node);
 
         }
 
@@ -122,6 +155,8 @@ MOVER * create_mover(CONTROLLER *controller, POINT *point, NET *net)
     mover->offset.y = point->y;
 
     mover->nodes = g_ptr_array_new();
+    mover->sources = g_ptr_array_new();
+    mover->targets = g_ptr_array_new();
 
     net->controller->monitor(controller, &mover->handler);
 

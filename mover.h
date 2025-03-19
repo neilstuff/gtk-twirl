@@ -38,6 +38,8 @@ typedef struct _MOVER {
     NET * net;
 
     GPtrArray * nodes;
+    GPtrArray * targets;
+    GPtrArray * sources;
 
     POINT offset;
 

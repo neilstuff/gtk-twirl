@@ -45,6 +45,7 @@ enum ACTION
     UNSELECT_ALL_ARCS = 7,
     SELECT_ARC_BY_POINT,
     GET_VIEW_SIZE,
+    GET_ARCS_FOR_NODE,
     EOF_ACTIONS
 };
 
@@ -60,13 +61,10 @@ typedef struct _CONTEXT
     {
         struct
         {
-
             DRAWER *drawer;
-
         } draw_context;
         struct
         {
-
             POINT point;
             int found;
             GPtrArray *nodes;
@@ -75,16 +73,19 @@ typedef struct _CONTEXT
         } point_context;
         struct
         {
-
             int id;
-
         } id_context;
         struct
         {
-
             SIZE size;
-
         } view_size;
+        struct
+        {
+            NODE *node;
+            GPtrArray *targets;
+            GPtrArray *sources;
+
+        } node_arcs;
     };
 
 } CONTEXT, *CONTEXT_P;
@@ -110,6 +111,7 @@ gboolean net_arc_find_by_point(gconstpointer node, gconstpointer point)
 
     return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), TO_POINT(point));
 }
+
 /**
  * @brief  iterator of nodes and arcs - the context determines the processor to apply to the artifact
  *
@@ -173,6 +175,19 @@ void net_artifact_iterator(gpointer artifact, gpointer context)
         if (TO_CONTEXT(context)->view_size.size.h < h)
         {
             TO_CONTEXT(context)->view_size.size.h = h;
+        }
+    }
+    break;
+    case GET_ARCS_FOR_NODE:
+    {
+        if (TO_ARC(artifact)->source == TO_CONTEXT(context)->node_arcs.node)
+        {
+            g_ptr_array_add(TO_CONTEXT(context)->node_arcs.sources, TO_ARC(artifact));
+        }
+
+        if (TO_ARC(artifact)->target == TO_CONTEXT(context)->node_arcs.node)
+        {
+            g_ptr_array_add(TO_CONTEXT(context)->node_arcs.targets, TO_ARC(artifact));
         }
     }
     break;
@@ -440,10 +455,18 @@ void net_start_drag_processor(NET *net, EVENT *event)
     }
     else if (event->events.start_drag_event.mode == MOVE && node != NULL)
     {
-        MOVER * mover = create_mover(net->controller, &point, net);
+        MOVER *mover = create_mover(net->controller, &point, net);
+
+        CONTEXT context;
+
+        context.action = GET_ARCS_FOR_NODE;
+        context.node_arcs.node = node;
 
         mover->addNode(mover, node);
+        context.node_arcs.sources = mover->sources;
+        context.node_arcs.targets = mover->targets;
 
+        net_apply_context_all_arcs(net, &context);
     }
 }
 
