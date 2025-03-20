@@ -12,19 +12,21 @@
 #ifndef DRAWER_H_INCLUDED
 #define DRAWER_H_INCLUDED
 
+#include "geometry.h"
+
 enum PAINTER_TYPE
 {
     PLACE_PAINTER = 0,
     TRANSITION_PAINTER,
     ARC_PAINTER,
     CONNECTOR_PAINTER,
+    SELECTION_AREA,
     END_PAINTER_TYPES
-
 };
 
 /**
  * @brief painter prototype - instructs the drawer what painter method to use
- * 
+ *
  */
 typedef struct _PAINTER
 {
@@ -35,34 +37,40 @@ typedef struct _PAINTER
         struct
         {
 
-            struct _NODE * node;
+            struct _NODE *node;
 
         } place_painter;
 
         struct
         {
 
-             struct _NODE * node;
+            struct _NODE *node;
 
         } transition_painter;
-      
+
         struct
         {
 
-            struct _ARC * arc;
+            struct _ARC *arc;
         } arc_painter;
-     
+
         struct
         {
 
-            struct _NET * net;
-            struct _CONNECTOR * connector;
+            struct _NET *net;
+            struct _CONNECTOR *connector;
         } connector_painter;
-  
-  
+
+        struct
+        {
+            struct _NET *net;
+            POINT start;
+            POINT finish;
+        } area_painter;
+
     } painters;
 
-} PAINTER, *PAINTER_P; 
+} PAINTER, *PAINTER_P;
 
 /**
  * @brief casts an object to a drawer
@@ -78,7 +86,7 @@ typedef struct _DRAWER
 
     void (*draw)(struct _DRAWER *drawer, PAINTER *painter);
 
-    void (*drawers[END_PAINTER_TYPES])(struct _DRAWER *drawer, PAINTER * painter);
+    void (*drawers[END_PAINTER_TYPES])(struct _DRAWER *drawer, PAINTER *painter);
 
 } DRAWER, *DRAWER_P;
 

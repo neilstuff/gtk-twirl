@@ -17,7 +17,6 @@
 #include "drawer.h"
 #include "editor.h"
 
-
 #include "node.h"
 #include "event.h"
 
@@ -104,8 +103,7 @@ void draw_text(DRAWER *drawer, NODE *node)
 void draw_selection_box(DRAWER *drawer, NODE *node)
 {
 
-    if (node->artifact.selected && node->artifact.state == INACTIVE 
-        || node->artifact.enabled && node->artifact.state == ACTIVE)
+    if (node->artifact.selected && node->artifact.state == INACTIVE || node->artifact.enabled && node->artifact.state == ACTIVE)
     {
         const double dashes[] = {1.0, 1.0, 1.0};
 
@@ -139,13 +137,16 @@ void draw_place(DRAWER *drawer, PAINTER *painter)
     if ((node->place.marked && node->artifact.state == INACTIVE) || node->place.occupied && node->artifact.state == ACTIVE)
     {
         cairo_text_extents_t extents;
- 
+
         cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
 
-        if (node->place.marked == 1) {
+        if (node->place.marked == 1)
+        {
             cairo_arc(drawer->canvas, node->position.x, node->position.y, 4, 0, 2 * M_PI);
             cairo_fill(drawer->canvas);
-        } else {
+        }
+        else
+        {
             GString *tokens = g_string_new("");
 
             g_string_printf(tokens, "%d", node->place.marked);
@@ -156,17 +157,14 @@ void draw_place(DRAWER *drawer, PAINTER *painter)
             cairo_set_source_rgb(drawer->canvas, 0.3, 0.3, 0.3);
             cairo_select_font_face(drawer->canvas, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
             cairo_set_font_size(drawer->canvas, 10);
-    
+
             cairo_text_extents(drawer->canvas, tokens->str, &extents);
-        
+
             cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 7);
             cairo_show_text(drawer->canvas, tokens->str);
-            
+
             g_string_free(tokens, TRUE);
-
         }
-
-  
     }
 
     draw_selection_box(drawer, node);
@@ -220,7 +218,6 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
         cairo_set_source_rgb(drawer->canvas, 0, 0, 255);
         cairo_set_line_width(drawer->canvas, 1);
         cairo_set_dash(drawer->canvas, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
-
     }
     else
     {
@@ -235,18 +232,18 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
         {
 
             cairo_move_to(drawer->canvas, (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
-                                          (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
+                          (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
         }
         else
         {
 
             cairo_line_to(drawer->canvas, (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
-                                          (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
+                          (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
 
             cairo_stroke(drawer->canvas);
 
             draw_arrow_head(arc, &TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,
-                                 &TO_VERTEX(arc->vertices->pdata[iVertex])->point,
+                            &TO_VERTEX(arc->vertices->pdata[iVertex])->point,
                             drawer->canvas);
         }
     }
@@ -272,6 +269,24 @@ void draw_connector(DRAWER *drawer, PAINTER *painter)
     cairo_line_to(drawer->canvas, (int)(connector->source->position.x + connector->offset.x),
                   (int)(connector->source->position.y + connector->offset.y));
 
+    cairo_stroke(drawer->canvas);
+    cairo_set_dash(drawer->canvas, dashes, 0, 0);
+}
+
+/**
+ * @brief draw the node's selection box
+ *
+ */
+void draw_selection_area(DRAWER *drawer, PAINTER *painter)
+{
+    const double dashes[] = {1.0, 1.0, 1.0};
+
+    cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.2);
+    cairo_set_dash(drawer->canvas, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
+    cairo_rectangle(drawer->canvas, (int)(painter->painters.area_painter.start.x), 
+                    (int)(painter->painters.area_painter.start.y),
+                    (int)(painter->painters.area_painter.finish.x), 
+                    (int)(painter->painters.area_painter.finish.y));
     cairo_stroke(drawer->canvas);
     cairo_set_dash(drawer->canvas, dashes, 0, 0);
 }
@@ -303,6 +318,7 @@ DRAWER *create_drawer(cairo_t *canvas)
     drawer->drawers[TRANSITION_PAINTER] = draw_transition;
     drawer->drawers[ARC_PAINTER] = draw_arc;
     drawer->drawers[CONNECTOR_PAINTER] = draw_connector;
+    drawer->drawers[SELECTION_AREA] = draw_selection_area;
 
     return drawer;
 }
