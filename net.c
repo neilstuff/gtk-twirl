@@ -318,6 +318,28 @@ void net_draw_event_processor(NET *net, EVENT *event)
 }
 
 /**
+ * @brief resize the net
+ * 
+ */
+void net_resize(NET* net) 
+{
+    CONTEXT context;
+
+    context.action = GET_VIEW_SIZE;
+    context.view_size.size.w = 0;
+    context.view_size.size.h = 0;
+
+    net_apply_context_all_nodes(net, &context);
+
+    EVENT *resize = create_event(SET_VIEW_SIZE, &context.view_size.size);
+
+    net->controller->process(net->controller, resize);
+
+    resize->release(resize);
+
+}
+
+/**
  * @brief select or create a node (based on the selected tool)
  *
  */
@@ -400,21 +422,8 @@ void net_select_node_processor(NET *net, EVENT *event)
 
             g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
 
-            {
-                CONTEXT context;
+            net->resize(net);
 
-                context.action = GET_VIEW_SIZE;
-                context.view_size.size.w = 0;
-                context.view_size.size.h = 0;
-
-                net_apply_context_all_nodes(net, &context);
-
-                EVENT *resize = create_event(SET_VIEW_SIZE, &context.view_size.size);
-
-                net->controller->process(net->controller, resize);
-
-                resize->release(resize);
-            }
             {
                 EVENT *activate = create_event(ACTIVATE_TOOLBAR, TRUE);
 
@@ -540,6 +549,7 @@ NET *net_create(CONTROLLER *controller)
 
     net->controller = controller;
     net->redraw = net_redraw;
+    net->resize = net_resize;
 
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;
