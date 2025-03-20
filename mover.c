@@ -30,7 +30,6 @@
 #include "arc.h"
 #include "mover.h"
 
-
 /**
  * @brief  iterator through the nodes to adjust the first line's point
  *
@@ -115,6 +114,15 @@ void mover_event_handler(EVENT *event, void *processor)
 }
 
 /**
+ * @brief move nodes and points
+ *
+ */
+void mover_add_node(MOVER *mover, NODE *node) 
+{
+    g_ptr_array_add(mover->nodes, node);
+}
+
+/**
  * @brief deallocate a mover object
  *
  */
@@ -124,14 +132,6 @@ void release_mover(MOVER *mover)
     mover->net->controller->unmonitor(mover->net->controller, &mover->handler);
 
     g_free(mover);
-}
-/**
- * @brief move nodes and points
- *
- */
-void mover_add_node(MOVER *mover, NODE *node) 
-{
-    g_ptr_array_add(mover->nodes, node);
 }
 
 /**
