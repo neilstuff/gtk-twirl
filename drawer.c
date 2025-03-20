@@ -40,7 +40,7 @@ void draw_arrow_head(ARC *arc, POINT *source, POINT *target, cairo_t *cr)
     gdouble slopy = atan2(target->y - source->y, target->x - source->x);
     gdouble cosy = cos(slopy);
     gdouble siny = sin(slopy);
-    gdouble par = 10;
+    gdouble par = 11;
 
     POINT position;
 
