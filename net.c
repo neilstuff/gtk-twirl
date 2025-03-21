@@ -47,6 +47,7 @@ enum ACTION
     SELECT_ARC_BY_POINT,
     GET_VIEW_SIZE,
     GET_ARCS_FOR_NODE,
+    SELECT_NODE_BY_BOUNDS,
     EOF_ACTIONS
 };
 
@@ -87,6 +88,10 @@ typedef struct _CONTEXT
             GPtrArray *sources;
 
         } node_arcs;
+        struct
+        {
+            BOUNDS bound;
+        } node_selector;
     };
 
 } CONTEXT, *CONTEXT_P;

@@ -93,11 +93,18 @@ double distance_between(POINT *a, POINT *b)
  */
 int point_in_bounds(POINT *point, BOUNDS *bounds)
 {
+    BOUNDS adjusted;
 
-    return (point->x >= bounds->point.x &&
-            point->x <= bounds->point.x + bounds->size.w &&
-            point->y >= bounds->point.y &&
-            point->y <= bounds->point.y + bounds->size.h);
+    adjusted.point.x = bounds->size.w < 0 ? bounds->point.x - bounds->size.w : bounds->point.x;
+    adjusted.point.y = bounds->size.h < 0 ? bounds->point.y - bounds->size.h : bounds->point.y;
+
+    adjusted.size.w =  abs(bounds->size.w);
+    adjusted.size.h =  abs(bounds->size.h);
+
+    return (point->x >= adjusted.point.x &&
+            point->x <= adjusted.point.x + adjusted.size.w &&
+            point->y >= adjusted.point.y &&
+            point->y <= adjusted.point.y + adjusted.size.h);
 }
 
 /**

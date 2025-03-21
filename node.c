@@ -96,6 +96,17 @@ gint is_node_at_point(NODE *node, POINT *point)
 }
 
 /**
+ * @brief get the node's bounds
+ *
+ */
+gint is_node_in_bounds(NODE *node, BOUNDS *bounds)
+{
+
+    return point_in_bounds(&node->position, bounds);
+
+}
+
+/**
  * @brief set the node's position ('x', 'y' coordinates)
  *
  */
