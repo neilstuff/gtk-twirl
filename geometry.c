@@ -132,8 +132,8 @@ POINT *set_point(POINT *point, double x, double y)
 POINT *adjust_point(POINT *point, double adjustment)
 {
 
-    double cx = point->x - ((int)point->x % 15);
-    double cy = point->y - ((int)point->y % 15);
+    double cx = point->x - ((int)point->x % (int)adjustment);
+    double cy = point->y - ((int)point->y % (int)adjustment);
 
     point->x = cx < adjustment ? adjustment : cx;
     point->y = cy < adjustment ? adjustment : cy;

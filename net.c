@@ -30,6 +30,7 @@
 
 #include "connector.h"
 #include "mover.h"
+#include "selector.h"
 
 #define TO_CONTEXT(context) ((CONTEXT *)(context))
 
@@ -218,7 +219,6 @@ NODE *net_find_node_by_point(NET *net, POINT *point)
                                          net_node_find_by_point,
                                          &index))
     {
-
         return g_ptr_array_index(net->places, index);
     }
 
@@ -227,7 +227,6 @@ NODE *net_find_node_by_point(NET *net, POINT *point)
                                          net_node_find_by_point,
                                          &index))
     {
-
         return g_ptr_array_index(net->transitions, index);
     }
 
@@ -412,6 +411,8 @@ void net_select_node_processor(NET *net, EVENT *event)
 
             set_point(&point, event->events.create_node.x, event->events.create_node.y);
 
+            adjust_point(&point, 15);
+     
             node->setPosition(node, point.x, point.y);
 
             context.action = DRAW_NODE;
@@ -477,6 +478,11 @@ void net_start_drag_processor(NET *net, EVENT *event)
 
         net_apply_context_all_arcs(net, &context);
     }
+    else if (event->events.start_drag_event.mode == MOVE && node == NULL)
+    {
+        create_selector(net->controller, &point, net);
+    }
+
 }
 
 /**
