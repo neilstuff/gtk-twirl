@@ -12,15 +12,13 @@
 #ifndef DRAWER_H_INCLUDED
 #define DRAWER_H_INCLUDED
 
-#include "geometry.h"
-
 enum PAINTER_TYPE
 {
     PLACE_PAINTER = 0,
     TRANSITION_PAINTER,
     ARC_PAINTER,
     CONNECTOR_PAINTER,
-    SELECTION_AREA,
+    SELECTOR_PAINTER,
     END_PAINTER_TYPES
 };
 
@@ -64,9 +62,9 @@ typedef struct _PAINTER
         struct
         {
             struct _NET *net;
-            POINT start;
-            POINT finish;
-        } area_painter;
+            struct _SELECTOR *selector;
+        } selector_painter;
+
 
     } painters;
 

@@ -28,6 +28,7 @@
 #include "arc.h"
 #include "net.h"
 #include "connector.h"
+#include "selector.h"
 
 #include "node.h"
 
@@ -277,16 +278,16 @@ void draw_connector(DRAWER *drawer, PAINTER *painter)
  * @brief draw the node's selection box
  *
  */
-void draw_selection_area(DRAWER *drawer, PAINTER *painter)
+void draw_selection(DRAWER *drawer, PAINTER *painter)
 {
     const double dashes[] = {1.0, 1.0, 1.0};
 
     cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.2);
     cairo_set_dash(drawer->canvas, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
-    cairo_rectangle(drawer->canvas, (int)(painter->painters.area_painter.start.x), 
-                    (int)(painter->painters.area_painter.start.y),
-                    (int)(painter->painters.area_painter.finish.x), 
-                    (int)(painter->painters.area_painter.finish.y));
+    cairo_rectangle(drawer->canvas, (int)(painter->painters.selector_painter.selector->offset.x), 
+                    (int)(painter->painters.selector_painter.selector->offset.y),
+                    (int)(painter->painters.selector_painter.selector->offset.x), 
+                    (int)(painter->painters.selector_painter.selector->offset.y));
     cairo_stroke(drawer->canvas);
     cairo_set_dash(drawer->canvas, dashes, 0, 0);
 }
@@ -318,7 +319,7 @@ DRAWER *create_drawer(cairo_t *canvas)
     drawer->drawers[TRANSITION_PAINTER] = draw_transition;
     drawer->drawers[ARC_PAINTER] = draw_arc;
     drawer->drawers[CONNECTOR_PAINTER] = draw_connector;
-    drawer->drawers[SELECTION_AREA] = draw_selection_area;
+    drawer->drawers[SELECTOR_PAINTER] = draw_selection;
 
     return drawer;
 }

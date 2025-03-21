@@ -31,6 +31,12 @@ typedef struct _MOVER {
      */
     void (*release)(struct _MOVER * mover);
     void (*addNode)(struct _MOVER * mover, NODE *node);
+    
+    /**  
+     * @brief define how the painter should draw the connector
+     * 
+     */
+    struct _PAINTER painter;
 
     HANDLER handler;
 

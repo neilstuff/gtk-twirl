@@ -17,13 +17,19 @@
  * @brief casts an object to a mover
  * 
  */
-#define TO_SELECTOR(mover) ((SELECTOR*)(selector))
+#define TO_SELECTOR(selector) ((SELECTOR*)(selector))
 
 /**
  * @brief selector interface
  * 
  */
 typedef struct _SELECTOR {
+
+    /**  
+     * @brief define how the painter should draw the connector
+     * 
+     */
+    struct _PAINTER painter;
 
     /**
      * @brief release the selector and deallocate resources
@@ -39,6 +45,7 @@ typedef struct _SELECTOR {
     GPtrArray * nodes;
 
     POINT offset;
+    POINT position;
 
 } SELECTOR, * SELECTOR_P;
 
