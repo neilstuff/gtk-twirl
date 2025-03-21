@@ -280,14 +280,20 @@ void draw_connector(DRAWER *drawer, PAINTER *painter)
  */
 void draw_selection(DRAWER *drawer, PAINTER *painter)
 {
-    const double dashes[] = {1.0, 1.0, 1.0};
+    const double dashes[] = {1.0, 1.0, 1.0}; 
 
-    cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.2);
+    cairo_set_source_rgba(drawer->canvas, 0, 0, 1.0, 0.2);
+ 
+    int width = (int)(painter->painters.selector_painter.selector->offset.x - 
+                      painter->painters.selector_painter.selector->position.x);
+
+    int height = (int)(painter->painters.selector_painter.selector->offset.y - 
+                        painter->painters.selector_painter.selector->position.y);
+
     cairo_set_dash(drawer->canvas, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
-    cairo_rectangle(drawer->canvas, (int)(painter->painters.selector_painter.selector->offset.x), 
-                    (int)(painter->painters.selector_painter.selector->offset.y),
-                    (int)(painter->painters.selector_painter.selector->offset.x), 
-                    (int)(painter->painters.selector_painter.selector->offset.y));
+    cairo_rectangle(drawer->canvas, (int)(painter->painters.selector_painter.selector->position.x), 
+                    (int)(painter->painters.selector_painter.selector->position.y),
+                    width, height);
     cairo_stroke(drawer->canvas);
     cairo_set_dash(drawer->canvas, dashes, 0, 0);
 }

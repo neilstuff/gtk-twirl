@@ -40,6 +40,8 @@ void selector_event_handler(EVENT *event, void *processor)
     {
     case UPDATE_DRAG:
     {
+        TO_SELECTOR(processor)->offset.x = TO_SELECTOR(processor)->position.x + event->events.update_drag_event.offset_x;
+        TO_SELECTOR(processor)->offset.y = TO_SELECTOR(processor)->position.y + event->events.update_drag_event.offset_y;
         TO_SELECTOR(processor)->controller->redraw(TO_SELECTOR(processor)->controller);
     }
     break;
@@ -50,6 +52,7 @@ void selector_event_handler(EVENT *event, void *processor)
         TO_SELECTOR(processor)->release(TO_SELECTOR(processor));
     }
     break;
+
     case DRAW_REQUESTED:
     {
         DRAWER *drawer = create_drawer(event->events.draw_event.canvas);
@@ -86,6 +89,9 @@ SELECTOR * create_selector(CONTROLLER *controller, POINT *point, NET *net)
 
     selector->controller = controller;
     selector->net = net;
+
+    selector->position.x = point->x;
+    selector->position.y = point->y;
 
     selector->offset.x = point->x;
     selector->offset.y = point->y;

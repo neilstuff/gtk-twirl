@@ -44,8 +44,8 @@ typedef struct _SELECTOR {
 
     GPtrArray * nodes;
 
-    POINT offset;
     POINT position;
+    POINT offset;
 
 } SELECTOR, * SELECTOR_P;
 

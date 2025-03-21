@@ -478,7 +478,7 @@ void net_start_drag_processor(NET *net, EVENT *event)
 
         net_apply_context_all_arcs(net, &context);
     }
-    else if (event->events.start_drag_event.mode == MOVE && node == NULL)
+    else if (node == NULL)
     {
         create_selector(net->controller, &point, net);
     }
