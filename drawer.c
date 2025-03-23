@@ -153,12 +153,12 @@ void draw_place(DRAWER *drawer, PAINTER *painter)
 
             g_string_printf(tokens, "%d", node->place.marked);
 
-            cairo_arc(drawer->canvas, node->position.x, node->position.y - 4, 3, 0, 2 * M_PI);
+            cairo_arc(drawer->canvas, node->position.x, node->position.y - 5, 2, 0, 2 * M_PI);
             cairo_fill(drawer->canvas);
 
             cairo_set_source_rgb(drawer->canvas, 0.3, 0.3, 0.3);
-            cairo_select_font_face(drawer->canvas, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-            cairo_set_font_size(drawer->canvas, 10);
+            cairo_select_font_face(drawer->canvas, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+            cairo_set_font_size(drawer->canvas, 11);
 
             cairo_text_extents(drawer->canvas, tokens->str, &extents);
 
