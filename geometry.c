@@ -95,12 +95,12 @@ int point_in_bounds(POINT *point, BOUNDS *bounds)
 {
     BOUNDS adjusted;
 
-    adjusted.point.x = bounds->size.w < 0 ? bounds->point.x - bounds->size.w : bounds->point.x;
-    adjusted.point.y = bounds->size.h < 0 ? bounds->point.y - bounds->size.h : bounds->point.y;
+    adjusted.point.x = bounds->size.w < 0 ? bounds->point.x + bounds->size.w : bounds->point.x;
+    adjusted.point.y = bounds->size.h < 0 ? bounds->point.y + bounds->size.h : bounds->point.y;
 
     adjusted.size.w =  abs(bounds->size.w);
     adjusted.size.h =  abs(bounds->size.h);
-
+   
     return (point->x >= adjusted.point.x &&
             point->x <= adjusted.point.x + adjusted.size.w &&
             point->y >= adjusted.point.y &&
@@ -131,6 +131,21 @@ POINT *set_point(POINT *point, double x, double y)
     return point;
 }
 
+/**
+ * @brief determine if a point is in the bounding rectangle
+ *
+ */
+int set_bounds(BOUNDS *source, BOUNDS *target)
+{
+
+    target->point.x = source->point.x;
+    target->point.y = source->point.y;
+
+    target->size.w = source->size.w;
+    target->size.h = source->size.h;
+   
+
+}
 
 /**
  * @brief adjust the point

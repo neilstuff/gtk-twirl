@@ -48,7 +48,7 @@ void controller_notify(CONTROLLER *controller, EVENT *event)
  * @brief send an event to the controller to process
  *
  */
-void controller_process(CONTROLLER *controller, EVENT *event)
+void controller_send(CONTROLLER *controller, EVENT *event)
 {
 
     switch (event->notification)
@@ -65,12 +65,26 @@ void controller_process(CONTROLLER *controller, EVENT *event)
                                         event->events.set_view_size.size.h + 64);
         }
         break;
+
+    };
+}
+
+/**
+ * @brief send an event to the controller to process
+ *
+ */
+void controller_message(CONTROLLER *controller, enum NOTIFICATION notification)
+{
+
+    switch (notification)
+    {
         case CLEAR_EDITOR:
         {
             gtk_list_box_remove_all(controller->fieldEditor);
         }
         break;
-    };
+
+    }
 }
 
 /**
@@ -139,9 +153,17 @@ void controller_gesture_released(GtkGestureClick *gesture,
                                  gpointer user_data)
 {
 
-    EVENT *event = create_event(CREATE_NODE, n_press, x, y);
+    if (TO_CONTROLLER(user_data)->mode != FINALISE)
+    {
+        EVENT *event = create_event(CREATE_NODE, n_press, x, y);
 
-    controller_notify(TO_CONTROLLER(user_data), event);
+        controller_notify(TO_CONTROLLER(user_data), event);
+    }
+    else 
+    {
+        TO_CONTROLLER(user_data)->mode = NORMAL;
+    }
+
 }
 
 /**
@@ -277,7 +299,8 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         controller->unmonitor = controller_unmonitor;
         controller->redraw = controller_redraw;
         controller->notify = controller_notify;
-        controller->process = controller_process;
+        controller->send = controller_send;
+        controller->message = controller_message;
         controller->edit = controller_edit;
 
         controller->handlers = g_ptr_array_new();

@@ -48,9 +48,39 @@ void selector_event_handler(EVENT *event, void *processor)
 
     case END_DRAG:
     {
+
+        BOUNDS bounds;
+
+        bounds.point.x = TO_SELECTOR(processor)->position.x;
+        bounds.point.y = TO_SELECTOR(processor)->position.y;
+
+        bounds.size.w = TO_SELECTOR(processor)->offset.x - TO_SELECTOR(processor)->position.x;
+        bounds.size.h = TO_SELECTOR(processor)->offset.y - TO_SELECTOR(processor)->position.y;
+
+        GPtrArray *nodes = g_ptr_array_new();
+
+        TO_SELECTOR(processor)->net->select(TO_SELECTOR(processor)->net, &bounds, nodes);
+        TO_SELECTOR(processor)->controller->message(TO_SELECTOR(processor)->controller, CLEAR_EDITOR);
+
+        EDITOR *editor = TO_SELECTOR(processor)->controller->edit(TO_SELECTOR(processor)->controller);
+
+        for (int iNode = 0; iNode < nodes->len; iNode++)
+        {
+            NODE *node = g_ptr_array_index(nodes, iNode);
+
+            node->edit(node, editor);
+            node->artifact.selected = TRUE;
+            
+            TO_SELECTOR(processor)->controller->mode = FINALISE;
+        }
+
         TO_SELECTOR(processor)->controller->redraw(TO_SELECTOR(processor)->controller);
+
         TO_SELECTOR(processor)->release(TO_SELECTOR(processor));
+    
     }
+
+
     break;
 
     case DRAW_REQUESTED:
@@ -78,7 +108,7 @@ void release_selector(SELECTOR *selector)
  * @brief create a mover for nodes and points
  *
  */
-SELECTOR * create_selector(CONTROLLER *controller, POINT *point, NET *net)
+SELECTOR *create_selector(CONTROLLER *controller, POINT *point, NET *net)
 {
     SELECTOR *selector = g_malloc(sizeof(SELECTOR));
 

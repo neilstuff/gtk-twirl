@@ -36,7 +36,6 @@ enum NOTIFICATION
     SET_VIEW_SIZE,
     CLEAR_EDITOR,
     END_NOTIFICATION
-
 };
 
 /**

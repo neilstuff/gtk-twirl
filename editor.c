@@ -52,9 +52,6 @@ void edit_on_value_changed(GtkSpinButton* self, gpointer user_data)
 void editor_init(EDITOR *editor, void *object, Handler handler, enum FIELD field, ...)
 {
     va_list args;
-
-    gtk_list_box_remove_all(editor->listBox);
-
     va_start(args, field);
 
     while (field != END_FIELD)

@@ -13,6 +13,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+
 #include "artifact.h"
 #include "drawer.h"
 #include "editor.h"

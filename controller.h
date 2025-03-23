@@ -27,6 +27,8 @@ enum MODES
     NORMAL = 0,
     CONNECT,
     MOVE,
+    DRAG,
+    FINALISE,
     END_MODES
     
 };
@@ -78,17 +80,23 @@ typedef struct _CONTROLLER
    void (*notify) (struct _CONTROLLER * controller, EVENT * event);  
 
 /**
- * @brief this is called GTK to call all handlers to respond to the 'draw' event
+ * @brief this is cto send message 
  * 
  */
-   void (*process) (struct _CONTROLLER * controller, EVENT * event);
+   void (*send) (struct _CONTROLLER * controller, EVENT * event);
+
+
+/**
+ * @brief this is similar but only requires the nitifcation
+ * 
+ */
+void (*message) (struct _CONTROLLER * controller, enum NOTIFICATION notification);
 
 /**
  * @brief this is called GTK to call all handlers to respond to the 'draw' event
  * 
  */
    void (*redraw) (struct _CONTROLLER * controller);
-
 
 /**
  * @brief this is called to get a field editor

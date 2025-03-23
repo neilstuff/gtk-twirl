@@ -37,13 +37,13 @@
 enum ACTION
 {
     DRAW_NODE = 0,
-    UNSELECT_ALL_NODES = 1,
-    SELECT_NODE_BY_POINT = 2,
-    NODE_AT_POINT = 3,
-    GET_NEXT_NODE_ID = 4,
-    DRAW_ARC = 5,
-    POINT_IN_ARC = 6,
-    UNSELECT_ALL_ARCS = 7,
+    UNSELECT_ALL_NODES,
+    SELECT_NODE_BY_POINT,
+    NODE_AT_POINT,
+    GET_NEXT_NODE_ID,
+    DRAW_ARC,
+    POINT_IN_ARC,
+    UNSELECT_ALL_ARCS,
     SELECT_ARC_BY_POINT,
     GET_VIEW_SIZE,
     GET_ARCS_FOR_NODE,
@@ -90,7 +90,8 @@ typedef struct _CONTEXT
         } node_arcs;
         struct
         {
-            BOUNDS bound;
+            GPtrArray *nodes;
+            BOUNDS bounds;
         } node_selector;
     };
 
@@ -197,6 +198,17 @@ void net_artifact_iterator(gpointer artifact, gpointer context)
         }
     }
     break;
+    case SELECT_NODE_BY_BOUNDS:
+    {
+        if (point_in_bounds(&TO_NODE(artifact)->position, &TO_CONTEXT(context)->node_selector.bounds))
+        {
+ 
+            g_ptr_array_add(TO_CONTEXT(context)->node_selector.nodes, TO_NODE(artifact));
+        }
+        {
+            TO_NODE(artifact)->artifact.selected = FALSE;
+        }
+    }
     }
 }
 
@@ -293,7 +305,6 @@ void net_apply_action_all_arcs(NET *net, enum ACTION action)
  */
 void net_draw_event_processor(NET *net, EVENT *event)
 {
-
     {
         CONTEXT context;
 
@@ -323,9 +334,9 @@ void net_draw_event_processor(NET *net, EVENT *event)
 
 /**
  * @brief resize the net
- * 
+ *
  */
-void net_resize(NET* net) 
+void net_resize(NET *net)
 {
     CONTEXT context;
 
@@ -337,10 +348,36 @@ void net_resize(NET* net)
 
     EVENT *resize = create_event(SET_VIEW_SIZE, &context.view_size.size);
 
-    net->controller->process(net->controller, resize);
+    net->controller->send(net->controller, resize);
 
     resize->release(resize);
+}
 
+/**
+ * @brief select the nodes within the bounds and unselect the others
+ *
+ */
+void net_select(NET *net, BOUNDS *bounds, GPtrArray *nodes)
+{
+
+    printf("Select %f, %f, %f, %f\n", bounds->point.x, bounds->point.y, bounds->size.w, bounds->size.h);
+
+    net_apply_action_all_arcs(net, UNSELECT_ALL_ARCS);
+
+    {
+        CONTEXT context;
+
+        context.action = SELECT_NODE_BY_BOUNDS;
+        context.node_selector.nodes = nodes;
+
+        set_bounds(bounds, &context.node_selector.bounds);
+
+        g_ptr_array_foreach(net->places,
+                            net_artifact_iterator, &context);
+
+        g_ptr_array_foreach(net->transitions,
+                            net_artifact_iterator, &context);
+    }
 }
 
 /**
@@ -349,18 +386,13 @@ void net_resize(NET* net)
  */
 void net_select_node_processor(NET *net, EVENT *event)
 {
+
     POINT point;
 
     set_point(&point, event->events.create_node.x, event->events.create_node.y);
 
     net_apply_action_all_nodes(net, UNSELECT_ALL_NODES);
     net_apply_action_all_arcs(net, UNSELECT_ALL_ARCS);
-
-    EVENT *clearEvent = create_event(CLEAR_EDITOR);
-
-    net->controller->process(net->controller, clearEvent);
-
-    clearEvent->release(clearEvent);
 
     if (net->tool == SELECT_TOOL)
     {
@@ -377,6 +409,8 @@ void net_select_node_processor(NET *net, EVENT *event)
 
         if (context.point_context.found == 1)
         {
+            net->controller->message(net->controller, CLEAR_EDITOR);
+
             EDITOR *editor = net->controller->edit(net->controller);
 
             for (int iNode = 0; iNode < context.point_context.nodes->len; iNode++)
@@ -387,6 +421,8 @@ void net_select_node_processor(NET *net, EVENT *event)
         }
         else if (!context.point_context.found)
         {
+            net->controller->message(net->controller, CLEAR_EDITOR);
+
             context.action = SELECT_ARC_BY_POINT;
             context.point_context.found = 0;
             net_apply_context_all_arcs(net, &context);
@@ -400,6 +436,8 @@ void net_select_node_processor(NET *net, EVENT *event)
 
         if (node == NULL)
         {
+            net->controller->message(net->controller, CLEAR_EDITOR);
+
             CONTEXT context;
 
             context.action = GET_NEXT_NODE_ID;
@@ -416,8 +454,8 @@ void net_select_node_processor(NET *net, EVENT *event)
 
             set_point(&point, event->events.create_node.x, event->events.create_node.y);
 
-            adjust_point(&point, 15);
-     
+            adjust_point(&point, 16);
+
             node->setPosition(node, point.x, point.y);
 
             context.action = DRAW_NODE;
@@ -433,13 +471,15 @@ void net_select_node_processor(NET *net, EVENT *event)
             {
                 EVENT *activate = create_event(ACTIVATE_TOOLBAR, TRUE);
 
-                net->controller->process(net->controller, activate);
+                net->controller->send(net->controller, activate);
 
                 activate->release(activate);
             }
         }
         else
         {
+            net->controller->message(net->controller, CLEAR_EDITOR);
+
             EDITOR *editor = net->controller->edit(net->controller);
 
             node->edit(node, editor);
@@ -487,7 +527,6 @@ void net_start_drag_processor(NET *net, EVENT *event)
     {
         create_selector(net->controller, &point, net);
     }
-
 }
 
 /**
@@ -510,7 +549,6 @@ void net_connect_processor(NET *net, EVENT *event)
  */
 void net_create_processor(NET *net, EVENT *event)
 {
-
     net->tool = event->events.create_net.tool;
 }
 
@@ -561,6 +599,7 @@ NET *net_create(CONTROLLER *controller)
     net->controller = controller;
     net->redraw = net_redraw;
     net->resize = net_resize;
+    net->select = net_select;
 
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;

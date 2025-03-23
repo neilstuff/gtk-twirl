@@ -36,6 +36,7 @@ typedef struct _NET {
 
     void (*processors[END_NOTIFICATION]) (struct _NET * net, EVENT * event);
 
+    void (*select) (struct _NET * net, BOUNDS * bounds, GPtrArray *nodes);
     void (*redraw) (struct _NET * net);
     void (*resize) (struct _NET * net);
 
