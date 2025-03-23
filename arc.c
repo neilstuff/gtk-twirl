@@ -23,6 +23,39 @@
 #include "node.h"
 
 /**
+ * @brief create a vertex
+ *
+ */
+void arc_set_vertex(ARC *arc, POINT *point)
+{
+    int iVertex = 0;
+    int located = FALSE;
+
+    for (iVertex = 0; iVertex < arc->vertices->len && !located; iVertex++)
+    {
+        POINT *source;
+
+
+        if (iVertex > 1)
+        {
+            int intersects = point_on_line(&TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,
+                                           &TO_VERTEX(arc->vertices->pdata[iVertex])->point, point, 4);
+
+            if (intersects)
+            {
+                located = TRUE;
+                break;
+            }
+        }
+
+    }
+
+    if (located) {
+        g_ptr_array_insert (arc->vertices, iVertex, create_vertex(CONTROL_POSITION, point));
+    }
+}
+
+/**
  * @brief does this arc contain the point
  *
  */
@@ -38,9 +71,7 @@ int is_arc_at_point(ARC *arc, POINT *point)
         {
             int intersects = point_on_line(&TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,  
                                            &TO_VERTEX(arc->vertices->pdata[iVertex])->point, 
-                                           point, 4);
-
-            printf("Intersects: %d\n", intersects);
+                                           point, 4);;
 
             if (intersects)
             {
@@ -57,7 +88,7 @@ int is_arc_at_point(ARC *arc, POINT *point)
  * @brief release/free an arc object
  *
  */
-void destroy_arc(ARC *arc)
+void release_arc(ARC *arc)
 {
     g_free(arc);
 }
@@ -81,8 +112,10 @@ ARC *create_arc(NODE *source, NODE *target)
     g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, &source->position));
     g_ptr_array_add(arc->vertices, create_vertex(TARGET_POSITION, &target->position));
 
-    arc->destroy = destroy_arc;
+    arc->release = release_arc;
     arc->isArcAtPoint = is_arc_at_point;
+    arc->setVertex = arc_set_vertex;
+
 
     return arc;
 }

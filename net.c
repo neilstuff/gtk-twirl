@@ -425,6 +425,7 @@ void net_select_node_processor(NET *net, EVENT *event)
 
             context.action = SELECT_ARC_BY_POINT;
             context.point_context.found = 0;
+            context.point_context.arcs = g_ptr_array_new();
             net_apply_context_all_arcs(net, &context);
         }
 

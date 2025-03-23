@@ -26,9 +26,9 @@ typedef struct _ARC
 
     struct _PAINTER painter;
 
-    void (*destroy)(struct _ARC * arc);
+    void (*release)(struct _ARC * arc);
     int (*isArcAtPoint)(struct _ARC *arc,  POINT * point);
-    void (*setBounds)(struct _ARC * arc);
+    void (*setVertex)(struct _ARC * arc, POINT * point);
     void (*draw)(struct _ARC * arc, cairo_t * cr);
 
     struct _NODE * source;
