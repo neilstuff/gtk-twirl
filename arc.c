@@ -30,26 +30,29 @@ void arc_set_vertex(ARC *arc, POINT *point)
 {
     int iVertex = 0;
     int located = FALSE;
+    POINT *source = NULL;
+    POINT *target = NULL;
 
     for (iVertex = 0; iVertex < arc->vertices->len && !located; iVertex++)
     {
-        POINT *source;
 
-        if (iVertex % 2 != 0)
-        {
-            int intersects = point_on_line(&TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,
-                                           &TO_VERTEX(arc->vertices->pdata[iVertex])->point, point, 4);
+        if (source != NULL)
+        {           
+            target = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
 
-            if (intersects)
+            if (point_on_line(source, target, point, 4))
             {
                 located = TRUE;
                 break;
             }
         }
 
+        source = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
+
     }
 
     if (located) {
+        printf("IM HERE D");
         g_ptr_array_insert (arc->vertices, iVertex, create_vertex(CONTROL_POSITION, point));
     }
 }
@@ -61,23 +64,23 @@ void arc_set_vertex(ARC *arc, POINT *point)
 int is_arc_at_point(ARC *arc, POINT *point)
 {
     int iVertex = 0;
+    POINT *source = NULL;
+    POINT *target = NULL;
  
     for (iVertex = 0; iVertex < arc->vertices->len; iVertex++)
     {
-        POINT *source;
 
-        if (iVertex % 2 != 0)
+        if ((source != NULL))
         {
-            int intersects = point_on_line(&TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,  
-                                           &TO_VERTEX(arc->vertices->pdata[iVertex])->point, 
-                                           point, 4);;
-
-            if (intersects)
+            target = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
+            if (point_on_line(source, target, point, 4)) 
             {
 
                 return TRUE;
             }
         }
+
+        source = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
     }
  
     return FALSE;
