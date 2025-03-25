@@ -52,7 +52,6 @@ void arc_set_vertex(ARC *arc, POINT *point)
     }
 
     if (located) {
-        printf("IM HERE D");
         g_ptr_array_insert (arc->vertices, iVertex, create_vertex(CONTROL_POSITION, point));
     }
 }
