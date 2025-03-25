@@ -214,6 +214,9 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
     ARC *arc = painter->painters.arc_painter.arc;
     int iVertex = 0;
     const double dashes[] = {1.0, 1.0, 1.0};
+    
+    POINT *from = NULL;
+    POINT *to = NULL;
 
     if (arc->artifact.selected)
     {
@@ -230,24 +233,29 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
     for (iVertex = 0; iVertex < arc->vertices->len; iVertex++)
     {
 
-        if (iVertex % 2 == 0)
-        {
+        if (from) {
 
-            cairo_move_to(drawer->canvas, (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
-                          (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
-        }
-        else
-        {
-
-            cairo_line_to(drawer->canvas, (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.x,
-                          (int)TO_VERTEX(arc->vertices->pdata[iVertex])->point.y);
+            to = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
+            
+            cairo_line_to(drawer->canvas, (int)to->x, (int)to->y);
 
             cairo_stroke(drawer->canvas);
 
-            draw_arrow_head(arc, &TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,
-                            &TO_VERTEX(arc->vertices->pdata[iVertex])->point,
-                            drawer->canvas);
+            draw_arrow_head(arc, from, to, drawer->canvas);
+
+            from = to;
+        } 
+
+        if (to && iVertex < arc->vertices->len - 1) {
+            cairo_arc(drawer->canvas, (int)to->x, (int)to->y, 3, 0, 2 * M_PI);
+            cairo_fill(drawer->canvas);
+ 
         }
+
+        from = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
+
+        cairo_move_to(drawer->canvas, (int)from->x, (int)from->y);
+    
     }
 
     cairo_set_dash(drawer->canvas, dashes, 0, 0);

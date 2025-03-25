@@ -427,6 +427,17 @@ void net_select_node_processor(NET *net, EVENT *event)
             context.point_context.found = 0;
             context.point_context.arcs = g_ptr_array_new();
             net_apply_context_all_arcs(net, &context);
+
+            if (net->controller->mode == CONNECT &&  context.point_context.arcs->len > 0) {
+                int iArc = 0;
+
+                for (; iArc < context.point_context.arcs->len; iArc++)
+                {
+                    ARC *arc = g_ptr_array_index(context.point_context.arcs, iArc);
+
+                    arc->setVertex(arc, &point);
+                }
+            }
         }
 
         net->redraw(net);

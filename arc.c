@@ -35,8 +35,7 @@ void arc_set_vertex(ARC *arc, POINT *point)
     {
         POINT *source;
 
-
-        if (iVertex > 1)
+        if (iVertex % 2 != 0)
         {
             int intersects = point_on_line(&TO_VERTEX(arc->vertices->pdata[iVertex - 1])->point,
                                            &TO_VERTEX(arc->vertices->pdata[iVertex])->point, point, 4);
