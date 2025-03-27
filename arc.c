@@ -108,6 +108,8 @@ ARC *create_arc(NODE *source, NODE *target)
     arc->painter.type = ARC_PAINTER;
     arc->painter.painters.arc_painter.arc = arc;
 
+    arc->weight = 1;
+
     arc->vertices = g_ptr_array_new();
 
     g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, &source->position));
@@ -116,7 +118,6 @@ ARC *create_arc(NODE *source, NODE *target)
     arc->release = release_arc;
     arc->isArcAtPoint = is_arc_at_point;
     arc->setVertex = arc_set_vertex;
-
 
     return arc;
 }

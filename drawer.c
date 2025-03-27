@@ -13,6 +13,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+#include "math.h"
 
 #include "artifact.h"
 #include "drawer.h"
@@ -66,7 +67,7 @@ void draw_arrow_head(ARC *arc, POINT *source, POINT *target, cairo_t *cr)
                   position.y + (int)(-par * siny + (par / 2.0 * cosy)));
 
     cairo_line_to(cr, position.x + (int)(-par * cosy + (par / 2.0 * siny)),
-                  position.y - (int)(par / 2.0 * cosy + par * siny));
+                      position.y - (int)(par / 2.0 * cosy + par * siny));
 
     cairo_line_to(cr, position.x, position.y);
 
@@ -75,6 +76,48 @@ void draw_arrow_head(ARC *arc, POINT *source, POINT *target, cairo_t *cr)
 
     cairo_close_path(cr);
 }
+
+/**
+ * @brief arc's arrow (-->--) drawer
+ *
+ */
+void draw_arc_tokens(DRAWER *drawer, ARC *arc, POINT *source, POINT *target, cairo_t *cr)
+{
+    POINT position;
+    cairo_text_extents_t extents;
+
+    get_midpoint(source, target, &position);
+
+    gdouble slopy = atan2(target->y - source->y, target->x - source->x);
+    gdouble cosy = cos(slopy);
+    gdouble siny = sin(slopy); 
+    int par = 20;
+
+    cairo_set_line_width(drawer->canvas, 1);
+    cairo_set_source_rgb(drawer->canvas, 0.2, 0.2, 0.2);
+    cairo_arc(drawer->canvas, position.x + (int)(-par * cosy + (par / 2.0 * siny)),
+                              position.y + (int)(-par * siny - (par / 2.0 * cosy)), 6, 0, 2 * M_PI);
+    cairo_stroke(drawer->canvas);
+
+    cairo_set_source_rgb(drawer->canvas, 1.0, 1.0, 1.0);
+    cairo_fill(drawer->canvas);
+   
+    GString *tokens = g_string_new("");
+
+    g_string_printf(tokens, "%d", arc->weight);
+
+    cairo_set_source_rgb(drawer->canvas, 0.1, 0.1, 0.1);
+    cairo_select_font_face(drawer->canvas, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size(drawer->canvas, 10);
+    cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
+    cairo_text_extents(drawer->canvas, tokens->str, &extents);
+    cairo_move_to(drawer->canvas, position.x + (int)(-par * cosy + (par / 2.0 * siny) - (int)extents.width / 2) - 1,
+                                  position.y + (int)(-par * siny - (par / 2.0 * cosy) + 3));
+    cairo_show_text(drawer->canvas, tokens->str);
+
+    g_string_free(tokens, TRUE);
+}
+
 
 /**
  * @brief draw the node's text
@@ -241,7 +284,8 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
 
             cairo_stroke(drawer->canvas);
 
-            draw_arrow_head(arc, source, target, drawer->canvas);
+            draw_arrow_head(arc, source, target, drawer->canvas);   
+            draw_arc_tokens(drawer, arc, source, target, drawer->canvas);
 
         } 
 
