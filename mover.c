@@ -54,10 +54,10 @@ void mover_target_arc_iterator(gpointer artifact, gpointer node)
 }
 
 /**
- * @brief event handler for a mover
+ * @brief event handler for moving a node
  *
  */
-void mover_event_handler(EVENT *event, void *processor)
+void mover_node_event_handler(EVENT *event, void *processor)
 {
     switch (event->notification)
     {
@@ -109,6 +109,77 @@ void mover_event_handler(EVENT *event, void *processor)
 }
 
 /**
+ * @brief event handler for moving a node
+ *
+ */
+void mover_vertex_event_handler(EVENT *event, void *processor)
+{
+    switch (event->notification)
+    {
+    case UPDATE_DRAG:
+    {
+        for (int iVertex = 0; iVertex < TO_MOVER(processor)->vertices->len; iVertex++)
+        {
+            VERTEX *vertix = g_ptr_array_index(TO_MOVER(processor)->vertices, iVertex);
+
+            int x = TO_MOVER(processor)->offset.x + event->events.update_drag_event.offset_x;
+            int y = TO_MOVER(processor)->offset.y + event->events.update_drag_event.offset_y;
+
+            POINT point;
+
+            vertix->setPoint(vertix, set_point(&point, (long)x, (long)y));
+
+        }
+
+        TO_MOVER(processor)->controller->redraw(TO_MOVER(processor)->controller);
+    }
+    break;
+
+    case END_DRAG:
+    {
+
+        for (int iVertex = 0; iVertex < TO_MOVER(processor)->vertices->len; iVertex++)
+        {
+            VERTEX *vertix = g_ptr_array_index(TO_MOVER(processor)->vertices, iVertex);
+
+            int x = TO_MOVER(processor)->offset.x + event->events.update_drag_event.offset_x;
+            int y = TO_MOVER(processor)->offset.y + event->events.update_drag_event.offset_y;
+
+            POINT point;
+
+            vertix->setPoint(vertix, set_point(&point, (long)x, (long)y));
+            vertix->artifact.selected = FALSE;
+
+        }
+
+        TO_MOVER(processor)->net->resize(TO_MOVER(processor)->net);
+        TO_MOVER(processor)->controller->redraw(TO_MOVER(processor)->controller);
+        TO_MOVER(processor)->release(TO_MOVER(processor));
+    }
+    break;
+    }
+}
+
+
+/**
+ * @brief move vertices
+ *
+ */
+void mover_add_vertex(MOVER *mover, VERTEX *vertex)
+{
+    g_ptr_array_add(mover->vertices, vertex);
+}
+
+/**
+ * @brief move nodes 
+ *
+ */
+void mover_add_node(MOVER *mover, NODE *node)
+{
+    g_ptr_array_add(mover->nodes, node);
+}
+
+/**
  * @brief deallocate a mover object
  *
  */
@@ -121,27 +192,21 @@ void release_mover(MOVER *mover)
 }
 
 /**
- * @brief move nodes and points
+ * @brief create a mover for nodes and vertices
  *
  */
-void mover_add_node(MOVER *mover, NODE *node)
-{
-    g_ptr_array_add(mover->nodes, node);
-}
-
-/**
- * @brief create a mover for nodes and points
- *
- */
-MOVER *create_mover(CONTROLLER *controller, POINT *point, NET *net)
+MOVER *create_mover(enum MOVING moving, CONTROLLER *controller, POINT *point, NET *net)
 {
     MOVER *mover = g_malloc(sizeof(MOVER));
 
-    mover->handler.handler = mover_event_handler;
+    mover->moving = moving;
+
+    mover->handler.handler = moving == MOVING_NODE ? mover_node_event_handler : mover_vertex_event_handler;
     mover->handler.processor = mover;
 
     mover->release = release_mover;
     mover->addNode = mover_add_node;
+    mover->addVertex = mover_add_vertex;
 
     mover->controller = controller;
     mover->net = net;
@@ -149,6 +214,7 @@ MOVER *create_mover(CONTROLLER *controller, POINT *point, NET *net)
     mover->offset.x = point->x;
     mover->offset.y = point->y;
 
+    mover->vertices = g_ptr_array_new();
     mover->nodes = g_ptr_array_new();
     mover->sources = g_ptr_array_new();
     mover->targets = g_ptr_array_new();

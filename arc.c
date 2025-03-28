@@ -18,31 +18,31 @@
 #include "artifact.h"
 #include "editor.h"
 #include "drawer.h"
+
+#include "event.h"
+#include "handler.h"
 #include "vertex.h"
 #include "arc.h"
 #include "node.h"
 
-#include "event.h"
-#include "handler.h"
 #include "editor.h"
 #include "controller.h"
-
 #include "net.h"
 
-void arc_edit_handler(int id, void * value, void * object)
+void arc_edit_handler(int id, void *value, void *object)
 {
- 
-    switch (id) {
 
-        case 1: {
-            int * tokens = (int*)value;
-            TO_ARC(object)->weight = *tokens;
-            TO_ARC(object)->net->redraw(TO_ARC(object)->net);
-        }
-        break;
+    switch (id)
+    {
 
+    case 1:
+    {
+        int *tokens = (int *)value;
+        TO_ARC(object)->weight = *tokens;
+        TO_ARC(object)->net->redraw(TO_ARC(object)->net);
     }
- 
+    break;
+    }
 }
 
 /**
@@ -56,11 +56,12 @@ VERTEX *arc_get_vertex(ARC *arc, POINT *point)
 
     for (iVertex = 0; iVertex < arc->vertices->len && !located; iVertex++)
     {
-
         POINT *vertex = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
 
-        if (point_on_point(vertex, point, 4))
+        if (TO_VERTEX(arc->vertices->pdata[iVertex])->position == CONTROL_POSITION 
+        && point_on_point(vertex, point, 4))
         {
+            printf("Found Vertex\n");
             return arc->vertices->pdata[iVertex];
         }
     }
@@ -98,7 +99,7 @@ void arc_set_vertex(ARC *arc, POINT *point)
 
     if (located)
     {
-        g_ptr_array_insert(arc->vertices, iVertex, create_vertex(CONTROL_POSITION, point));
+        g_ptr_array_insert(arc->vertices, iVertex, create_vertex(CONTROL_POSITION, arc->net, point));
     }
 }
 
@@ -138,7 +139,7 @@ int is_arc_at_point(ARC *arc, POINT *point)
 
 void arc_editor(ARC *arc, EDITOR *editor)
 {
-    
+
     editor->init(editor, arc, arc_edit_handler,
                  SPIN_BUTTON, 1, "Tokens", arc->weight,
                  END_FIELD);
@@ -162,7 +163,7 @@ ARC *create_arc(NET *net, NODE *source, NODE *target)
     ARC *arc = g_malloc(sizeof(ARC));
 
     arc->net = net;
- 
+
     arc->source = source;
     arc->target = target;
 
@@ -173,8 +174,8 @@ ARC *create_arc(NET *net, NODE *source, NODE *target)
 
     arc->vertices = g_ptr_array_new();
 
-    g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, &source->position));
-    g_ptr_array_add(arc->vertices, create_vertex(TARGET_POSITION, &target->position));
+    g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, net, &source->position));
+    g_ptr_array_add(arc->vertices, create_vertex(TARGET_POSITION, net, &target->position));
 
     arc->release = release_arc;
     arc->isArcAtPoint = is_arc_at_point;

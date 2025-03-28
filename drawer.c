@@ -290,6 +290,15 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
         } 
 
         if (target && iVertex < arc->vertices->len - 1) {
+
+            if (TO_VERTEX(arc->vertices->pdata[iVertex])->artifact.selected) 
+            {
+                cairo_set_source_rgba(drawer->canvas, 0, 0, 255, 1.0);
+            }
+            else 
+            {
+                cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 1.0);
+            }
             cairo_arc(drawer->canvas, (int)target->x, (int)target->y, 3, 0, 2 * M_PI);
             cairo_fill(drawer->canvas);
  

@@ -18,12 +18,13 @@
 #include "editor.h"
 #include "drawer.h"
 
+#include "event.h"
+#include "handler.h"
+
 #include "node.h"
 #include "vertex.h"
 #include "arc.h"
 
-#include "event.h"
-#include "handler.h"
 #include "editor.h"
 #include "controller.h"
 
@@ -221,6 +222,30 @@ void net_tool_event_processor(NET *net, EVENT *event)
 {
 
     net->tool = event->events.button_event.tool;
+}
+
+
+/**
+ * @brief find a vertex given a point
+ *
+ */
+VERTEX * net_find_vertex_by_point(NET *net, POINT *point)
+{
+    for (int iArc = 0; iArc < net->arcs->len; iArc++)
+    {
+        ARC *arc = g_ptr_array_index(net->arcs, iArc);
+        
+        VERTEX * vertex = arc->getVertex(arc, point);
+
+        if (vertex != NULL)
+        {
+            return vertex;
+        }
+    
+    }
+
+    return NULL;
+
 }
 
 /**
@@ -428,7 +453,6 @@ void net_select_node_processor(NET *net, EVENT *event)
             context.point_context.found = 0;
             context.point_context.arcs = g_ptr_array_new();
             net_apply_context_all_arcs(net, &context);
-
             {
                 EDITOR *editor = net->controller->edit(net->controller);
                 int iArc = 0;
@@ -440,6 +464,7 @@ void net_select_node_processor(NET *net, EVENT *event)
                     arc->edit(arc, editor);
 
                 }
+
             }
 
             if (net->controller->mode == CONNECT && context.point_context.arcs->len > 0)
@@ -537,7 +562,7 @@ void net_start_drag_processor(NET *net, EVENT *event)
     }
     else if (event->events.start_drag_event.mode == MOVE && node != NULL)
     {
-        MOVER *mover = create_mover(net->controller, &point, net);
+        MOVER *mover = create_mover(MOVING_NODE, net->controller, &point, net);
 
         CONTEXT context;
 
@@ -552,7 +577,22 @@ void net_start_drag_processor(NET *net, EVENT *event)
     }
     else if (node == NULL)
     {
-        create_selector(net->controller, &point, net);
+        VERTEX * vertex = net_find_vertex_by_point(net, &point);
+
+        if (vertex == NULL) 
+        {
+            create_selector(net->controller, &point, net);
+        } 
+        else
+        {
+
+            MOVER *mover = create_mover(MOVING_VERTEX, net->controller, &point, net);
+
+            mover->addVertex(mover, vertex);
+
+            vertex->artifact.selected = TRUE;
+
+        }
     }
 }
 

@@ -13,6 +13,14 @@
 
 #include "geometry.h"
 
+enum MOVING
+{
+    MOVING_NODE = 0,
+    MOVING_VERTEX,
+    END_MOVING_TYPES
+
+};
+
 /**
  * @brief casts an object to a mover
  * 
@@ -31,6 +39,7 @@ typedef struct _MOVER {
      */
     void (*release)(struct _MOVER * mover);
     void (*addNode)(struct _MOVER * mover, NODE *node);
+    void (*addVertex)(struct _MOVER * mover, VERTEX *vertex);
     
     /**  
      * @brief define how the painter should draw the connector
@@ -43,10 +52,13 @@ typedef struct _MOVER {
     CONTROLLER * controller;
     NET * net;
 
+    GPtrArray * vertices;  
+
     GPtrArray * nodes;
     GPtrArray * targets;
     GPtrArray * sources;
 
+    enum MOVING moving;
     POINT offset;
 
 } MOVER, * MOVER_P;
@@ -55,6 +67,6 @@ typedef struct _MOVER {
  * @brief create a mover object
  *  
  */
-extern MOVER *create_mover(CONTROLLER *controller, POINT * point, NET *net);
+extern MOVER *create_mover(enum MOVING moving, CONTROLLER *controller, POINT * point, NET *net);
 
 #endif // MOVER_H_INCLUDED

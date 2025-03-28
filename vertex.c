@@ -15,14 +15,34 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+#include "geometry.h"
 #include "artifact.h"
+#include "editor.h"
+#include "drawer.h"
+
+#include "node.h"
+#include "event.h"
+#include "handler.h"
+
+#include "artifact.h"
+#include "controller.h"
+#include "net.h"
 #include "vertex.h"
+
+/**
+ * @brief copy the point
+ * 
+ */
+void vertex_set_point(VERTEX *vertex, POINT *point)
+{
+    copy_point(point, &vertex->point);   
+}
 
 /**
  * @brief release/free a vertex object
  *
  */
-void destroy_vertex(VERTEX *vertex)
+void vertex_release(VERTEX *vertex)
 {
     g_free(vertex);
 }
@@ -31,15 +51,21 @@ void destroy_vertex(VERTEX *vertex)
  * @brief vertex constructor
  *
  */
-VERTEX *create_vertex(enum POSITION position, POINT * point)
+VERTEX *create_vertex(enum POSITION position, NET * net, POINT * point)
 {
     VERTEX *vertex = g_malloc(sizeof(VERTEX));
 
+    vertex->net = net;
     vertex->position = position;
+    
+    vertex->artifact.state = INACTIVE;
+    vertex->artifact.selected = FALSE;
     
     copy_point(point, &vertex->point);   
 
-    vertex->destroy = destroy_vertex;
+    vertex->release = vertex_release;    
+    vertex->setPoint = vertex_set_point;    
+
 
     return vertex;
 }
