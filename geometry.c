@@ -88,6 +88,18 @@ double distance_between(POINT *a, POINT *b)
 }
 
 /**
+ * @brief determine if a point is near a point
+ */
+int point_on_point(POINT *point, POINT *test, int adjustment)
+{
+
+    return (point->x >= test->x - adjustment &&
+            point->x <= test->x + adjustment &&
+            point->y >= test->y - adjustment &&
+            point->y <= test->y + adjustment );
+}
+
+/**
  * @brief determine if a point is in the bounding rectangle
  *
  */

@@ -27,9 +27,23 @@ typedef struct _ARC
     struct _PAINTER painter;
 
     void (*release)(struct _ARC * arc);
-    int (*isArcAtPoint)(struct _ARC *arc,  POINT * point);
+    int (*isArcAtPoint)(struct _ARC * arc,  POINT * point);
+    VERTEX * (*getVertex)(struct _ARC * arc, POINT * point);
     void (*setVertex)(struct _ARC * arc, POINT * point);
+
+    /**
+     * @brief draw the arc
+     * 
+     */
     void (*draw)(struct _ARC * arc, cairo_t * cr);
+
+    /**
+     * @brief edit the arc's properties and attributes
+     * 
+     */
+    void (*edit)(struct _ARC * arc,  EDITOR * editor);
+
+    struct _NET * net;
 
     struct _NODE * source;
     struct _NODE * target;
@@ -40,6 +54,6 @@ typedef struct _ARC
 
 } ARC, * ARC_P;
 
-extern ARC * create_arc (struct _NODE * source, struct _NODE * target);
+extern ARC * create_arc(struct _NET * net,  struct _NODE * source, struct _NODE * target);
 
 #endif // ARC_H_INCLUDED

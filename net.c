@@ -19,6 +19,7 @@
 #include "drawer.h"
 
 #include "node.h"
+#include "vertex.h"
 #include "arc.h"
 
 #include "event.h"
@@ -202,7 +203,7 @@ void net_artifact_iterator(gpointer artifact, gpointer context)
     {
         if (point_in_bounds(&TO_NODE(artifact)->position, &TO_CONTEXT(context)->node_selector.bounds))
         {
- 
+
             g_ptr_array_add(TO_CONTEXT(context)->node_selector.nodes, TO_NODE(artifact));
         }
         {
@@ -428,7 +429,21 @@ void net_select_node_processor(NET *net, EVENT *event)
             context.point_context.arcs = g_ptr_array_new();
             net_apply_context_all_arcs(net, &context);
 
-            if (net->controller->mode == CONNECT &&  context.point_context.arcs->len > 0) {
+            {
+                EDITOR *editor = net->controller->edit(net->controller);
+                int iArc = 0;
+
+                for (; iArc < context.point_context.arcs->len; iArc++)
+                {
+                    ARC * arc =  g_ptr_array_index(context.point_context.arcs, iArc);
+
+                    arc->edit(arc, editor);
+
+                }
+            }
+
+            if (net->controller->mode == CONNECT && context.point_context.arcs->len > 0)
+            {
                 int iArc = 0;
 
                 for (; iArc < context.point_context.arcs->len; iArc++)
@@ -551,7 +566,25 @@ void net_connect_processor(NET *net, EVENT *event)
 
     if (target != NULL && event->events.connect_event.source->type != target->type)
     {
-        g_ptr_array_add(net->arcs, create_arc(event->events.connect_event.source, target));
+        net_apply_action_all_nodes(net, UNSELECT_ALL_NODES);
+        net_apply_action_all_arcs(net, UNSELECT_ALL_ARCS);
+        
+        ARC *arc = create_arc(net, event->events.connect_event.source, target);
+
+        arc->artifact.selected = TRUE;
+
+        net->controller->message(net->controller, CLEAR_EDITOR);
+
+        EDITOR *editor = net->controller->edit(net->controller);
+       
+        arc->edit(arc, editor);
+
+        g_ptr_array_add(net->arcs, arc);
+        
+        net->controller->mode = FINALISE;
+
+        net->redraw(net);
+        
     }
 }
 

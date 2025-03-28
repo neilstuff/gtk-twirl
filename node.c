@@ -26,7 +26,7 @@
 #include "controller.h"
 #include "net.h"
 
-void edit_handler(int id, void * value, void * object)
+void node_edit_handler(int id, void * value, void * object)
 {
  
     switch (id) {
@@ -198,7 +198,7 @@ NODE *new_node()
  void node_place_editor(NODE* node, EDITOR * editor)
  {
 
-    editor->init(editor, node, edit_handler, 
+    editor->init(editor, node, node_edit_handler, 
                  TEXT_FIELD, 0, "Name", node->name->str, 
                  SPIN_BUTTON, 1, "Tokens", node->place.marked,
                  END_FIELD);
@@ -233,7 +233,7 @@ NODE *new_place(NODE * node)
 
  void node_transition_editor(NODE* node, EDITOR * editor)
  {
-    editor->init(editor, node, edit_handler, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
+    editor->init(editor, node, node_edit_handler, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
  }
 
 /**
