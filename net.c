@@ -726,6 +726,7 @@ void net_delete_selected(NET *net, EVENT *event)
     net->controller->message(net->controller, CLEAR_EDITOR);
 
     net_activate(net, ACTIVATE_DELETE, FALSE);
+    net->resize(net);
     net->redraw(net);
 
 }

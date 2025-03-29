@@ -16,7 +16,7 @@
 
 typedef struct _WRITER {
 
-    void (*destroy)(struct _WRITER * writer);
+    void (*release)(struct _WRITER * writer);
 
     xmlDocPtr document;
     xmlTextWriterPtr writer;

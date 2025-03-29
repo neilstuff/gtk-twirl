@@ -22,7 +22,7 @@
  * Free the writer resources
  *
  */
-void destroy_writer (WRITER * writer)
+void release_writer (WRITER * writer)
 {
 
     xmlFreeDoc(writer->document);
@@ -39,7 +39,7 @@ WRITER * create_writer ()
 {
     WRITER * writer = g_malloc(sizeof(WRITER));
 
-    writer->destroy = destroy_writer;
+    writer->release = release_writer;
 	writer->writer = xmlNewTextWriterDoc(&writer->document, 0);
 
     return writer;
