@@ -29,6 +29,47 @@
 #include "controller.h"
 #include "net.h"
 
+typedef struct _PATH
+{
+    POINT *point;
+
+} PATH, *PATH_P;
+
+/**
+ * @brief  iterator of nodes and arcs - the context determines the processor to apply to the artifact
+ *
+ */
+void arc_vertex_path_iterator(gpointer artifact, gpointer context)
+{
+    PATH *path = (PATH *)context;
+
+    path->point->x = TO_VERTEX(artifact)->point.x > path->point->x ? TO_VERTEX(artifact)->point.x : path->point->x;
+    path->point->y = TO_VERTEX(artifact)->point.y > path->point->y ? TO_VERTEX(artifact)->point.y : path->point->y;
+
+}
+
+/**
+ * @brief get the bounds of th arc - used to calculate the scrollbars for the primary view
+ *
+ */
+POINT *arc_get_path_bounds(ARC *arc, POINT *point)
+{
+    PATH path;
+
+    set_point(point, 0, 0);
+
+    path.point = point;
+
+    g_ptr_array_foreach(arc->vertices,
+                        arc_vertex_path_iterator, &path);
+
+    return point;
+}
+
+/**
+ * @brief arc edit handler called from the editor
+ *
+ */
 void arc_edit_handler(int id, void *value, void *object)
 {
 
@@ -58,10 +99,8 @@ VERTEX *arc_get_vertex(ARC *arc, POINT *point)
     {
         POINT *vertex = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
 
-        if (TO_VERTEX(arc->vertices->pdata[iVertex])->position == CONTROL_POSITION 
-        && point_on_point(vertex, point, 4))
+        if (TO_VERTEX(arc->vertices->pdata[iVertex])->position == CONTROL_POSITION && point_on_point(vertex, point, 4))
         {
-            printf("Found Vertex\n");
             return arc->vertices->pdata[iVertex];
         }
     }
@@ -179,6 +218,7 @@ ARC *create_arc(NET *net, NODE *source, NODE *target)
 
     arc->release = release_arc;
     arc->isArcAtPoint = is_arc_at_point;
+    arc->getPathBounds = arc_get_path_bounds;
     arc->setVertex = arc_set_vertex;
     arc->getVertex = arc_get_vertex;
     arc->edit = arc_editor;

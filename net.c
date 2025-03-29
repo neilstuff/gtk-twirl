@@ -47,9 +47,11 @@ enum ACTION
     POINT_IN_ARC,
     UNSELECT_ALL_ARCS,
     SELECT_ARC_BY_POINT,
-    GET_VIEW_SIZE,
+    GET_NODE_VIEW_SIZE,
+    GET_ARC_VIEW_SIZE,
     GET_ARCS_FOR_NODE,
     SELECT_NODE_BY_BOUNDS,
+    GET_SELECTED_NODES,
     EOF_ACTIONS
 };
 
@@ -86,15 +88,22 @@ typedef struct _CONTEXT
         struct
         {
             NODE *node;
-            GPtrArray *targets;
             GPtrArray *sources;
-
+            GPtrArray *targets;
         } node_arcs;
         struct
         {
             GPtrArray *nodes;
             BOUNDS bounds;
         } node_selector;
+        struct
+        {
+            NET * net;
+
+            GPtrArray *nodes;
+            GPtrArray *sources;
+            GPtrArray *targets;
+        } node_arc_selector;
     };
 
 } CONTEXT, *CONTEXT_P;
@@ -172,7 +181,7 @@ void net_artifact_iterator(gpointer artifact, gpointer context)
                                                  ? TO_NODE(artifact)->id + 1
                                                  : TO_CONTEXT(context)->id_context.id;
         break;
-    case GET_VIEW_SIZE:
+    case GET_NODE_VIEW_SIZE:
     {
         double w = TO_NODE(artifact)->bounds.point.x + TO_NODE(artifact)->bounds.size.w;
         double h = TO_NODE(artifact)->bounds.point.y + TO_NODE(artifact)->bounds.size.h;
@@ -184,6 +193,22 @@ void net_artifact_iterator(gpointer artifact, gpointer context)
         if (TO_CONTEXT(context)->view_size.size.h < h)
         {
             TO_CONTEXT(context)->view_size.size.h = h;
+        }
+    }
+    break;
+    case GET_ARC_VIEW_SIZE:
+    {
+        POINT point;
+
+        TO_ARC(artifact)->getPathBounds(TO_ARC(artifact), &point);
+
+        if (TO_CONTEXT(context)->view_size.size.w < point.x)
+        {
+            TO_CONTEXT(context)->view_size.size.w = point.x;
+        }
+        if (TO_CONTEXT(context)->view_size.size.h < point.y)
+        {
+            TO_CONTEXT(context)->view_size.size.h = point.y;
         }
     }
     break;
@@ -211,6 +236,29 @@ void net_artifact_iterator(gpointer artifact, gpointer context)
             TO_NODE(artifact)->artifact.selected = FALSE;
         }
     }
+    break;
+    case GET_SELECTED_NODES:
+    {
+        if (TO_NODE(artifact)->artifact.selected == TRUE)
+        {
+            g_ptr_array_add(TO_CONTEXT(context)->node_arc_selector.nodes, TO_NODE(artifact));
+
+            {
+                CONTEXT selector;
+ 
+                selector.action = GET_ARCS_FOR_NODE;
+                selector.node_arcs.node = TO_NODE(artifact);
+                selector.node_arcs.sources = TO_CONTEXT(context)->node_arc_selector.sources;
+                selector.node_arcs.targets = TO_CONTEXT(context)->node_arc_selector.targets;
+
+                g_ptr_array_foreach(TO_CONTEXT(context)->node_arc_selector.net->arcs,
+                            net_artifact_iterator, &selector);
+
+            }
+    
+        }
+    }
+    break;
     }
 }
 
@@ -224,28 +272,25 @@ void net_tool_event_processor(NET *net, EVENT *event)
     net->tool = event->events.button_event.tool;
 }
 
-
 /**
  * @brief find a vertex given a point
  *
  */
-VERTEX * net_find_vertex_by_point(NET *net, POINT *point)
+VERTEX *net_find_vertex_by_point(NET *net, POINT *point)
 {
     for (int iArc = 0; iArc < net->arcs->len; iArc++)
     {
         ARC *arc = g_ptr_array_index(net->arcs, iArc);
-        
-        VERTEX * vertex = arc->getVertex(arc, point);
+
+        VERTEX *vertex = arc->getVertex(arc, point);
 
         if (vertex != NULL)
         {
             return vertex;
         }
-    
     }
 
     return NULL;
-
 }
 
 /**
@@ -358,6 +403,15 @@ void net_draw_event_processor(NET *net, EVENT *event)
     }
 }
 
+void net_activate(NET *net, enum NOTIFICATION notification, int status)
+{
+    EVENT *activate = create_event(notification, status);
+
+    net->controller->send(net->controller, activate);
+
+    activate->release(activate);
+}
+
 /**
  * @brief resize the net
  *
@@ -366,11 +420,16 @@ void net_resize(NET *net)
 {
     CONTEXT context;
 
-    context.action = GET_VIEW_SIZE;
+    context.action = GET_NODE_VIEW_SIZE;
     context.view_size.size.w = 0;
     context.view_size.size.h = 0;
 
     net_apply_context_all_nodes(net, &context);
+
+    context.action = GET_ARC_VIEW_SIZE;
+
+    g_ptr_array_foreach(net->arcs,
+                        net_artifact_iterator, &context);
 
     EVENT *resize = create_event(SET_VIEW_SIZE, &context.view_size.size);
 
@@ -385,8 +444,6 @@ void net_resize(NET *net)
  */
 void net_select(NET *net, BOUNDS *bounds, GPtrArray *nodes)
 {
-
-    printf("Select %f, %f, %f, %f\n", bounds->point.x, bounds->point.y, bounds->size.w, bounds->size.h);
 
     net_apply_action_all_arcs(net, UNSELECT_ALL_ARCS);
 
@@ -459,12 +516,10 @@ void net_select_node_processor(NET *net, EVENT *event)
 
                 for (; iArc < context.point_context.arcs->len; iArc++)
                 {
-                    ARC * arc =  g_ptr_array_index(context.point_context.arcs, iArc);
+                    ARC *arc = g_ptr_array_index(context.point_context.arcs, iArc);
 
                     arc->edit(arc, editor);
-
                 }
-
             }
 
             if (net->controller->mode == CONNECT && context.point_context.arcs->len > 0)
@@ -479,6 +534,8 @@ void net_select_node_processor(NET *net, EVENT *event)
                 }
             }
         }
+
+        net_activate(net, ACTIVATE_DELETE, TRUE);
 
         net->redraw(net);
     }
@@ -539,8 +596,11 @@ void net_select_node_processor(NET *net, EVENT *event)
             node->artifact.selected = TRUE;
         }
 
+        net_activate(net, ACTIVATE_DELETE, TRUE);
+
         net->redraw(net);
     }
+
 }
 
 /**
@@ -577,12 +637,12 @@ void net_start_drag_processor(NET *net, EVENT *event)
     }
     else if (node == NULL)
     {
-        VERTEX * vertex = net_find_vertex_by_point(net, &point);
+        VERTEX *vertex = net_find_vertex_by_point(net, &point);
 
-        if (vertex == NULL) 
+        if (vertex == NULL)
         {
             create_selector(net->controller, &point, net);
-        } 
+        }
         else
         {
 
@@ -591,7 +651,6 @@ void net_start_drag_processor(NET *net, EVENT *event)
             mover->addVertex(mover, vertex);
 
             vertex->artifact.selected = TRUE;
-
         }
     }
 }
@@ -608,7 +667,7 @@ void net_connect_processor(NET *net, EVENT *event)
     {
         net_apply_action_all_nodes(net, UNSELECT_ALL_NODES);
         net_apply_action_all_arcs(net, UNSELECT_ALL_ARCS);
-        
+
         ARC *arc = create_arc(net, event->events.connect_event.source, target);
 
         arc->artifact.selected = TRUE;
@@ -616,16 +675,59 @@ void net_connect_processor(NET *net, EVENT *event)
         net->controller->message(net->controller, CLEAR_EDITOR);
 
         EDITOR *editor = net->controller->edit(net->controller);
-       
+
         arc->edit(arc, editor);
 
         g_ptr_array_add(net->arcs, arc);
-        
+
         net->controller->mode = FINALISE;
 
+        net_activate(net, ACTIVATE_DELETE, TRUE);
         net->redraw(net);
-        
     }
+}
+
+/**
+ * @brief delete all the selected nodes
+ *
+ */
+void net_delete_selected(NET *net, EVENT *event)
+{
+    CONTEXT context;
+
+    context.action = GET_SELECTED_NODES;
+    context.node_arc_selector.net = net;
+    context.node_arc_selector.nodes = g_ptr_array_new();
+    context.node_arc_selector.sources = g_ptr_array_new();
+    context.node_arc_selector.targets = g_ptr_array_new();
+
+    net_apply_context_all_nodes(net, &context);
+
+    for (int iNode = 0; iNode < context.node_arc_selector.nodes->len; iNode++)
+    {
+        NODE *node = g_ptr_array_index(context.node_arc_selector.nodes, iNode);
+        
+        g_ptr_array_remove (net->places, node);
+        g_ptr_array_remove (net->transitions, node);
+    }
+
+    for (int iArc = 0; iArc < context.node_arc_selector.sources->len; iArc++)
+    {
+      
+        g_ptr_array_remove (net->arcs, g_ptr_array_index(context.node_arc_selector.sources, iArc));
+    }
+
+    for (int iArc = 0; iArc < context.node_arc_selector.targets->len; iArc++)
+    {
+        
+        g_ptr_array_remove (net->arcs, g_ptr_array_index(context.node_arc_selector.targets, iArc));
+    }
+
+    net->controller->message(net->controller, CLEAR_EDITOR);
+
+    net_activate(net, ACTIVATE_DELETE, FALSE);
+    net->redraw(net);
+
 }
 
 /**
@@ -693,6 +795,7 @@ NET *net_create(CONTROLLER *controller)
     net->processors[START_DRAG] = net_start_drag_processor;
     net->processors[UPDATE_DRAG] = NULL;
     net->processors[CONNECT_NODES] = net_connect_processor;
+    net->processors[DELETE_SELECTED] = net_delete_selected;
     net->processors[END_DRAG] = NULL;
 
     net->release = net_release;

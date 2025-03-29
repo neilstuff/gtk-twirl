@@ -59,6 +59,13 @@ void controller_send(CONTROLLER *controller, EVENT *event)
             gtk_widget_set_sensitive(controller->saveAsToolbarButton, event->events.activate_toolbar.activate);
         }
         break;
+
+        case ACTIVATE_DELETE:
+        {
+            gtk_widget_set_sensitive(controller->deleteToolbarButton, event->events.activate_toolbar.activate);
+        }
+        break;
+
         case SET_VIEW_SIZE:
         {
             gtk_widget_set_size_request(controller->drawingArea, event->events.set_view_size.size.w + 64,
@@ -138,6 +145,17 @@ void controller_transition_clicked(GtkButton *button, gpointer user_data)
     GdkCursor *cursor = gdk_cursor_new_from_name("copy", NULL);
 
     gtk_widget_set_cursor(TO_CONTROLLER(user_data)->scrolledWindow, cursor);
+
+    controller_notify(TO_CONTROLLER(user_data), event);
+}
+
+/**
+ * @brief 'delete' tool selected
+ *
+ */
+void controller_delete_clicked(GtkButton *button, gpointer user_data)
+{
+    EVENT *event = create_event(DELETE_SELECTED);
 
     controller_notify(TO_CONTROLLER(user_data), event);
 }
@@ -334,6 +352,8 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
             GTK_WIDGET(gtk_builder_get_object(builder, "saveToolbarButton"));
         controller->saveAsToolbarButton =
             GTK_WIDGET(gtk_builder_get_object(builder, "saveAsToolbarButton"));
+        controller->deleteToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "deleteToolbarButton"));
     }
     {
         g_signal_connect(controller->selectButton, "clicked",
@@ -345,10 +365,13 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         g_signal_connect(controller->transitionButton, "clicked",
                          G_CALLBACK(controller_transition_clicked), controller);
 
+        g_signal_connect(controller->deleteToolbarButton, "clicked",
+                            G_CALLBACK(controller_delete_clicked), controller);
+
         gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(controller->drawingArea), controller_draw, controller,
                                        NULL);
+       
         controller->click = gtk_gesture_click_new();
-
         g_signal_connect(controller->click, "released",
                          G_CALLBACK(controller_gesture_released),
                          controller);

@@ -105,6 +105,10 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
             copy_size(va_arg(args, SIZE*), &event->events.set_view_size.size);
         }
         break;
+        case ACTIVATE_DELETE:
+        {
+            event->events.activate_toolbar.activate = va_arg(args, int);
+        }
     }
 
     va_end(args);

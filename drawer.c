@@ -111,11 +111,15 @@ void draw_arc_tokens(DRAWER *drawer, ARC *arc, POINT *source, POINT *target, cai
     cairo_set_font_size(drawer->canvas, 10);
     cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
     cairo_text_extents(drawer->canvas, tokens->str, &extents);
-    cairo_move_to(drawer->canvas, position.x + (int)(-par * cosy + (par / 2.0 * siny) - (int)extents.width / 2) - 1,
+
+    int adjustment = atoi(tokens->str) > 9  && atoi(tokens->str) < 20 || atoi(tokens->str) == 1 ? 1 : 0;
+    
+    cairo_move_to(drawer->canvas, position.x + (int)(-par * cosy + (par / 2.0 * siny) - (int)extents.width / 2 - adjustment),
                                   position.y + (int)(-par * siny - (par / 2.0 * cosy) + 3));
     cairo_show_text(drawer->canvas, tokens->str);
 
     g_string_free(tokens, TRUE);
+
 }
 
 
