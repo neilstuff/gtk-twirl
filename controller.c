@@ -53,26 +53,25 @@ void controller_send(CONTROLLER *controller, EVENT *event)
 
     switch (event->notification)
     {
-        case ACTIVATE_TOOLBAR:
-        {
-            gtk_widget_set_sensitive(controller->saveToolbarButton, event->events.activate_toolbar.activate);
-            gtk_widget_set_sensitive(controller->saveAsToolbarButton, event->events.activate_toolbar.activate);
-        }
-        break;
+    case ACTIVATE_TOOLBAR:
+    {
+        gtk_widget_set_sensitive(controller->saveToolbarButton, event->events.activate_toolbar.activate);
+        gtk_widget_set_sensitive(controller->saveAsToolbarButton, event->events.activate_toolbar.activate);
+    }
+    break;
 
-        case ACTIVATE_DELETE:
-        {
-            gtk_widget_set_sensitive(controller->deleteToolbarButton, event->events.activate_toolbar.activate);
-        }
-        break;
+    case ACTIVATE_DELETE:
+    {
+        gtk_widget_set_sensitive(controller->deleteToolbarButton, event->events.activate_toolbar.activate);
+    }
+    break;
 
-        case SET_VIEW_SIZE:
-        {
-            gtk_widget_set_size_request(controller->drawingArea, event->events.set_view_size.size.w + 64,
-                                        event->events.set_view_size.size.h + 64);
-        }
-        break;
-
+    case SET_VIEW_SIZE:
+    {
+        gtk_widget_set_size_request(controller->drawingArea, event->events.set_view_size.size.w + 64,
+                                    event->events.set_view_size.size.h + 64);
+    }
+    break;
     };
 }
 
@@ -85,12 +84,11 @@ void controller_message(CONTROLLER *controller, enum NOTIFICATION notification)
 
     switch (notification)
     {
-        case CLEAR_EDITOR:
-        {
-            gtk_list_box_remove_all(controller->fieldEditor);
-        }
-        break;
-
+    case CLEAR_EDITOR:
+    {
+        gtk_list_box_remove_all(controller->fieldEditor);
+    }
+    break;
     }
 }
 
@@ -149,6 +147,73 @@ void controller_transition_clicked(GtkButton *button, gpointer user_data)
     controller_notify(TO_CONTROLLER(user_data), event);
 }
 
+void controller_open(GObject *source_object, GAsyncResult *res, gpointer data)
+{
+    GError *error = NULL;
+
+    GFile *file = gtk_file_dialog_open_finish((GtkFileDialog *)source_object, res, &error);
+
+    if (file != NULL) {
+        char *path = g_file_get_path(file);
+        printf("OPEN Path: %s\n", path);
+    }
+}
+
+void controller_save(GObject *source_object, GAsyncResult *res, gpointer data)
+{
+    GError *error = NULL;
+
+    GFile *file = gtk_file_dialog_save_finish((GtkFileDialog *)source_object, res, &error);
+
+    if (file != NULL) {
+        char *path = g_file_get_path(file);
+        printf("SAVE Path: %s\n", path);
+    }
+
+}
+
+/**
+ * @brief 'open' toolbar selected
+ *
+ */
+void controller_open_clicked(GtkButton *button, gpointer user_data)
+{
+
+    GtkFileDialog *filedialog = gtk_file_dialog_new();
+
+    GtkFileFilter *filefilter = gtk_file_filter_new();
+    gtk_file_filter_add_suffix(filefilter, "xml");
+    gtk_file_filter_set_name(filefilter, "XML File");
+
+    GListStore *liststore = g_list_store_new(GTK_TYPE_FILE_FILTER);
+    g_list_store_append(liststore, filefilter);
+
+    gtk_file_dialog_set_filters(filedialog, G_LIST_MODEL(liststore));
+
+    gtk_file_dialog_open(filedialog, GTK_WINDOW(TO_CONTROLLER(user_data)->window), NULL, controller_open, user_data);
+}
+
+/**
+ * @brief 'save' toolbar selected
+ *
+ */
+void controller_save_clicked(GtkButton *button, gpointer user_data)
+{
+
+    GtkFileDialog *filedialog = gtk_file_dialog_new();
+
+    GtkFileFilter *filefilter = gtk_file_filter_new();
+    gtk_file_filter_add_suffix(filefilter, "xml");
+    gtk_file_filter_set_name(filefilter, "XML File");
+
+    GListStore *liststore = g_list_store_new(GTK_TYPE_FILE_FILTER);
+    g_list_store_append(liststore, filefilter);
+
+    gtk_file_dialog_set_filters(filedialog, G_LIST_MODEL(liststore));
+
+    gtk_file_dialog_save(filedialog, GTK_WINDOW(TO_CONTROLLER(user_data)->window), NULL, controller_save, user_data);
+}
+
 /**
  * @brief 'delete' tool selected
  *
@@ -177,11 +242,10 @@ void controller_gesture_released(GtkGestureClick *gesture,
 
         controller_notify(TO_CONTROLLER(user_data), event);
     }
-    else 
+    else
     {
         TO_CONTROLLER(user_data)->mode = NORMAL;
     }
-
 }
 
 /**
@@ -203,7 +267,7 @@ gboolean controller_key_pressed(GtkEventControllerKey *self,
     {
         TO_CONTROLLER(user_data)->mode = MOVE;
     }
-    
+
     return TRUE;
 }
 
@@ -283,9 +347,9 @@ void controller_unmonitor(CONTROLLER *controller, HANDLER *handler)
 /**
  * @brief get a field editor
  */
-EDITOR * controller_edit(CONTROLLER *controller)
+EDITOR *controller_edit(CONTROLLER *controller)
 {
-    return create_editor(controller->fieldEditor);   
+    return create_editor(controller->fieldEditor);
 }
 
 /**
@@ -348,6 +412,8 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         controller->transitionButton =
             GTK_WIDGET(gtk_builder_get_object(builder, "transitionButton"));
 
+        controller->openToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "openToolbarButton"));
         controller->saveToolbarButton =
             GTK_WIDGET(gtk_builder_get_object(builder, "saveToolbarButton"));
         controller->saveAsToolbarButton =
@@ -365,12 +431,18 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         g_signal_connect(controller->transitionButton, "clicked",
                          G_CALLBACK(controller_transition_clicked), controller);
 
+        g_signal_connect(controller->openToolbarButton, "clicked",
+                         G_CALLBACK(controller_open_clicked), controller);
+
+        g_signal_connect(controller->saveToolbarButton, "clicked",
+                         G_CALLBACK(controller_save_clicked), controller);
+
         g_signal_connect(controller->deleteToolbarButton, "clicked",
-                            G_CALLBACK(controller_delete_clicked), controller);
+                         G_CALLBACK(controller_delete_clicked), controller);
 
         gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(controller->drawingArea), controller_draw, controller,
                                        NULL);
-       
+
         controller->click = gtk_gesture_click_new();
         g_signal_connect(controller->click, "released",
                          G_CALLBACK(controller_gesture_released),

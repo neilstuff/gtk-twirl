@@ -52,6 +52,7 @@ typedef struct _CONTROLLER
     GtkWidget *placeButton;
     GtkWidget *transitionButton;
 
+    GtkWidget *openToolbarButton;
     GtkWidget *saveToolbarButton;
     GtkWidget *saveAsToolbarButton;
     GtkWidget *deleteToolbarButton;
