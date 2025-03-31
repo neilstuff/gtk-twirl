@@ -38,7 +38,6 @@
 
 #include "writer.h"
 
-
 /**
  * @brief find the arc by a given point
  *
