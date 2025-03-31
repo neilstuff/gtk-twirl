@@ -109,6 +109,11 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
         {
             event->events.activate_toolbar.activate = va_arg(args, int);
         }
+        break;
+        case SAVE_NET:
+        {
+            event->events.save_net.file = va_arg(args, GFile*);
+        }
     }
 
     va_end(args);

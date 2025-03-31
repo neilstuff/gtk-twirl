@@ -114,6 +114,27 @@ void writer_generate_nodes (WRITER * writer, NET * net)
 }
 
 /**
+ * Create a Writer
+ *
+ */
+void writer_write(WRITER * writer, NET * net)
+{
+	xmlTextWriterStartDocument (writer->writer, NULL, ENCODING, NULL);
+
+	xmlTextWriterStartElement (writer->writer, BAD_CAST NET_ELEMENT);
+
+    writer_generate_nodes(writer, net);
+
+	xmlTextWriterEndElement (writer->writer);
+	xmlTextWriterEndElement (writer->writer);
+
+	xmlTextWriterEndDocument (writer->writer);
+
+    xmlFreeTextWriter (writer->writer);
+
+}
+
+/**
  * Free the writer resources
  *
  */
@@ -135,6 +156,7 @@ WRITER * create_writer ()
     WRITER * writer = g_malloc(sizeof(WRITER));
 
     writer->release = release_writer;
+    writer->write = writer_write;
     writer->writer = xmlNewTextWriterDoc(&writer->document, 0);
 
     return writer;

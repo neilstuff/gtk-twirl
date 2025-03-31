@@ -37,6 +37,7 @@ enum NOTIFICATION
     ACTIVATE_DELETE,
     SET_VIEW_SIZE,
     CLEAR_EDITOR,
+    SAVE_NET,
     END_NOTIFICATION
 };
 
@@ -136,13 +137,18 @@ typedef struct _EVENT
             int activate;
 
         } activate_toolbar;
-
         struct
         {
 
             SIZE size;
 
         } set_view_size;
+        struct
+        {
+
+           GFile * file;
+
+        } save_net;
 
     } events;
 
