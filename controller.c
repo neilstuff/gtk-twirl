@@ -13,9 +13,16 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+#include <libxml/encoding.h>
+#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
+
 #include "artifact.h"
+
 #include "editor.h"
 #include "drawer.h"
+#include "reader.h"
+#include "writer.h"
 
 #include "node.h"
 #include "event.h"
@@ -350,6 +357,23 @@ void controller_unmonitor(CONTROLLER *controller, HANDLER *handler)
 EDITOR *controller_edit(CONTROLLER *controller)
 {
     return create_editor(controller->fieldEditor);
+}
+
+
+/**
+ * @brief get a field editor
+ */
+READER *controller_reader(CONTROLLER *controller, char *filename)
+{
+    return create_reader_from_file(filename);
+}
+
+/**
+ * @brief get a field editor
+ */
+WRITER *controller_writer(CONTROLLER *controller)
+{
+    return create_writer();
 }
 
 /**

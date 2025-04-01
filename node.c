@@ -15,10 +15,17 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+#include <libxml/encoding.h>
+#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
+
 #include "geometry.h"
 #include "artifact.h"
-#include "editor.h"
+
 #include "drawer.h"
+#include "editor.h"
+#include "reader.h"
+#include "writer.h"
 
 #include "node.h"
 #include "event.h"

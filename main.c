@@ -25,9 +25,16 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+#include <libxml/encoding.h>
+#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
+
 #include "artifact.h"
+
 #include "editor.h"
 #include "drawer.h"
+#include "reader.h"
+#include "writer.h"
 
 #include "node.h"
 

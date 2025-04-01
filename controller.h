@@ -14,106 +14,117 @@
 
 /**
  * @brief casts an object to a controller
- * 
+ *
  */
-#define TO_CONTROLLER(controller) ((CONTROLLER*)(controller))
+#define TO_CONTROLLER(controller) ((CONTROLLER *)(controller))
 
 /**
  * @brief drag modes - based on the control key being pressed
- * 
+ *
  */
 enum MODES
 {
-    NORMAL = 0,
-    CONNECT,
-    MOVE,
-    DRAG,
-    FINALISE,
-    END_MODES
-    
+  NORMAL = 0,
+  CONNECT,
+  MOVE,
+  DRAG,
+  FINALISE,
+  END_MODES
+
 };
 
 /**
- * @brief controller interface 
- * 
+ * @brief controller interface
+ *
  */
-typedef struct _CONTROLLER 
+typedef struct _CONTROLLER
 {
 
-    GtkWidget *window;
-    GtkWidget *scrolledWindow;
-    GtkWidget *drawingArea;
-    GtkWidget *viewPort;
-    GtkGesture *click;
-    GtkGesture *drag;
-    GtkEventController * keyController;
+  GtkWidget *window;
+  GtkWidget *scrolledWindow;
+  GtkWidget *drawingArea;
+  GtkWidget *viewPort;
+  GtkGesture *click;
+  GtkGesture *drag;
+  GtkEventController *keyController;
 
-    GtkWidget *selectButton;
-    GtkWidget *placeButton;
-    GtkWidget *transitionButton;
+  GtkWidget *selectButton;
+  GtkWidget *placeButton;
+  GtkWidget *transitionButton;
 
-    GtkWidget *openToolbarButton;
-    GtkWidget *saveToolbarButton;
-    GtkWidget *saveAsToolbarButton;
-    GtkWidget *deleteToolbarButton;
+  GtkWidget *openToolbarButton;
+  GtkWidget *saveToolbarButton;
+  GtkWidget *saveAsToolbarButton;
+  GtkWidget *deleteToolbarButton;
 
-    GtkListBox *fieldEditor;
+  GtkListBox *fieldEditor;
 
-    GPtrArray * handlers;
+  GPtrArray *handlers;
 
-    enum MODES mode;
+  enum MODES mode;
 
-/**
- * @brief this adds the handler(s) array to include the handler
- * 
- */
-   void (*monitor) (struct _CONTROLLER * controller, HANDLER * handler);  
+  /**
+   * @brief this adds the handler(s) array to include the handler
+   *
+   */
+  void (*monitor)(struct _CONTROLLER *controller, HANDLER *handler);
 
-/**
- * @brief this removes the handler(s) array to include the handler
- * 
- */
-   void (*unmonitor) (struct _CONTROLLER * controller, HANDLER * handler);  
+  /**
+   * @brief this removes the handler(s) array to include the handler
+   *
+   */
+  void (*unmonitor)(struct _CONTROLLER *controller, HANDLER *handler);
 
-/**
- * @brief notify the handler(s) to process the event
- * 
- */
-   void (*notify) (struct _CONTROLLER * controller, EVENT * event);  
+  /**
+   * @brief notify the handler(s) to process the event
+   *
+   */
+  void (*notify)(struct _CONTROLLER *controller, EVENT *event);
 
-/**
- * @brief this is cto send message 
- * 
- */
-   void (*send) (struct _CONTROLLER * controller, EVENT * event);
+  /**
+   * @brief this is send message
+   *
+   */
+  void (*send)(struct _CONTROLLER *controller, EVENT *event);
 
+  /**
+   * @brief this is similar but only requires the nitifcation
+   *
+   */
+  void (*message)(struct _CONTROLLER *controller, enum NOTIFICATION notification);
 
-/**
- * @brief this is similar but only requires the nitifcation
- * 
- */
-void (*message) (struct _CONTROLLER * controller, enum NOTIFICATION notification);
+  /**
+   * @brief this is called GTK to call all handlers to respond to the 'draw' event
+   *
+   */
+  void (*redraw)(struct _CONTROLLER *controller);
 
-/**
- * @brief this is called GTK to call all handlers to respond to the 'draw' event
- * 
- */
-   void (*redraw) (struct _CONTROLLER * controller);
+  /**
+   * @brief this is called to get a field editor
+   *
+   */
+  EDITOR *(*edit)(struct _CONTROLLER *controller);
 
-/**
- * @brief this is called to get a field editor
- * 
- */
-   EDITOR * (*edit) (struct _CONTROLLER * controller);
+  /**
+   * @brief this is called to get a field editor
+   *
+   */
+  WRITER *(*writer)(struct _CONTROLLER *controller);
 
-/**
- * @brief release the controller and return all resources
- * 
- */
-   void (*release) (struct _CONTROLLER * controller);
-    
-} CONTROLLER, * CONTROLLER_P;
+  /**
+   * @brief this is called to get a field editor
+   *
+   */
+  READER *(*reader)(struct _CONTROLLER *controller, char * filename);
 
-extern CONTROLLER * create_controller(GtkApplication * gtkAppication, char * resourceURL);
+  /**
+   * @brief release the controller and return all resources
+   *
+   */
+  void (*release)(struct _CONTROLLER *controller);
+
+} CONTROLLER, *CONTROLLER_P;
+
+extern CONTROLLER *create_controller(GtkApplication *gtkAppication, char *resourceURL);
 
 #endif // CONTROLLER_H_INCLUDED

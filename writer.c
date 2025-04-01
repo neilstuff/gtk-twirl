@@ -14,6 +14,7 @@
 #include <gdk/gdk.h>
 
 #include <libxml/encoding.h>
+#include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
 #include "artifact.h"
@@ -28,6 +29,8 @@
 #include "arc.h"
 
 #include "editor.h"
+#include "reader.h"
+#include "writer.h"
 #include "controller.h"
 
 #include "net.h"
@@ -35,8 +38,6 @@
 #include "connector.h"
 #include "mover.h"
 #include "selector.h"
-
-#include "writer.h"
 
 /**
  * @brief find the arc by a given point

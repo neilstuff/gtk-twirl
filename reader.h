@@ -14,7 +14,7 @@
 
  typedef struct _READER {
 
-    void (*read)(struct _READER * reader, NET * net);
+    void (*read)(struct _READER * reader);
     void (*release)(struct _READER * reader);
 
     xmlDocPtr  document;

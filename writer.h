@@ -34,7 +34,7 @@
 
 typedef struct _WRITER {
 
-    void (*write)(struct _WRITER * writer, NET * net);
+    void (*write)(struct _WRITER * writer, struct _NET * net);
     void (*release)(struct _WRITER * writer);
 
     xmlDocPtr document;

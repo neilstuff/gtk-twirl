@@ -15,6 +15,7 @@
 
 #include <libxml/encoding.h>
 #include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
 
 #include "artifact.h"
 #include "editor.h"
@@ -28,6 +29,9 @@
 #include "arc.h"
 
 #include "editor.h"
+#include "reader.h"
+#include "writer.h"
+
 #include "controller.h"
 
 #include "net.h"
