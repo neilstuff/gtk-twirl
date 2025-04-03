@@ -40,8 +40,10 @@ typedef struct _WRITER {
     xmlDocPtr document;
     xmlTextWriterPtr writer;
 
+    char* file;
+
 } WRITER, * WRITER_P;
 
-extern WRITER * create_writer();
+extern WRITER * create_writer_from_file(char * file);
 
 #endif // WRITER_H_INCLUDED

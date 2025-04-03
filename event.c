@@ -13,11 +13,19 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
+#include <libxml/encoding.h>
+#include <libxml/xmlreader.h>
+#include <libxml/xmlwriter.h>
+
 #include "artifact.h"
 #include "editor.h"
 #include "drawer.h"
 #include "node.h"
+
+#include "reader.h"
+#include "writer.h"
 #include "event.h"
+
 
 /**
  * @brief deallocate an event's storage
@@ -110,10 +118,19 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
             event->events.activate_toolbar.activate = va_arg(args, int);
         }
         break;
-        case SAVE_NET:
+        case READ_NET:
         {
-            event->events.save_net.file = va_arg(args, GFile*);
+            event->events.read_net.reader = va_arg(args, READER*);
+            event->events.read_net.filename = va_arg(args, char*);
         }
+        break;
+        case WRITE_NET:
+        {
+            event->events.write_net.writer = va_arg(args, WRITER*);
+            event->events.write_net.filename = va_arg(args, char*);
+  
+        }
+        break;
     }
 
     va_end(args);

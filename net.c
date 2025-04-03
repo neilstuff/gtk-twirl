@@ -739,6 +739,30 @@ void net_delete_selected(NET *net, EVENT *event)
 }
 
 /**
+ * @brief create a net from a file
+ *
+ */
+void net_read_net(NET *net, EVENT *event)
+{
+
+    printf("net_read_net: %s\n", event->events.read_net.filename);
+
+}
+
+/**
+ * @brief save a net a formula
+ *
+ */
+void net_write_net(NET *net, EVENT *event)
+{
+
+    printf("net_write_net: %s\n", event->events.write_net.filename);
+
+    event->events.write_net.writer->write(event->events.write_net.writer, net);
+
+}
+
+/**
  * @brief set the current tool - for the created net
  *
  */
@@ -804,6 +828,8 @@ NET *net_create(CONTROLLER *controller)
     net->processors[UPDATE_DRAG] = NULL;
     net->processors[CONNECT_NODES] = net_connect_processor;
     net->processors[DELETE_SELECTED] = net_delete_selected;
+    net->processors[READ_NET] = net_read_net;
+    net->processors[WRITE_NET] = net_write_net;
     net->processors[END_DRAG] = NULL;
 
     net->release = net_release;

@@ -37,7 +37,8 @@ enum NOTIFICATION
     ACTIVATE_DELETE,
     SET_VIEW_SIZE,
     CLEAR_EDITOR,
-    SAVE_NET,
+    READ_NET,
+    WRITE_NET,
     END_NOTIFICATION
 };
 
@@ -146,9 +147,17 @@ typedef struct _EVENT
         struct
         {
 
-           GFile * file;
+           struct _READER * reader;
+           char * filename;
 
-        } save_net;
+        } read_net;
+        struct
+        {
+
+           struct _WRITER * writer;
+           char * filename;
+
+        } write_net;
 
     } events;
 

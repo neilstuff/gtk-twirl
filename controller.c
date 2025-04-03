@@ -162,8 +162,15 @@ void controller_open(GObject *source_object, GAsyncResult *res, gpointer data)
 
     if (file != NULL) {
         char *path = g_file_get_path(file);
+        
         printf("OPEN Path: %s\n", path);
+
+        EVENT * event = create_event(READ_NET, create_reader_from_file(path), path);
+
+        controller_notify(TO_CONTROLLER(data), event);
+
     }
+
 }
 
 void controller_save(GObject *source_object, GAsyncResult *res, gpointer data)
@@ -175,6 +182,12 @@ void controller_save(GObject *source_object, GAsyncResult *res, gpointer data)
     if (file != NULL) {
         char *path = g_file_get_path(file);
         printf("SAVE Path: %s\n", path);
+        WRITER * writer = create_writer_from_file(path);
+
+        EVENT * event = create_event(WRITE_NET, writer, path);
+
+        controller_notify(TO_CONTROLLER(data), event);
+
     }
 
 }
@@ -222,8 +235,8 @@ void controller_save_clicked(GtkButton *button, gpointer user_data)
 }
 
 /**
- * @brief 'delete' tool selected
- *
+ * @brief delete tool selected
+ * 
  */
 void controller_delete_clicked(GtkButton *button, gpointer user_data)
 {
@@ -357,23 +370,6 @@ void controller_unmonitor(CONTROLLER *controller, HANDLER *handler)
 EDITOR *controller_edit(CONTROLLER *controller)
 {
     return create_editor(controller->fieldEditor);
-}
-
-
-/**
- * @brief get a field editor
- */
-READER *controller_reader(CONTROLLER *controller, char *filename)
-{
-    return create_reader_from_file(filename);
-}
-
-/**
- * @brief get a field editor
- */
-WRITER *controller_writer(CONTROLLER *controller)
-{
-    return create_writer();
 }
 
 /**
