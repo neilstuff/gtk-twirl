@@ -34,7 +34,6 @@
  * @brief node type
  *
  */
-
 enum TYPE
 {
     PLACE_NODE = 0,

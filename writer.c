@@ -40,23 +40,42 @@
 #include "selector.h"
 
 /**
- * @brief find the arc by a given point
+ * @brief iterate through the vertices
  *
  */
-void writer_arc_iterator(gpointer node, gpointer writer)
+void writer_vertex_iterator(gpointer arc, gpointer writer)
+{
+
+    xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST VERTEX_ELEMENT);
+
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, X_ATTRIBUTE, "%d", (int)TO_VERTEX(arc)->point.x);
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, Y_ATTRIBUTE, "%d", (int)TO_VERTEX(arc)->point.y);
+ 
+    xmlTextWriterEndElement(TO_WRITER(writer)->writer);
+    
+}
+
+/**
+ * @brief iterate through the arcs
+ *
+ */
+void writer_arc_iterator(gpointer arc, gpointer writer)
 {
 
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST ARC_ELEMENT);
-    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, SOURCE_ATTRIBUTE, "%d", (int)TO_ARC(node)->source->id);
-    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TARGET_ATTRIBUTE, "%d", (int)TO_ARC(node)->source->id);;
-    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, WEIGHT_ATTRIBUTE, "%d", (int)TO_ARC(node)->weight);;
-	xmlTextWriterEndElement(TO_WRITER(writer)->writer); 
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, SOURCE_ATTRIBUTE, "%d", (int)TO_ARC(arc)->source->id);
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TARGET_ATTRIBUTE, "%d", (int)TO_ARC(arc)->source->id);
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, WEIGHT_ATTRIBUTE, "%d", (int)TO_ARC(arc)->weight);
+
+    g_ptr_array_foreach(TO_ARC(arc)->vertices,
+        writer_vertex_iterator, writer);
+
+    xmlTextWriterEndElement(TO_WRITER(writer)->writer);
 
 }
 
-
 /**
- * @brief find the arc by a given point
+ * @brief iterate through the place
  *
  */
 void writer_place_iterator(gpointer node, gpointer writer)
@@ -65,19 +84,20 @@ void writer_place_iterator(gpointer node, gpointer writer)
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST PLACE_ELEMENT);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_ID_ATTRIBUTE, "%d", (int)TO_NODE(node)->id);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_NAME_ATTRIBUTE, "%s", TO_NODE(node)->name->str);
- 
+
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST GRAPHICS_ELEMENT);
 
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, X_ATTRIBUTE, "%d", (int)TO_NODE(node)->position.x);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, Y_ATTRIBUTE, "%d", (int)TO_NODE(node)->position.y);
 
-	xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Graphics
-	xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Place
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TOKENS_ATTRIBUTE, "%d", (int)TO_PLACE(node).marked);
 
+    xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Graphics
+    xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Place
 }
 
 /**
- * @brief find the arc by a given point
+ * @brief iterate through the transitions
  *
  */
 void writer_transition_iterator(gpointer node, gpointer writer)
@@ -86,81 +106,89 @@ void writer_transition_iterator(gpointer node, gpointer writer)
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST TRANSITION_ELEMENT);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_ID_ATTRIBUTE, "%d", (int)TO_NODE(node)->id);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_NAME_ATTRIBUTE, "%s", TO_NODE(node)->name->str);
- 
+
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST GRAPHICS_ELEMENT);
 
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, X_ATTRIBUTE, "%d", (int)TO_NODE(node)->position.x);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, Y_ATTRIBUTE, "%d", (int)TO_NODE(node)->position.y);
 
-	xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Graphics
-	xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Transition
-
+    xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Graphics
+    xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Transition
 }
 
 /**
  * Free the writer resources
  *
  */
-void writer_generate_nodes (WRITER * writer, NET * net)
+void writer_generate_nodes(WRITER *writer, NET *net)
 {
 
+    printf("writer_generate_nodes : ENTER\n");
+
     g_ptr_array_foreach(net->places,
-        writer_place_iterator, writer);
+                        writer_place_iterator, writer);
 
     g_ptr_array_foreach(net->transitions,
-            writer_transition_iterator, writer);
-    
-    
+                        writer_transition_iterator, writer);
+
+    g_ptr_array_foreach(net->arcs,
+                        writer_arc_iterator, writer);
+
+    printf("writer_generate_nodes : EXIT\n");
 }
 
 /**
  * Write out the NET
  *
  */
-void writer_write(WRITER * writer, NET * net)
+void writer_write(WRITER *writer, NET *net)
 {
-	xmlTextWriterStartDocument (writer->writer, NULL, ENCODING, NULL);
+    xmlTextWriterStartDocument(writer->writer, NULL, ENCODING, NULL);
 
-	xmlTextWriterStartElement (writer->writer, BAD_CAST NET_ELEMENT);
+    xmlTextWriterStartElement(writer->writer, BAD_CAST NET_ELEMENT);
 
     writer_generate_nodes(writer, net);
 
-	xmlTextWriterEndElement (writer->writer);
+    xmlTextWriterEndElement(writer->writer);
 
-	xmlTextWriterEndDocument (writer->writer);
+    xmlTextWriterEndDocument(writer->writer);
 
-    xmlFreeTextWriter (writer->writer);
+    xmlFreeTextWriter(writer->writer);
 
+    xmlBufferPtr buf = xmlBufferCreate();
+
+    xmlNodeDump(buf, NULL, xmlDocGetRootElement(writer->document), 1, 1);
+    printf("%s", (char *)buf->content);
+
+    xmlSaveFileEnc(writer->filename, writer->document, ENCODING);
 }
 
 /**
  * Free the writer resources
  *
  */
-void release_writer (WRITER * writer)
+void release_writer(WRITER *writer)
 {
 
     xmlFreeDoc(writer->document);
 
-    g_free (writer);
-
+    g_free(writer);
 }
 
 /**
  * Create a Writer
  *
  */
-WRITER * create_writer_from_file(char * file)
+WRITER *create_writer_from_file(char *filename)
 {
-    WRITER * writer = g_malloc(sizeof(WRITER));
+    WRITER *writer = g_malloc(sizeof(WRITER));
 
     writer->release = release_writer;
     writer->write = writer_write;
 
-    writer->file = file;
+    writer->filename = filename;
 
     writer->writer = xmlNewTextWriterDoc(&writer->document, 0);
 
     return writer;
-
 }

@@ -22,6 +22,8 @@
 #define TRANSITION_ELEMENT "transition"
 #define GRAPHICS_ELEMENT "graphics"
 #define ARC_ELEMENT "arc"
+#define VERTEX_ELEMENT "vertex"
+
 #define NODE_NAME_ATTRIBUTE "name"
 
 #define SOURCE_ATTRIBUTE "source"
@@ -40,7 +42,7 @@ typedef struct _WRITER {
     xmlDocPtr document;
     xmlTextWriterPtr writer;
 
-    char* file;
+    char* filename;
 
 } WRITER, * WRITER_P;
 
