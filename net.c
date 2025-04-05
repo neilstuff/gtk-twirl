@@ -744,8 +744,36 @@ void net_delete_selected(NET *net, EVENT *event)
  */
 void net_read_net(NET *net, EVENT *event)
 {
-
     printf("net_read_net: %s\n", event->events.read_net.filename);
+
+    for (int iNode = 0; net->places->len != 0; iNode++)
+    {
+        NODE *node = g_ptr_array_index(net->places, iNode);
+        
+        g_ptr_array_remove (net->places, node);
+
+        node->release(node);
+
+    }
+
+    for (int iNode = 0; net->transitions->len != 0;)
+    {
+        NODE *node = g_ptr_array_index(net->transitions, iNode);
+        
+        g_ptr_array_remove (net->places, node);
+
+        node->release(node);
+
+    }
+
+    for (int iArc = 0; net->arcs->len != 0; )
+    {
+        ARC *arc = g_ptr_array_index(net->arcs, iArc);
+
+        g_ptr_array_remove (net->arcs, g_ptr_array_index( net->arcs, iArc));
+
+        arc->release(arc);
+    }
 
 }
 
