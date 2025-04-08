@@ -55,7 +55,7 @@ OBJECTS = $(patsubst %.c,$(OBJDIR)/%.o,$(ALL_SRC))
 all: twirl
 
 resource.c: twirl.gresource.xml twirl.ui
-	$(COMPILE_RESOURCES) twirl.gresource.xml --target=$(SRCDIR)\$@ --sourcedir=. --generate-source
+	$(COMPILE_RESOURCES) twirl.gresource.xml --target=$(SRCDIR)/$@ --sourcedir=. --generate-source
 
 obj/%.o:$(SRCDIR)/%.c resource.c
 	$(CC) -c -o $(OBJDIR)/$(@F) $(INC) $<
