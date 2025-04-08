@@ -68,7 +68,6 @@ void release_node(NODE *node)
         g_string_free(node->name, TRUE);
     }
 
-    node->handler->release(node->handler);
     g_free(node);
 }
 

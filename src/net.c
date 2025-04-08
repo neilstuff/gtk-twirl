@@ -746,25 +746,33 @@ void net_read_net(NET *net, EVENT *event)
 {
     printf("net_read_net: %s\n", event->events.read_net.filename);
 
-    for (int iNode = 0; net->places->len != 0; iNode++)
+    for (int iNode = 0; net->places->len != 0;)
     {
         NODE *node = g_ptr_array_index(net->places, iNode);
         
         g_ptr_array_remove (net->places, node);
 
+        printf("net_read_net Before (PLACES): %d\n", net->places->len);
+
         node->release(node);
 
+        printf("net_read_net After (PLACES): %d\n", iNode);
+
     }
+
+    printf("net_read_net: %s\n", "deleted Places");
 
     for (int iNode = 0; net->transitions->len != 0;)
     {
         NODE *node = g_ptr_array_index(net->transitions, iNode);
         
-        g_ptr_array_remove (net->places, node);
+        g_ptr_array_remove (net->transitions, node);
 
         node->release(node);
 
     }
+
+    printf("net_read_net: %s\n", "deleted Transitions");
 
     for (int iArc = 0; net->arcs->len != 0; )
     {
@@ -774,6 +782,11 @@ void net_read_net(NET *net, EVENT *event)
 
         arc->release(arc);
     }
+
+    event->events.read_net.reader->read(event->events.read_net.reader, net);
+
+    net->resize(net);
+    net->redraw(net);
 
 }
 

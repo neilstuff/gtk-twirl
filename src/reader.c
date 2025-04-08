@@ -46,6 +46,16 @@
  * Free the reader resources
  *
  */
+
+ void reader_read(READER *reader, NET *net)
+{
+
+}
+
+/**
+ * Free the reader resources
+ *
+ */
 void release_reader(READER *reader)
 {
 
@@ -65,6 +75,7 @@ READER *new_reader()
     READER *reader = g_malloc(sizeof(READER));
 
     reader->release = release_reader;
+    reader->read = reader_read;
 
     return reader;
 }

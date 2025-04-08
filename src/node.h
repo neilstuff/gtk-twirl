@@ -141,12 +141,6 @@ typedef struct _NODE
     struct _NET * net;
 
     /**
-     * @brief the owning 'handler'
-     * 
-     */
-    struct _HANDLER * handler;
-
-    /**
      * @brief private (the nodes type - place/transition)
      * 
      */
