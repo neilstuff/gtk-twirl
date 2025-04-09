@@ -84,14 +84,14 @@ void writer_place_iterator(gpointer node, gpointer writer)
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST PLACE_ELEMENT);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_ID_ATTRIBUTE, "%d", (int)TO_NODE(node)->id);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_NAME_ATTRIBUTE, "%s", TO_NODE(node)->name->str);
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TOKENS_ATTRIBUTE, "%d", (int)TO_PLACE(node).marked);
 
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST GRAPHICS_ELEMENT);
 
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, X_ATTRIBUTE, "%d", (int)TO_NODE(node)->position.x);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, Y_ATTRIBUTE, "%d", (int)TO_NODE(node)->position.y);
 
-    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TOKENS_ATTRIBUTE, "%d", (int)TO_PLACE(node).marked);
-
+ 
     xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Graphics
     xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Place
 }
