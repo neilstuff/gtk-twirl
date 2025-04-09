@@ -26,7 +26,10 @@
 
 #include "artifact.h"
 
+#include "vertex.h"
+
 #include "node.h"
+#include "arc.h"
 #include "event.h"
 #include "handler.h"
 #include "editor.h"

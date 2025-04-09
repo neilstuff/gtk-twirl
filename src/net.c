@@ -837,6 +837,28 @@ void net_redraw(NET *net)
 }
 
 /**
+ * @brief add a node to the net
+ *
+ */
+void net_add_node(NET *net, NODE * node)
+{
+
+    g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
+
+}
+
+/**
+ * @brief add an arc to the net
+ *
+ */
+void net_add_arc(NET *net, ARC * arc)
+{
+
+    g_ptr_array_add(net->arcs, arc);
+
+}
+
+/**
  * @brief release/free the net object
  *
  */
@@ -860,6 +882,10 @@ NET *net_create(CONTROLLER *controller)
     net->redraw = net_redraw;
     net->resize = net_resize;
     net->select = net_select;
+
+    
+    net->addNode = net_add_node;
+    net->addArc = net_add_arc;
 
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;

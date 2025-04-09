@@ -57,25 +57,63 @@ void reader_process_graphics(READER *reader, xmlNode *parent, NODE *node)
 
             if (strcmp(attribute->name, "x") == 0)
             {
+                printf("Atributo %s: %s\n", attribute->name, value);
                 sscanf(value, "%lf", &x);
             }
 
             if (strcmp(attribute->name, "y") == 0)
             {
+                printf("Atributo %s: %s\n", attribute->name, value);
                 sscanf(value, "%lf", &y);
             }
 
             xmlFree(value);
 
+            attribute = attribute->next;
         }
-        
+
         node->setPosition(node, x, y);
     }
-
 }
 
 /**
- * Process  the place nodes
+ * Process the transition nodes
+ *
+ */
+void reader_process_transition(READER *reader, NET *net, xmlNode *node)
+{
+
+    printf("node type: Transition, name: %s\n", node->name);
+
+    xmlAttr *attribute = node->properties;
+    NODE *transition = create_node(TRANSITION_NODE, net);
+
+    while (attribute && attribute->name && attribute->children)
+    {
+        xmlChar *value = xmlNodeListGetString(node->doc, attribute->children, 1);
+
+        printf("Atributo %s: %s\n", attribute->name, value);
+
+        if (strcmp(attribute->name, "name") == 0)
+        {
+            transition->setName(transition, value);
+        }
+
+        if (strcmp(attribute->name, "id") == 0)
+        {
+            transition->id = atoi(value);
+        }
+
+        xmlFree(value);
+
+        attribute = attribute->next;
+    }
+
+    reader_process_graphics(reader, node->children, transition);
+}
+
+/**
+ * Process the place nodes
  *
  */
 void reader_process_place(READER *reader, NET *net, xmlNode *node)
@@ -84,34 +122,35 @@ void reader_process_place(READER *reader, NET *net, xmlNode *node)
     printf("node type: Place, name: %s\n", node->name);
 
     xmlAttr *attribute = node->properties;
-    NODE * place = create_node(PLACE_NODE, net);
+    NODE *place = create_node(PLACE_NODE, net);
 
     while (attribute && attribute->name && attribute->children)
     {
         xmlChar *value = xmlNodeListGetString(node->doc, attribute->children, 1);
-       
+
         printf("Atributo %s: %s\n", attribute->name, value);
 
         if (strcmp(attribute->name, "name") == 0)
         {
             place->setName(place, value);
         }
-       
-        if  (strcmp(attribute->name, "id") == 0)
+
+        if (strcmp(attribute->name, "id") == 0)
         {
             place->id = atoi(value);
         }
 
-        if  (strcmp(attribute->name, "tokens") == 0)
+        if (strcmp(attribute->name, "tokens") == 0)
         {
             place->place.marked = atoi(value);
         }
 
         xmlFree(value);
-        
+
         attribute = attribute->next;
     }
 
+    reader_process_graphics(reader, node->children, place);
 }
 
 /**
@@ -130,6 +169,11 @@ void reader_process_nodes(READER *reader, NET *net, xmlNode *parent)
             if (strcmp(node->name, PLACE_ELEMENT) == 0)
             {
                 reader_process_place(reader, net, node);
+            }
+
+            if (strcmp(node->name, TRANSITION_ELEMENT) == 0)
+            {
+                reader_process_transition(reader, net, node);
             }
         }
 

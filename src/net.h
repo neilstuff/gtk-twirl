@@ -31,6 +31,9 @@ typedef struct _NET {
 
     HANDLER handler;
 
+    void (*addNode) (struct _NET * net, NODE * node);
+    void (*addArc) (struct _NET * net, ARC * arc);
+
     void (*connect) (struct _NET * net, NODE * source, POINT * point);
 
     void (*processors[END_NOTIFICATION]) (struct _NET * net, EVENT * event);

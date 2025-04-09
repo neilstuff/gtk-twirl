@@ -26,14 +26,15 @@
 #include "reader.h"
 #include "writer.h"
 
+#include "vertex.h"
 #include "node.h"
+#include "arc.h"
 #include "event.h"
 #include "handler.h"
 
 #include "artifact.h"
 #include "controller.h"
 #include "net.h"
-#include "vertex.h"
 
 /**
  * @brief copy the point

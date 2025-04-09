@@ -27,7 +27,10 @@
 #include "reader.h"
 #include "writer.h"
 
+#include "vertex.h"
+
 #include "node.h"
+#include "arc.h"
 #include "event.h"
 #include "handler.h"
 #include "controller.h"
