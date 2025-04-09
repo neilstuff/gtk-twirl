@@ -42,8 +42,36 @@
 
 #include "reader.h"
 
-void reader_process_graphics(READER *reader, xmlNode *node, NODE *artifact)
+void reader_process_graphics(READER *reader, xmlNode *parent, NODE *node)
 {
+
+    if (parent->type == XML_ELEMENT_NODE && (strcmp(parent->name, GRAPHICS_ELEMENT) == 0))
+    {
+        xmlAttr *attribute = parent->properties;
+        double x = 0;
+        double y = 0;
+
+        while (attribute && attribute->name && attribute->children)
+        {
+            xmlChar *value = xmlNodeListGetString(parent->doc, attribute->children, 1);
+
+            if (strcmp(attribute->name, "x") == 0)
+            {
+                sscanf(value, "%lf", &x);
+            }
+
+            if (strcmp(attribute->name, "y") == 0)
+            {
+                sscanf(value, "%lf", &y);
+            }
+
+            xmlFree(value);
+
+        }
+        
+        node->setPosition(node, x, y);
+    }
+
 }
 
 /**
@@ -72,6 +100,11 @@ void reader_process_place(READER *reader, NET *net, xmlNode *node)
         if  (strcmp(attribute->name, "id") == 0)
         {
             place->id = atoi(value);
+        }
+
+        if  (strcmp(attribute->name, "tokens") == 0)
+        {
+            place->place.marked = atoi(value);
         }
 
         xmlFree(value);
