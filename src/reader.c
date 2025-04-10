@@ -89,6 +89,10 @@ void reader_process_arc(READER *reader, NET *net, xmlNode *node)
 
         printf("Atributo %s: %s\n", attribute->name, value);
 
+        xmlFree(value);
+
+        attribute = attribute->next;
+
     }
 
 }
