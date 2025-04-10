@@ -803,6 +803,20 @@ void net_write_net(NET *net, EVENT *event)
 
 }
 
+
+/**
+ * @brief resize the net
+ *
+ */
+NODE * net_find_node(NET *net, char * buffer)
+{
+    int type;
+    int id;
+
+    sscanf(buffer, "%d-%d", &type, &id);
+    
+}
+
 /**
  * @brief set the current tool - for the created net
  *
@@ -882,10 +896,11 @@ NET *net_create(CONTROLLER *controller)
     net->redraw = net_redraw;
     net->resize = net_resize;
     net->select = net_select;
-
     
     net->addNode = net_add_node;
     net->addArc = net_add_arc;
+
+    net->findNode = net_find_node;
 
     net->processors[DRAW_REQUESTED] = net_draw_event_processor;
     net->processors[TOOL_SELECTED] = net_tool_event_processor;
