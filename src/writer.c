@@ -61,12 +61,15 @@ void writer_vertex_iterator(gpointer arc, gpointer writer)
  */
 void writer_arc_iterator(gpointer arc, gpointer writer)
 {
+    char buffer[36];
 
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST ARC_ELEMENT);
-    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, SOURCE_ATTRIBUTE, "%d", (int)TO_ARC(arc)->source->id);
-    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TARGET_ATTRIBUTE, "%d", (int)TO_ARC(arc)->source->id);
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, SOURCE_ATTRIBUTE, "%s", 
+                                        TO_ARC(arc)->source->generate(TO_ARC(arc)->source, sizeof(buffer), buffer));                
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TARGET_ATTRIBUTE, "%s", 
+                                        TO_ARC(arc)->target->generate(TO_ARC(arc)->target, sizeof(buffer), buffer));
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, WEIGHT_ATTRIBUTE, "%d", (int)TO_ARC(arc)->weight);
-
+    
     g_ptr_array_foreach(TO_ARC(arc)->vertices,
         writer_vertex_iterator, writer);
 
@@ -123,8 +126,6 @@ void writer_transition_iterator(gpointer node, gpointer writer)
 void writer_generate_nodes(WRITER *writer, NET *net)
 {
 
-    printf("writer_generate_nodes : ENTER\n");
-
     g_ptr_array_foreach(net->places,
                         writer_place_iterator, writer);
 
@@ -134,7 +135,6 @@ void writer_generate_nodes(WRITER *writer, NET *net)
     g_ptr_array_foreach(net->arcs,
                         writer_arc_iterator, writer);
 
-    printf("writer_generate_nodes : EXIT\n");
 }
 
 /**

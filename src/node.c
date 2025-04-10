@@ -36,27 +36,26 @@
 #include "controller.h"
 #include "net.h"
 
-void node_edit_handler(int id, void * value, void * object)
+void node_edit_handler(int id, void *value, void *object)
 {
- 
-    switch (id) {
-        case 0:
-            {
-                TO_NODE(object)->setName(TO_NODE(object), (char *)value);
-                TO_NODE(object)->net->redraw(TO_NODE(object)->net);
-  
-            }
-            break;
 
-        case 1: {
-            int * tokens = (int*)value;
-            TO_NODE(object)->place.marked = *tokens;
-            TO_NODE(object)->net->redraw(TO_NODE(object)->net);
-        }
-        break;
-
+    switch (id)
+    {
+    case 0:
+    {
+        TO_NODE(object)->setName(TO_NODE(object), (char *)value);
+        TO_NODE(object)->net->redraw(TO_NODE(object)->net);
     }
- 
+    break;
+
+    case 1:
+    {
+        int *tokens = (int *)value;
+        TO_NODE(object)->place.marked = *tokens;
+        TO_NODE(object)->net->redraw(TO_NODE(object)->net);
+    }
+    break;
+    }
 }
 
 /**
@@ -112,7 +111,6 @@ gint is_node_in_bounds(NODE *node, BOUNDS *bounds)
 {
 
     return point_in_bounds(&node->position, bounds);
-
 }
 
 /**
@@ -130,6 +128,21 @@ void set_position(NODE *node, double x, double y)
 
     node->bounds.size.w = 30;
     node->bounds.size.h = 30;
+}
+
+/**
+ * @brief format the node for arc serialisation
+ *
+ */
+char *node_generate(NODE *node, int length, char *buffer)
+{
+
+    memset(buffer, 0, length);
+
+    snprintf(buffer, length, "%d-%d", node->type, node->id);
+
+
+    return buffer;
 }
 
 /**
@@ -185,6 +198,7 @@ NODE *new_node()
     node->setPosition = set_position;
     node->getBounds = get_bounds;
     node->isNodeAtPoint = is_node_at_point;
+    node->generate = node_generate;
 
     node->isTransition = is_transition;
     node->isPlace = is_place;
@@ -204,20 +218,20 @@ NODE *new_node()
  *
  */
 
- void node_place_editor(NODE* node, EDITOR * editor)
- {
+void node_place_editor(NODE *node, EDITOR *editor)
+{
 
-    editor->init(editor, node, node_edit_handler, 
-                 TEXT_FIELD, 0, "Name", node->name->str, 
+    editor->init(editor, node, node_edit_handler,
+                 TEXT_FIELD, 0, "Name", node->name->str,
                  SPIN_BUTTON, 1, "Tokens", node->place.marked,
                  END_FIELD);
- }
+}
 
 /**
  * @brief create an initialised "place" node
  *
  */
-NODE *new_place(NODE * node)
+NODE *new_place(NODE *node)
 {
 
     node->place.marked = 0;
@@ -240,10 +254,10 @@ NODE *new_place(NODE * node)
  *
  */
 
- void node_transition_editor(NODE* node, EDITOR * editor)
- {
+void node_transition_editor(NODE *node, EDITOR *editor)
+{
     editor->init(editor, node, node_edit_handler, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
- }
+}
 
 /**
  * @brief create an initialised "transition" node
@@ -267,7 +281,6 @@ NODE *new_transition(NODE *node)
     return node;
 }
 
-
 /**
  * @brief release/free the node object
  *
@@ -281,7 +294,7 @@ void node_release(NODE *node)
  * @brief create an initialised node common to both a place and transition node
  *
  */
-NODE *create_node(int type, NET * net)
+NODE *create_node(int type, NET *net)
 {
     NODE *node = new_node();
 

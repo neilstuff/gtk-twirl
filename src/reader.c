@@ -80,11 +80,25 @@ void reader_process_graphics(READER *reader, xmlNode *parent, NODE *node)
  * Process the transition nodes
  *
  */
+void reader_process_arc(READER *reader, NET *net, xmlNode *node)
+{
+    xmlAttr *attribute = node->properties;
+    while (attribute && attribute->name && attribute->children)
+    {
+        xmlChar *value = xmlNodeListGetString(node->doc, attribute->children, 1);
+
+        printf("Atributo %s: %s\n", attribute->name, value);
+
+    }
+
+}
+
+/**
+ * Process the transition nodes
+ *
+ */
 void reader_process_transition(READER *reader, NET *net, xmlNode *node)
 {
-
-    printf("node type: Transition, name: %s\n", node->name);
-
     xmlAttr *attribute = node->properties;
     NODE *transition = create_node(TRANSITION_NODE, net);
 
@@ -110,6 +124,8 @@ void reader_process_transition(READER *reader, NET *net, xmlNode *node)
     }
 
     reader_process_graphics(reader, node->children, transition);
+
+    net->addNode(net, transition);
 }
 
 /**
@@ -151,13 +167,15 @@ void reader_process_place(READER *reader, NET *net, xmlNode *node)
     }
 
     reader_process_graphics(reader, node->children, place);
+
+    net->addNode(net, place);
 }
 
 /**
  * Process  the place nodes
  *
  */
-void reader_process_nodes(READER *reader, NET *net, xmlNode *parent)
+void reader_process_elements(READER *reader, NET *net, xmlNode *parent)
 {
     xmlNode *node = NULL;
 
@@ -175,9 +193,14 @@ void reader_process_nodes(READER *reader, NET *net, xmlNode *parent)
             {
                 reader_process_transition(reader, net, node);
             }
+
+            if (strcmp(node->name, ARC_ELEMENT) == 0)
+            {
+                reader_process_arc(reader, net, node);
+            }
         }
 
-        reader_process_nodes(reader, net, node->children);
+        reader_process_elements(reader, net, node->children);
     }
 }
 
@@ -194,7 +217,7 @@ void reader_read(READER *reader, NET *net)
 
     xmlNodeDump(buf, NULL, root, 1, 1);
 
-    reader_process_nodes(reader, net, root);
+    reader_process_elements(reader, net, root);
 
     printf("%s", (char *)buf->content);
 }

@@ -29,6 +29,10 @@
 #define SOURCE_ATTRIBUTE "source"
 #define TARGET_ATTRIBUTE "target"
 
+#define SOURCE_ATTRIBUTE "source"
+#define TARGET_ATTRIBUTE "target"
+
+
 #define TOKENS_ATTRIBUTE "tokens"
 #define WEIGHT_ATTRIBUTE "weight"
 #define X_ATTRIBUTE "x"

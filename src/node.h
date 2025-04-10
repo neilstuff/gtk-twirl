@@ -105,6 +105,12 @@ typedef struct _NODE
     int (*isPlace)(struct _NODE *node);
 
     /**
+     * @brief returns the id prefixed by the type
+     * 
+     */
+    char * (*generate)(struct _NODE *node, int length, char *buffer);
+
+    /**
      * @brief set/replace the node's name
      * 
      */
@@ -147,7 +153,7 @@ typedef struct _NODE
     enum TYPE type;
 
     /**
-     * @brief private (the nodes unique id)
+     * @brief id 
      * 
      */
     int id;
