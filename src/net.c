@@ -105,7 +105,7 @@ typedef struct _CONTEXT
         } node_selector;
         struct
         {
-            NET * net;
+            NET *net;
 
             GPtrArray *nodes;
             GPtrArray *sources;
@@ -116,6 +116,217 @@ typedef struct _CONTEXT
 } CONTEXT, *CONTEXT_P;
 
 GPtrArray *nodes = NULL;
+
+void (*actions[EOF_ACTIONS])(gpointer artifact, gpointer context);
+
+/**
+ * @brief select the node at a given point
+ *
+ */
+void net_select_node_by_point(gpointer artifact, gpointer context)
+{
+    if (TO_NODE(artifact)->isNodeAtPoint(TO_NODE(artifact), &TO_CONTEXT(context)->point_context.point))
+    {
+        TO_NODE(artifact)->artifact.selected = TRUE;
+        g_ptr_array_add(TO_CONTEXT(context)->point_context.nodes, artifact);
+        TO_CONTEXT(context)->point_context.found += 1;
+    }
+    else
+    {
+        TO_NODE(artifact)->artifact.selected = FALSE;
+    }
+}
+
+/**
+ * @brief select the arc at a given point
+ *
+ */
+void net_select_arc_by_point(gpointer artifact, gpointer context)
+{
+
+    if (TO_ARC(artifact)->isArcAtPoint(TO_ARC(artifact), &TO_CONTEXT(context)->point_context.point))
+    {
+        g_ptr_array_add(TO_CONTEXT(context)->point_context.arcs, artifact);
+        TO_ARC(artifact)->artifact.selected = TRUE;
+    }
+    else
+    {
+        TO_ARC(artifact)->artifact.selected = FALSE;
+    }
+}
+
+/**
+ * @brief draw the node
+ *
+ */
+void net_net_draw_node(gpointer artifact, gpointer context)
+{
+
+    TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
+                                                   &TO_NODE(artifact)->painter);
+}
+
+/**
+ * @brief draw the arc
+ *
+ */
+void net_draw_arc(gpointer artifact, gpointer context)
+{
+
+    TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
+                                                   &TO_ARC(artifact)->painter);
+}
+
+/**
+ * @brief draw the node
+ *
+ */
+void net_draw_node(gpointer artifact, gpointer context)
+{
+
+    TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
+                                                   &TO_NODE(artifact)->painter);
+}
+
+/**
+ * @brief unselect all nodes
+ *
+ */
+void net_unselect_all_nodes(gpointer artifact, gpointer context)
+{
+
+    TO_NODE(artifact)->artifact.selected = FALSE;
+}
+
+/**
+ * @brief unselect all arcs
+ *
+ */
+void net_unselect_all_arcs(gpointer artifact, gpointer context)
+{
+
+    TO_ARC(artifact)->artifact.selected = FALSE;
+}
+
+/**
+ * @brief get the next node identifier
+ *
+ */
+void net_get_next_node_id(gpointer artifact, gpointer context)
+{
+
+    TO_CONTEXT(context)->id_context.id = TO_NODE(artifact)->id >= TO_CONTEXT(context)->id_context.id
+                                             ? TO_NODE(artifact)->id + 1
+                                             : TO_CONTEXT(context)->id_context.id;
+}
+
+/**
+ * @brief recalculate the view size considering nodes
+ *
+ */
+void net_get_node_view_size(gpointer artifact, gpointer context)
+{
+    double w = TO_NODE(artifact)->bounds.point.x + TO_NODE(artifact)->bounds.size.w;
+    double h = TO_NODE(artifact)->bounds.point.y + TO_NODE(artifact)->bounds.size.h;
+
+    if (TO_CONTEXT(context)->view_size.size.w < w)
+    {
+        TO_CONTEXT(context)->view_size.size.w = w;
+    }
+    if (TO_CONTEXT(context)->view_size.size.h < h)
+    {
+        TO_CONTEXT(context)->view_size.size.h = h;
+    }
+}
+
+/**
+ * @brief recalculate the view size considering arcs
+ *
+ */
+void net_get_arc_view_size(gpointer artifact, gpointer context)
+{
+    POINT point;
+
+    TO_ARC(artifact)->getPathBounds(TO_ARC(artifact), &point);
+
+    if (TO_CONTEXT(context)->view_size.size.w < point.x)
+    {
+        TO_CONTEXT(context)->view_size.size.w = point.x;
+    }
+    if (TO_CONTEXT(context)->view_size.size.h < point.y)
+    {
+        TO_CONTEXT(context)->view_size.size.h = point.y;
+    }
+}
+
+/**
+ * @brief get the arcs for a node
+ *
+ */
+void net_get_arcs_for_node(gpointer artifact, gpointer context)
+{
+    if (TO_ARC(artifact)->source == TO_CONTEXT(context)->node_arcs.node)
+    {
+        g_ptr_array_add(TO_CONTEXT(context)->node_arcs.sources, TO_ARC(artifact));
+    }
+
+    if (TO_ARC(artifact)->target == TO_CONTEXT(context)->node_arcs.node)
+    {
+        g_ptr_array_add(TO_CONTEXT(context)->node_arcs.targets, TO_ARC(artifact));
+    }
+}
+
+/**
+ * @brief select the node by bounding rectangle
+ *
+ */
+void net_select_node_by_bounds(gpointer artifact, gpointer context)
+{
+    if (point_in_bounds(&TO_NODE(artifact)->position, &TO_CONTEXT(context)->node_selector.bounds))
+    {
+
+        g_ptr_array_add(TO_CONTEXT(context)->node_selector.nodes, TO_NODE(artifact));
+    }
+    {
+        TO_NODE(artifact)->artifact.selected = FALSE;
+    }
+}
+
+/**
+ * @brief return all selected nodes in an array
+ *
+ */
+void net_get_selected_nodes(gpointer artifact, gpointer context)
+{
+
+    if (TO_NODE(artifact)->artifact.selected == TRUE)
+    {
+        g_ptr_array_add(TO_CONTEXT(context)->node_arc_selector.nodes, TO_NODE(artifact));
+
+        {
+            CONTEXT selector;
+
+            selector.action = GET_ARCS_FOR_NODE;
+            selector.node_arcs.node = TO_NODE(artifact);
+            selector.node_arcs.sources = TO_CONTEXT(context)->node_arc_selector.sources;
+            selector.node_arcs.targets = TO_CONTEXT(context)->node_arc_selector.targets;
+
+            g_ptr_array_foreach(TO_CONTEXT(context)->node_arc_selector.net->arcs,
+                                actions[GET_ARCS_FOR_NODE], &selector);
+        }
+    }
+}
+
+/**
+ * @brief find a node (place or transition)
+ *
+ */
+gboolean net_node_find_by_id(gconstpointer node, gconstpointer id)
+{
+
+    printf("Found Node: %d, %d, %d\n", TO_NODE(node)->id, *(int *)id, TO_NODE(node)->id == *(int *)id);
+    return TO_NODE(node)->id == *(int *)id;
+}
 
 /**
  * @brief find a node (place or transition)
@@ -128,145 +339,13 @@ gboolean net_node_find_by_point(gconstpointer node, gconstpointer point)
 }
 
 /**
- * @brieffind the arc by a given point
+ * @brief find the arc by a given point
  *
  */
 gboolean net_arc_find_by_point(gconstpointer node, gconstpointer point)
 {
 
     return TO_NODE(node)->isNodeAtPoint(TO_NODE(node), TO_POINT(point));
-}
-
-/**
- * @brief  iterator of nodes and arcs - the context determines the processor to apply to the artifact
- *
- */
-void net_artifact_iterator(gpointer artifact, gpointer context)
-{
-
-    switch (TO_CONTEXT(context)->action)
-    {
-    case SELECT_NODE_BY_POINT:
-        if (TO_NODE(artifact)->isNodeAtPoint(TO_NODE(artifact), &TO_CONTEXT(context)->point_context.point))
-        {
-            TO_NODE(artifact)->artifact.selected = TRUE;
-            g_ptr_array_add(TO_CONTEXT(context)->point_context.nodes, artifact);
-            TO_CONTEXT(context)->point_context.found += 1;
-        }
-        else
-        {
-            TO_NODE(artifact)->artifact.selected = FALSE;
-        }
-        break;
-    case SELECT_ARC_BY_POINT:
-        if (TO_ARC(artifact)->isArcAtPoint(TO_ARC(artifact), &TO_CONTEXT(context)->point_context.point))
-        {
-            g_ptr_array_add(TO_CONTEXT(context)->point_context.arcs, artifact);
-            TO_ARC(artifact)->artifact.selected = TRUE;
-        }
-        else
-        {
-            TO_ARC(artifact)->artifact.selected = FALSE;
-        }
-        break;
-    case DRAW_ARC:
-        TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
-                                                       &TO_ARC(artifact)->painter);
-        break;
-    case DRAW_NODE:
-        TO_CONTEXT(context)->draw_context.drawer->draw(TO_DRAWER(TO_CONTEXT(context)->draw_context.drawer),
-                                                       &TO_NODE(artifact)->painter);
-        break;
-    case UNSELECT_ALL_NODES:
-        TO_NODE(artifact)->artifact.selected = FALSE;
-        break;
-    case UNSELECT_ALL_ARCS:
-        TO_ARC(artifact)->artifact.selected = FALSE;
-        break;
-    case GET_NEXT_NODE_ID:
-        TO_CONTEXT(context)->id_context.id = TO_NODE(artifact)->id >= TO_CONTEXT(context)->id_context.id
-                                                 ? TO_NODE(artifact)->id + 1
-                                                 : TO_CONTEXT(context)->id_context.id;
-        break;
-    case GET_NODE_VIEW_SIZE:
-    {
-        double w = TO_NODE(artifact)->bounds.point.x + TO_NODE(artifact)->bounds.size.w;
-        double h = TO_NODE(artifact)->bounds.point.y + TO_NODE(artifact)->bounds.size.h;
-
-        if (TO_CONTEXT(context)->view_size.size.w < w)
-        {
-            TO_CONTEXT(context)->view_size.size.w = w;
-        }
-        if (TO_CONTEXT(context)->view_size.size.h < h)
-        {
-            TO_CONTEXT(context)->view_size.size.h = h;
-        }
-    }
-    break;
-    case GET_ARC_VIEW_SIZE:
-    {
-        POINT point;
-
-        TO_ARC(artifact)->getPathBounds(TO_ARC(artifact), &point);
-
-        if (TO_CONTEXT(context)->view_size.size.w < point.x)
-        {
-            TO_CONTEXT(context)->view_size.size.w = point.x;
-        }
-        if (TO_CONTEXT(context)->view_size.size.h < point.y)
-        {
-            TO_CONTEXT(context)->view_size.size.h = point.y;
-        }
-    }
-    break;
-    case GET_ARCS_FOR_NODE:
-    {
-        if (TO_ARC(artifact)->source == TO_CONTEXT(context)->node_arcs.node)
-        {
-            g_ptr_array_add(TO_CONTEXT(context)->node_arcs.sources, TO_ARC(artifact));
-        }
-
-        if (TO_ARC(artifact)->target == TO_CONTEXT(context)->node_arcs.node)
-        {
-            g_ptr_array_add(TO_CONTEXT(context)->node_arcs.targets, TO_ARC(artifact));
-        }
-    }
-    break;
-    case SELECT_NODE_BY_BOUNDS:
-    {
-        if (point_in_bounds(&TO_NODE(artifact)->position, &TO_CONTEXT(context)->node_selector.bounds))
-        {
-
-            g_ptr_array_add(TO_CONTEXT(context)->node_selector.nodes, TO_NODE(artifact));
-        }
-        {
-            TO_NODE(artifact)->artifact.selected = FALSE;
-        }
-    }
-    break;
-    case GET_SELECTED_NODES:
-    {
-        if (TO_NODE(artifact)->artifact.selected == TRUE)
-        {
-            g_ptr_array_add(TO_CONTEXT(context)->node_arc_selector.nodes, TO_NODE(artifact));
-
-            {
-                CONTEXT selector;
- 
-                selector.action = GET_ARCS_FOR_NODE;
-                selector.node_arcs.node = TO_NODE(artifact);
-                selector.node_arcs.sources = TO_CONTEXT(context)->node_arc_selector.sources;
-                selector.node_arcs.targets = TO_CONTEXT(context)->node_arc_selector.targets;
-
-                g_ptr_array_foreach(TO_CONTEXT(context)->node_arc_selector.net->arcs,
-                            net_artifact_iterator, &selector);
-
-            }
-    
-        }
-    }
-    break;
-    }
 }
 
 /**
@@ -336,9 +415,9 @@ void net_apply_context_all_nodes(NET *net, CONTEXT *context)
 {
 
     g_ptr_array_foreach(net->places,
-                        net_artifact_iterator, context);
+                        actions[context->action], context);
     g_ptr_array_foreach(net->transitions,
-                        net_artifact_iterator, context);
+                        actions[context->action], context);
 }
 
 /**
@@ -348,7 +427,7 @@ void net_apply_context_all_nodes(NET *net, CONTEXT *context)
 void net_apply_context_all_arcs(NET *net, CONTEXT *context)
 {
     g_ptr_array_foreach(net->arcs,
-                        net_artifact_iterator, context);
+                        actions[context->action], context);
 }
 
 /**
@@ -390,7 +469,7 @@ void net_draw_event_processor(NET *net, EVENT *event)
         context.draw_context.drawer = create_drawer(event->events.draw_event.canvas);
 
         g_ptr_array_foreach(net->arcs,
-                            net_artifact_iterator, &context);
+                            actions[context.action], &context);
 
         context.draw_context.drawer->release(context.draw_context.drawer);
     }
@@ -402,11 +481,12 @@ void net_draw_event_processor(NET *net, EVENT *event)
         context.draw_context.drawer = create_drawer(event->events.draw_event.canvas);
 
         g_ptr_array_foreach(net->places,
-                            net_artifact_iterator, &context);
+                            actions[context.action], &context);
         g_ptr_array_foreach(net->transitions,
-                            net_artifact_iterator, &context);
+                            actions[context.action], &context);
 
         context.draw_context.drawer->release(context.draw_context.drawer);
+
     }
 }
 
@@ -436,7 +516,7 @@ void net_resize(NET *net)
     context.action = GET_ARC_VIEW_SIZE;
 
     g_ptr_array_foreach(net->arcs,
-                        net_artifact_iterator, &context);
+                        actions[context.action], &context);
 
     EVENT *resize = create_event(SET_VIEW_SIZE, &context.view_size.size);
 
@@ -463,10 +543,10 @@ void net_select(NET *net, BOUNDS *bounds, GPtrArray *nodes)
         set_bounds(bounds, &context.node_selector.bounds);
 
         g_ptr_array_foreach(net->places,
-                            net_artifact_iterator, &context);
+                            actions[context.action], &context);
 
         g_ptr_array_foreach(net->transitions,
-                            net_artifact_iterator, &context);
+                            actions[context.action], &context);
     }
 }
 
@@ -562,7 +642,7 @@ void net_select_node_processor(NET *net, EVENT *event)
             node = create_node(net->tool == PLACE_TOOL ? PLACE_NODE : TRANSITION_NODE, net);
 
             g_ptr_array_foreach((net->tool == PLACE_TOOL) ? net->places : net->transitions,
-                                net_artifact_iterator, &context);
+                                actions[context.action], &context);
             node->id = context.id_context.id;
             node->setDefaultName(node);
 
@@ -607,7 +687,6 @@ void net_select_node_processor(NET *net, EVENT *event)
 
         net->redraw(net);
     }
-
 }
 
 /**
@@ -713,21 +792,21 @@ void net_delete_selected(NET *net, EVENT *event)
     for (int iNode = 0; iNode < context.node_arc_selector.nodes->len; iNode++)
     {
         NODE *node = g_ptr_array_index(context.node_arc_selector.nodes, iNode);
-        
-        g_ptr_array_remove (net->places, node);
-        g_ptr_array_remove (net->transitions, node);
+
+        g_ptr_array_remove(net->places, node);
+        g_ptr_array_remove(net->transitions, node);
     }
 
     for (int iArc = 0; iArc < context.node_arc_selector.sources->len; iArc++)
     {
-      
-        g_ptr_array_remove (net->arcs, g_ptr_array_index(context.node_arc_selector.sources, iArc));
+
+        g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.sources, iArc));
     }
 
     for (int iArc = 0; iArc < context.node_arc_selector.targets->len; iArc++)
     {
-        
-        g_ptr_array_remove (net->arcs, g_ptr_array_index(context.node_arc_selector.targets, iArc));
+
+        g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.targets, iArc));
     }
 
     net->controller->message(net->controller, CLEAR_EDITOR);
@@ -735,7 +814,6 @@ void net_delete_selected(NET *net, EVENT *event)
     net_activate(net, ACTIVATE_DELETE, FALSE);
     net->resize(net);
     net->redraw(net);
-
 }
 
 /**
@@ -749,15 +827,14 @@ void net_read_net(NET *net, EVENT *event)
     for (int iNode = 0; net->places->len != 0;)
     {
         NODE *node = g_ptr_array_index(net->places, iNode);
-        
-        g_ptr_array_remove (net->places, node);
+
+        g_ptr_array_remove(net->places, node);
 
         printf("net_read_net Before (PLACES): %d\n", net->places->len);
 
         node->release(node);
 
         printf("net_read_net After (PLACES): %d\n", iNode);
-
     }
 
     printf("net_read_net: %s\n", "deleted Places");
@@ -765,20 +842,19 @@ void net_read_net(NET *net, EVENT *event)
     for (int iNode = 0; net->transitions->len != 0;)
     {
         NODE *node = g_ptr_array_index(net->transitions, iNode);
-        
-        g_ptr_array_remove (net->transitions, node);
+
+        g_ptr_array_remove(net->transitions, node);
 
         node->release(node);
-
     }
 
     printf("net_read_net: %s\n", "deleted Transitions");
 
-    for (int iArc = 0; net->arcs->len != 0; )
+    for (int iArc = 0; net->arcs->len != 0;)
     {
         ARC *arc = g_ptr_array_index(net->arcs, iArc);
 
-        g_ptr_array_remove (net->arcs, g_ptr_array_index( net->arcs, iArc));
+        g_ptr_array_remove(net->arcs, g_ptr_array_index(net->arcs, iArc));
 
         arc->release(arc);
     }
@@ -787,7 +863,6 @@ void net_read_net(NET *net, EVENT *event)
 
     net->resize(net);
     net->redraw(net);
-
 }
 
 /**
@@ -800,21 +875,32 @@ void net_write_net(NET *net, EVENT *event)
     printf("net_write_net: %s\n", event->events.write_net.filename);
 
     event->events.write_net.writer->write(event->events.write_net.writer, net);
-
 }
-
 
 /**
  * @brief resize the net
  *
  */
-NODE * net_find_node(NET *net, char * buffer)
+NODE *net_find_node(NET *net, char *buffer)
 {
     int type;
     int id;
 
     sscanf(buffer, "%d-%d", &type, &id);
-    
+
+    NODE *node = NULL;
+    guint index;
+
+    if (g_ptr_array_find_with_equal_func((type == PLACE_NODE) ? net->places : net->transitions,
+                                         &id,
+                                         net_node_find_by_id,
+                                         &index))
+    {
+
+        return g_ptr_array_index((type == PLACE_NODE) ? net->places : net->transitions, index);
+    }
+
+    return NULL;
 }
 
 /**
@@ -854,22 +940,20 @@ void net_redraw(NET *net)
  * @brief add a node to the net
  *
  */
-void net_add_node(NET *net, NODE * node)
+void net_add_node(NET *net, NODE *node)
 {
 
     g_ptr_array_add(node->type == PLACE_NODE ? net->places : net->transitions, node);
-
 }
 
 /**
  * @brief add an arc to the net
  *
  */
-void net_add_arc(NET *net, ARC * arc)
+void net_add_arc(NET *net, ARC *arc)
 {
 
     g_ptr_array_add(net->arcs, arc);
-
 }
 
 /**
@@ -896,7 +980,7 @@ NET *net_create(CONTROLLER *controller)
     net->redraw = net_redraw;
     net->resize = net_resize;
     net->select = net_select;
-    
+
     net->addNode = net_add_node;
     net->addArc = net_add_arc;
 
@@ -919,6 +1003,19 @@ NET *net_create(CONTROLLER *controller)
     net->places = g_ptr_array_new();
     net->transitions = g_ptr_array_new();
     net->arcs = g_ptr_array_new();
+
+    actions[SELECT_NODE_BY_POINT] = net_select_node_by_point;
+    actions[SELECT_ARC_BY_POINT] = net_select_arc_by_point;
+    actions[DRAW_ARC] = net_draw_arc;
+    actions[DRAW_NODE] = net_draw_node;
+    actions[UNSELECT_ALL_NODES] = net_unselect_all_nodes;
+    actions[UNSELECT_ALL_ARCS] = net_unselect_all_arcs;
+    actions[GET_NEXT_NODE_ID] = net_get_next_node_id;
+    actions[GET_NODE_VIEW_SIZE] = net_get_node_view_size;
+    actions[GET_ARC_VIEW_SIZE] = net_get_arc_view_size;
+    actions[GET_ARCS_FOR_NODE] = net_get_arcs_for_node;
+    actions[SELECT_NODE_BY_BOUNDS] = net_select_node_by_bounds;
+    actions[GET_SELECTED_NODES] = net_get_selected_nodes;
 
     return net;
 }

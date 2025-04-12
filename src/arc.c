@@ -200,18 +200,19 @@ void release_arc(ARC *arc)
     g_free(arc);
 }
 
+
 /**
  * @brief arc constructor
  *
  */
-ARC *create_arc(NET *net, NODE *source, NODE *target)
+ARC *new_arc(NET *net)
 {
     ARC *arc = g_malloc(sizeof(ARC));
-
+    
     arc->net = net;
 
-    arc->source = source;
-    arc->target = target;
+    arc->source = NULL;
+    arc->target = NULL;
 
     arc->painter.type = ARC_PAINTER;
     arc->painter.painters.arc_painter.arc = arc;
@@ -220,15 +221,30 @@ ARC *create_arc(NET *net, NODE *source, NODE *target)
 
     arc->vertices = g_ptr_array_new();
 
-    g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, net, &source->position));
-    g_ptr_array_add(arc->vertices, create_vertex(TARGET_POSITION, net, &target->position));
-
     arc->release = release_arc;
     arc->isArcAtPoint = is_arc_at_point;
     arc->getPathBounds = arc_get_path_bounds;
     arc->setVertex = arc_set_vertex;
     arc->getVertex = arc_get_vertex;
     arc->edit = arc_editor;
+
+    return arc;
+
+}
+
+/**
+ * @brief arc constructor
+ *
+ */
+ARC *create_arc(NET *net, NODE *source, NODE *target)
+{
+    ARC *arc =new_arc(net);
+
+    arc->source = source;
+    arc->target = target;
+
+    g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, net, &source->position));
+    g_ptr_array_add(arc->vertices, create_vertex(TARGET_POSITION, net, &target->position));
 
     return arc;
 }

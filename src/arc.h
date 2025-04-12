@@ -55,6 +55,8 @@ typedef struct _ARC
 
 } ARC, * ARC_P;
 
+
+extern ARC * new_arc(struct _NET * net);
 extern ARC * create_arc(struct _NET * net,  struct _NODE * source, struct _NODE * target);
 
 #endif // ARC_H_INCLUDED

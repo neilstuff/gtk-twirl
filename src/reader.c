@@ -86,9 +86,30 @@ void reader_process_arc(READER *reader, NET *net, xmlNode *node)
     while (attribute && attribute->name && attribute->children)
     {
         xmlChar *value = xmlNodeListGetString(node->doc, attribute->children, 1);
+        ARC * arc = new_arc(net);
 
         printf("Atributo %s: %s\n", attribute->name, value);
 
+        if (strcmp(attribute->name, "weight") == 0) {
+
+            arc->weight = atoi(value);
+
+        }
+
+
+        if (strcmp(attribute->name, "source") == 0) {
+
+            printf("Found Source: %s\n", value);
+            arc->source = net->findNode(net, value);
+
+        }
+
+        if (strcmp(attribute->name, "target") == 0) {
+
+            printf("Found Target: %s\n", value);
+            arc->target = net->findNode(net, value);
+
+        }
         xmlFree(value);
 
         attribute = attribute->next;
