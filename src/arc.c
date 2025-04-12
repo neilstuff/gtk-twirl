@@ -145,8 +145,19 @@ void arc_set_vertex(ARC *arc, POINT *point)
 
     if (located)
     {
-        g_ptr_array_insert(arc->vertices, iVertex, create_vertex(CONTROL_POSITION, arc->net, point));
+        g_ptr_array_insert(arc->vertices, iVertex, create_vertex(CONTROL_POSITION, point));
     }
+}
+
+/**
+ * @brief add a vertex
+ *
+ */
+void arc_add_vertex(ARC *arc, VERTEX * vertex)
+{
+
+    g_ptr_array_add(arc->vertices, vertex);
+ 
 }
 
 /**
@@ -226,6 +237,7 @@ ARC *new_arc(NET *net)
     arc->getPathBounds = arc_get_path_bounds;
     arc->setVertex = arc_set_vertex;
     arc->getVertex = arc_get_vertex;
+    arc->addVertex = arc_add_vertex;
     arc->edit = arc_editor;
 
     return arc;
@@ -238,13 +250,13 @@ ARC *new_arc(NET *net)
  */
 ARC *create_arc(NET *net, NODE *source, NODE *target)
 {
-    ARC *arc =new_arc(net);
+    ARC *arc = new_arc(net);
 
     arc->source = source;
     arc->target = target;
 
-    g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, net, &source->position));
-    g_ptr_array_add(arc->vertices, create_vertex(TARGET_POSITION, net, &target->position));
+    g_ptr_array_add(arc->vertices, create_vertex(SOURCE_POSITION, &source->position));
+    g_ptr_array_add(arc->vertices, create_vertex(TARGET_POSITION, &target->position));
 
     return arc;
 }

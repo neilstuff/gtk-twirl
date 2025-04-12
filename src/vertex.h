@@ -39,13 +39,12 @@ typedef struct _VERTEX {
     POINT point;
 
     enum POSITION position;
-    struct _NET * net;
 
     void (*release)(struct _VERTEX * vertex);
     void (*setPoint)(struct _VERTEX * vertex, POINT * point);
  
 } VERTEX, *VERTEX_P;
 
-extern VERTEX * create_vertex(enum POSITION position, struct _NET * net, POINT * point);
+extern VERTEX * create_vertex(enum POSITION position, POINT * point);
 
 #endif // VERTEX_H_INCLUDED

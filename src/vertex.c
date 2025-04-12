@@ -58,11 +58,10 @@ void vertex_release(VERTEX *vertex)
  * @brief vertex constructor
  *
  */
-VERTEX *create_vertex(enum POSITION position, NET * net, POINT * point)
+VERTEX *create_vertex(enum POSITION position, POINT * point)
 {
     VERTEX *vertex = g_malloc(sizeof(VERTEX));
 
-    vertex->net = net;
     vertex->position = position;
     
     vertex->artifact.state = INACTIVE;
@@ -72,7 +71,6 @@ VERTEX *create_vertex(enum POSITION position, NET * net, POINT * point)
 
     vertex->release = vertex_release;    
     vertex->setPoint = vertex_set_point;    
-
 
     return vertex;
 }

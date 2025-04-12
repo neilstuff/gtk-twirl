@@ -31,6 +31,7 @@ typedef struct _ARC
     int (*isArcAtPoint)(struct _ARC * arc,  POINT * point);
     VERTEX * (*getVertex)(struct _ARC * arc, POINT * point);
     void (*setVertex)(struct _ARC * arc, POINT * point);
+    void (*addVertex)(struct _ARC * arc, VERTEX * vertex);
 
     /**
      * @brief draw the arc

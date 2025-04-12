@@ -77,16 +77,108 @@ void reader_process_graphics(READER *reader, xmlNode *parent, NODE *node)
 }
 
 /**
+ * Process the vertex nodes
+ *
+ */
+VERTEX * reader_process_vertix(READER *reader, enum POSITION position,  xmlNode *node)
+{
+    POINT point;
+
+    set_point(&point, 0, 0);
+
+    xmlAttr *attribute = node->properties;
+
+    while (attribute && attribute->name && attribute->children)
+    {
+        xmlChar *value = xmlNodeListGetString(node->doc, attribute->children, 1);
+
+        if (strcmp(attribute->name, "x") == 0) {
+
+            point.x = atoi(value);
+
+        }
+
+        if (strcmp(attribute->name, "y") == 0) {
+
+            point.y = atoi(value);
+
+        }
+
+        xmlFree(value);
+
+        attribute = attribute->next;
+
+    }
+
+    return create_vertex(position, &point);
+
+}
+
+/**
+ * Process all the vertices
+ *
+ */
+void reader_process_vertices(READER *reader, ARC * arc, int nVertices, xmlNode *parent)
+{
+    xmlNode *node = NULL;
+    VERTEX  *vertex = NULL; 
+    int iVertex = 0;
+
+    for (node = parent; node; node = node->next)
+    {
+        if (node->type == XML_ELEMENT_NODE)
+        {
+            if (strcmp(node->name, VERTEX_ELEMENT) == 0)
+            {
+                vertex = reader_process_vertix(reader, iVertex == 0 ? SOURCE_POSITION : 
+                    iVertex == nVertices - 1 ? TARGET_POSITION : CONTROL_POSITION, node);
+
+                arc->addVertex(arc, vertex);
+            }
+
+        }
+    }
+
+}
+
+/**
+ * @brief count the number vertices assigned to the arc
+ * 
+ */
+int reader_count_vertices(READER *reader, xmlNode *parent)
+{
+    int counter = 0;
+    xmlNode *node = NULL;
+
+    for (node = parent; node; node = node->next)
+    {
+        if (node->type == XML_ELEMENT_NODE)
+        {
+            if (strcmp(node->name, VERTEX_ELEMENT) == 0)
+            {
+               counter += 1;
+                
+            }
+
+        }
+    }
+
+    return counter;
+}
+
+/**
  * Process the transition nodes
  *
  */
 void reader_process_arc(READER *reader, NET *net, xmlNode *node)
 {
     xmlAttr *attribute = node->properties;
+    ARC * arc = new_arc(net);
+
     while (attribute && attribute->name && attribute->children)
     {
         xmlChar *value = xmlNodeListGetString(node->doc, attribute->children, 1);
-        ARC * arc = new_arc(net);
+   
 
         printf("Atributo %s: %s\n", attribute->name, value);
 
@@ -95,7 +187,6 @@ void reader_process_arc(READER *reader, NET *net, xmlNode *node)
             arc->weight = atoi(value);
 
         }
-
 
         if (strcmp(attribute->name, "source") == 0) {
 
@@ -110,11 +201,14 @@ void reader_process_arc(READER *reader, NET *net, xmlNode *node)
             arc->target = net->findNode(net, value);
 
         }
+
         xmlFree(value);
 
         attribute = attribute->next;
 
     }
+
+    reader_process_vertices(reader, arc, reader_count_vertices(reader, node->children), node->children);
 
 }
 
@@ -126,6 +220,7 @@ void reader_process_transition(READER *reader, NET *net, xmlNode *node)
 {
     xmlAttr *attribute = node->properties;
     NODE *transition = create_node(TRANSITION_NODE, net);
+
 
     while (attribute && attribute->name && attribute->children)
     {
