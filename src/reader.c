@@ -210,6 +210,8 @@ void reader_process_arc(READER *reader, NET *net, xmlNode *node)
 
     reader_process_vertices(reader, arc, reader_count_vertices(reader, node->children), node->children);
 
+    net->addArc(net, arc);
+
 }
 
 /**
