@@ -324,7 +324,6 @@ void net_get_selected_nodes(gpointer artifact, gpointer context)
 gboolean net_node_find_by_id(gconstpointer node, gconstpointer id)
 {
 
-    printf("Found Node: %d, %d, %d\n", TO_NODE(node)->id, *(int *)id, TO_NODE(node)->id == *(int *)id);
     return TO_NODE(node)->id == *(int *)id;
 }
 
@@ -822,7 +821,6 @@ void net_delete_selected(NET *net, EVENT *event)
  */
 void net_read_net(NET *net, EVENT *event)
 {
-    printf("net_read_net: %s\n", event->events.read_net.filename);
 
     for (int iNode = 0; net->places->len != 0;)
     {
@@ -830,14 +828,9 @@ void net_read_net(NET *net, EVENT *event)
 
         g_ptr_array_remove(net->places, node);
 
-        printf("net_read_net Before (PLACES): %d\n", net->places->len);
-
         node->release(node);
 
-        printf("net_read_net After (PLACES): %d\n", iNode);
     }
-
-    printf("net_read_net: %s\n", "deleted Places");
 
     for (int iNode = 0; net->transitions->len != 0;)
     {
@@ -847,8 +840,6 @@ void net_read_net(NET *net, EVENT *event)
 
         node->release(node);
     }
-
-    printf("net_read_net: %s\n", "deleted Transitions");
 
     for (int iArc = 0; net->arcs->len != 0;)
     {
