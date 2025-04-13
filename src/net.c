@@ -489,6 +489,47 @@ void net_draw_event_processor(NET *net, EVENT *event)
     }
 }
 
+/**
+ * @brief activate the net
+ * 
+ */
+void net_reset(NET *net)
+{
+
+    for (int iNode = 0; net->places->len != 0;)
+    {
+        NODE *node = g_ptr_array_index(net->places, iNode);
+
+        g_ptr_array_remove(net->places, node);
+
+        node->release(node);
+
+    }
+
+    for (int iNode = 0; net->transitions->len != 0;)
+    {
+        NODE *node = g_ptr_array_index(net->transitions, iNode);
+
+        g_ptr_array_remove(net->transitions, node);
+
+        node->release(node);
+    }
+
+    for (int iArc = 0; net->arcs->len != 0;)
+    {
+        ARC *arc = g_ptr_array_index(net->arcs, iArc);
+
+        g_ptr_array_remove(net->arcs, g_ptr_array_index(net->arcs, iArc));
+
+        arc->release(arc);
+    }
+
+}
+
+/**
+ * @brief activate the net
+ * 
+ */
 void net_activate(NET *net, enum NOTIFICATION notification, int status)
 {
     EVENT *activate = create_event(notification, status);
@@ -822,42 +863,40 @@ void net_delete_selected(NET *net, EVENT *event)
 void net_read_net(NET *net, EVENT *event)
 {
 
-    for (int iNode = 0; net->places->len != 0;)
-    {
-        NODE *node = g_ptr_array_index(net->places, iNode);
-
-        g_ptr_array_remove(net->places, node);
-
-        node->release(node);
-
-    }
-
-    for (int iNode = 0; net->transitions->len != 0;)
-    {
-        NODE *node = g_ptr_array_index(net->transitions, iNode);
-
-        g_ptr_array_remove(net->transitions, node);
-
-        node->release(node);
-    }
-
-    for (int iArc = 0; net->arcs->len != 0;)
-    {
-        ARC *arc = g_ptr_array_index(net->arcs, iArc);
-
-        g_ptr_array_remove(net->arcs, g_ptr_array_index(net->arcs, iArc));
-
-        arc->release(arc);
-    }
+    net_reset(net);
 
     event->events.read_net.reader->read(event->events.read_net.reader, net);
 
+    net_apply_action_all_nodes(net, UNSELECT_ALL_NODES);
+    net_apply_action_all_arcs(net, UNSELECT_ALL_ARCS);
+
     net->resize(net);
     net->redraw(net);
+
+    EVENT *activate = create_event(ACTIVATE_TOOLBAR, TRUE);
+
+    net->controller->send(net->controller, activate);
+
+    activate->release(activate);
+    
 }
 
 /**
- * @brief save a net a formula
+ * @brief clear the net
+ *
+ */
+void net_clear(NET *net, EVENT *event)
+{
+
+    net_reset(net);
+
+    net->resize(net);
+    net->redraw(net);
+
+}
+
+/**
+ * @brief save a net a a file
  *
  */
 void net_write_net(NET *net, EVENT *event)
@@ -988,6 +1027,7 @@ NET *net_create(CONTROLLER *controller)
     net->processors[READ_NET] = net_read_net;
     net->processors[WRITE_NET] = net_write_net;
     net->processors[END_DRAG] = NULL;
+    net->processors[CLEAR_NET] = net_clear;
 
     net->release = net_release;
 
@@ -1007,6 +1047,7 @@ NET *net_create(CONTROLLER *controller)
     actions[GET_ARCS_FOR_NODE] = net_get_arcs_for_node;
     actions[SELECT_NODE_BY_BOUNDS] = net_select_node_by_bounds;
     actions[GET_SELECTED_NODES] = net_get_selected_nodes;
+    
 
     return net;
 }

@@ -163,17 +163,14 @@ void controller_open(GObject *source_object, GAsyncResult *res, gpointer data)
 
     GFile *file = gtk_file_dialog_open_finish((GtkFileDialog *)source_object, res, &error);
 
-    if (file != NULL) {
+    if (file != NULL)
+    {
         char *path = g_file_get_path(file);
-        
-        printf("OPEN Path: %s\n", path);
 
-        EVENT * event = create_event(READ_NET, create_reader_from_file(path), path);
+        EVENT *event = create_event(READ_NET, create_reader_from_file(path), path);
 
         controller_notify(TO_CONTROLLER(data), event);
-
     }
-
 }
 
 void controller_save(GObject *source_object, GAsyncResult *res, gpointer data)
@@ -182,20 +179,31 @@ void controller_save(GObject *source_object, GAsyncResult *res, gpointer data)
 
     GFile *file = gtk_file_dialog_save_finish((GtkFileDialog *)source_object, res, &error);
 
-    if (file != NULL) {
+    if (file != NULL)
+    {
         char *path = g_file_get_path(file);
-        WRITER * writer = create_writer_from_file(path);
+        WRITER *writer = create_writer_from_file(path);
 
-        EVENT * event = create_event(WRITE_NET, writer, path);
+        EVENT *event = create_event(WRITE_NET, writer, path);
 
         controller_notify(TO_CONTROLLER(data), event);
-
     }
+}
+
+/**
+ * @brief 'new' toolbar button selected
+ *
+ */
+void controller_new_clicked(GtkButton *button, gpointer user_data)
+{
+    EVENT *event = create_event(CLEAR_NET);
+
+    controller_notify(TO_CONTROLLER(user_data), event);
 
 }
 
 /**
- * @brief 'open' toolbar selected
+ * @brief 'open' toolbar button selected
  *
  */
 void controller_open_clicked(GtkButton *button, gpointer user_data)
@@ -238,7 +246,7 @@ void controller_save_clicked(GtkButton *button, gpointer user_data)
 
 /**
  * @brief delete tool selected
- * 
+ *
  */
 void controller_delete_clicked(GtkButton *button, gpointer user_data)
 {
@@ -434,6 +442,8 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
         controller->transitionButton =
             GTK_WIDGET(gtk_builder_get_object(builder, "transitionButton"));
 
+        controller->newToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "newToolbarButton"));
         controller->openToolbarButton =
             GTK_WIDGET(gtk_builder_get_object(builder, "openToolbarButton"));
         controller->saveToolbarButton =
@@ -452,6 +462,9 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 
         g_signal_connect(controller->transitionButton, "clicked",
                          G_CALLBACK(controller_transition_clicked), controller);
+
+        g_signal_connect(controller->newToolbarButton, "clicked",
+                         G_CALLBACK(controller_new_clicked), controller);
 
         g_signal_connect(controller->openToolbarButton, "clicked",
                          G_CALLBACK(controller_open_clicked), controller);

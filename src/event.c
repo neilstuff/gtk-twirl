@@ -131,6 +131,8 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
   
         }
         break;
+        case CLEAR_NET:
+        break;
 
         
     }
