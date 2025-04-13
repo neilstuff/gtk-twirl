@@ -39,8 +39,6 @@ int point_on_line(POINT * source, POINT * target, POINT * point, double tolerate
     double d2 = get_distance(source, point);
     double d3 = get_distance(target, point);
 
-    printf("Distances %f : %f : %f : %f \n", d1,d2,d3, trunc(d2 + d3));
-
     return (trunc(d2 + d3) >= trunc(d1) - tolerate) &&
            (trunc(d2 + d3) <= trunc(d1) + tolerate);
 }
