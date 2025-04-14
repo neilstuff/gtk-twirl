@@ -73,6 +73,7 @@ void controller_send(CONTROLLER *controller, EVENT *event)
     case ACTIVATE_DELETE:
     {
         gtk_widget_set_sensitive(controller->deleteToolbarButton, event->events.activate_toolbar.activate);
+        gtk_widget_set_sensitive(controller->cutToolbarButton, event->events.activate_toolbar.activate);
     }
     break;
 
