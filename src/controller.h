@@ -57,6 +57,11 @@ typedef struct _CONTROLLER
   GtkWidget *saveToolbarButton;
   GtkWidget *saveAsToolbarButton;
   GtkWidget *deleteToolbarButton;
+  GtkWidget *undoToolbarButton;
+  GtkWidget *redoToolbarButton;
+  GtkWidget *cutToolbarButton;
+  GtkWidget *copyToolbarButton;
+  GtkWidget *pasteToolbarButton;
 
   GtkListBox *fieldEditor;
 

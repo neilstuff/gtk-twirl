@@ -199,7 +199,6 @@ void controller_new_clicked(GtkButton *button, gpointer user_data)
     EVENT *event = create_event(CLEAR_NET);
 
     controller_notify(TO_CONTROLLER(user_data), event);
-
 }
 
 /**
@@ -254,6 +253,19 @@ void controller_delete_clicked(GtkButton *button, gpointer user_data)
 
     controller_notify(TO_CONTROLLER(user_data), event);
 }
+
+
+/**
+ * @brief cut tool selected
+ *
+ */
+void controller_cut_clicked(GtkButton *button, gpointer user_data)
+{
+    EVENT *event = create_event(CUT_SELECTED);
+
+    controller_notify(TO_CONTROLLER(user_data), event);
+}
+
 
 /**
  * @brief 'release' gesture processing
@@ -452,6 +464,18 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
             GTK_WIDGET(gtk_builder_get_object(builder, "saveAsToolbarButton"));
         controller->deleteToolbarButton =
             GTK_WIDGET(gtk_builder_get_object(builder, "deleteToolbarButton"));
+
+        controller->undoToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "undoToolbarButton"));
+        controller->redoToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "redoToolbarButton"));
+   
+        controller->cutToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "cutToolbarButton"));
+        controller->copyToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "copyToolbarButton"));
+        controller->pasteToolbarButton =
+            GTK_WIDGET(gtk_builder_get_object(builder, "pasteToolbarButton"));
     }
     {
         g_signal_connect(controller->selectButton, "clicked",
@@ -474,6 +498,9 @@ CONTROLLER *create_controller(GtkApplication *gtkAppication,
 
         g_signal_connect(controller->deleteToolbarButton, "clicked",
                          G_CALLBACK(controller_delete_clicked), controller);
+
+        g_signal_connect(controller->cutToolbarButton, "clicked",
+                            G_CALLBACK(controller_cut_clicked), controller);
 
         gtk_drawing_area_set_draw_func(GTK_DRAWING_AREA(controller->drawingArea), controller_draw, controller,
                                        NULL);

@@ -106,6 +106,7 @@ VERTEX *arc_get_vertex(ARC *arc, POINT *point)
     {
         POINT *vertex = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
 
+        printf("On Point %d : %d\n",  point_on_point(vertex, point, 4), TO_VERTEX(arc->vertices->pdata[iVertex])->position);
         if (TO_VERTEX(arc->vertices->pdata[iVertex])->position == CONTROL_POSITION && point_on_point(vertex, point, 4))
         {
             return arc->vertices->pdata[iVertex];

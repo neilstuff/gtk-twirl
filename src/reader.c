@@ -124,9 +124,7 @@ void reader_process_vertices(READER *reader, ARC * arc, int nVertices, xmlNode *
     VERTEX  *vertex = NULL; 
     int iVertex = 0;
 
-    printf("Verticies count %d\n", nVertices);
-
-    for (node = parent; node; node = node->next)
+    for (node = parent; node; node = node->next, iVertex += 1)
     {
         if (node->type == XML_ELEMENT_NODE)
         {
@@ -139,6 +137,7 @@ void reader_process_vertices(READER *reader, ARC * arc, int nVertices, xmlNode *
             }
 
         }
+
     }
 
 }
