@@ -59,6 +59,7 @@ enum ACTION
     GET_ARCS_FOR_NODE,
     SELECT_NODE_BY_BOUNDS,
     GET_SELECTED_NODES,
+    GET_SELECTED_ARCS,
     EOF_ACTIONS
 };
 
@@ -103,6 +104,10 @@ typedef struct _CONTEXT
             GPtrArray *nodes;
             BOUNDS bounds;
         } node_selector;
+        struct
+        {
+            GPtrArray *arcs;
+        } arc_selector;
         struct
         {
             NET *net;
@@ -293,7 +298,7 @@ void net_select_node_by_bounds(gpointer artifact, gpointer context)
 }
 
 /**
- * @brief return all selected nodes in an array
+ * @brief return all selected nodes into an array
  *
  */
 void net_get_selected_nodes(gpointer artifact, gpointer context)
@@ -315,6 +320,19 @@ void net_get_selected_nodes(gpointer artifact, gpointer context)
                                 actions[GET_ARCS_FOR_NODE], &selector);
         }
     }
+}
+
+/**
+ * @brief return all selected arcs into an array
+ *
+ */
+void net_get_selected_arcs(gpointer artifact, gpointer context)
+{
+
+    if (TO_ARC(artifact)->artifact.selected == TRUE) {
+        g_ptr_array_add(TO_CONTEXT(context)->arc_selector.arcs, TO_ARC(artifact));
+    }
+
 }
 
 /**
@@ -819,39 +837,57 @@ void net_connect_processor(NET *net, EVENT *event)
  */
 void net_delete_selected(NET *net, EVENT *event)
 {
-    CONTEXT context;
-
-    context.action = GET_SELECTED_NODES;
-    context.node_arc_selector.net = net;
-    context.node_arc_selector.nodes = g_ptr_array_new();
-    context.node_arc_selector.sources = g_ptr_array_new();
-    context.node_arc_selector.targets = g_ptr_array_new();
-
-    net_apply_context_all_nodes(net, &context);
-
-    for (int iNode = 0; iNode < context.node_arc_selector.nodes->len; iNode++)
     {
-        NODE *node = g_ptr_array_index(context.node_arc_selector.nodes, iNode);
+        CONTEXT context;
 
-        g_ptr_array_remove(net->places, node);
-        g_ptr_array_remove(net->transitions, node);
+        context.action = GET_SELECTED_NODES;
+        context.node_arc_selector.net = net;
+        context.node_arc_selector.nodes = g_ptr_array_new();
+        context.node_arc_selector.sources = g_ptr_array_new();
+        context.node_arc_selector.targets = g_ptr_array_new();
+
+        net_apply_context_all_nodes(net, &context);
+
+        for (int iNode = 0; iNode < context.node_arc_selector.nodes->len; iNode++)
+        {
+            NODE *node = g_ptr_array_index(context.node_arc_selector.nodes, iNode);
+
+            g_ptr_array_remove(net->places, node);
+            g_ptr_array_remove(net->transitions, node);
+        }
+
+        for (int iArc = 0; iArc < context.node_arc_selector.sources->len; iArc++)
+        {
+
+            g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.sources, iArc));
+        }
+
+        for (int iArc = 0; iArc < context.node_arc_selector.targets->len; iArc++)
+        {
+
+            g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.targets, iArc));
+        }
+   
     }
-
-    for (int iArc = 0; iArc < context.node_arc_selector.sources->len; iArc++)
     {
+        CONTEXT context;
 
-        g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.sources, iArc));
+        context.action = GET_SELECTED_ARCS;
+        context.arc_selector.arcs = g_ptr_array_new();
+
+        g_ptr_array_foreach(net->arcs, actions[context.action], &context);
+
+        for (int iArc = 0; iArc < context.arc_selector.arcs->len; iArc++)
+        {
+            g_ptr_array_remove(net->arcs, g_ptr_array_index(context.arc_selector.arcs, iArc));
+        }
+ 
     }
-
-    for (int iArc = 0; iArc < context.node_arc_selector.targets->len; iArc++)
-    {
-
-        g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.targets, iArc));
-    }
-
+    
     net->controller->message(net->controller, CLEAR_EDITOR);
 
     net_activate(net, ACTIVATE_DELETE, FALSE);
+
     net->resize(net);
     net->redraw(net);
 }
@@ -1047,7 +1083,7 @@ NET *net_create(CONTROLLER *controller)
     actions[GET_ARCS_FOR_NODE] = net_get_arcs_for_node;
     actions[SELECT_NODE_BY_BOUNDS] = net_select_node_by_bounds;
     actions[GET_SELECTED_NODES] = net_get_selected_nodes;
-    
+    actions[GET_SELECTED_ARCS] = net_get_selected_arcs; 
 
     return net;
 }
