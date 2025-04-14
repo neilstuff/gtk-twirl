@@ -191,14 +191,12 @@ void reader_process_arc(READER *reader, NET *net, xmlNode *node)
 
         if (strcmp(attribute->name, "source") == 0) {
 
-            printf("Found Source: %s\n", value);
             arc->source = net->findNode(net, value);
 
         }
 
         if (strcmp(attribute->name, "target") == 0) {
-
-            printf("Found Target: %s\n", value);
+            
             arc->target = net->findNode(net, value);
 
         }

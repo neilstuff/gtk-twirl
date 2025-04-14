@@ -53,7 +53,7 @@ void mover_source_arc_iterator(gpointer artifact, gpointer node)
 }
 
 /**
- * @brief  iterator through the nodes to adjust the last line's point
+ * @brief iterator through the nodes to adjust the last line's point
  *
  */
 void mover_target_arc_iterator(gpointer artifact, gpointer node)
@@ -102,7 +102,7 @@ void mover_node_event_handler(EVENT *event, void *processor)
                       TO_MOVER(processor)->offset.x + event->events.update_drag_event.offset_x,
                       TO_MOVER(processor)->offset.y + event->events.update_drag_event.offset_y);
 
-            adjust_point(&point, 16);
+            adjust_point(&point, 8);
 
             node->setPosition(node, point.x, point.y);
 
@@ -137,7 +137,11 @@ void mover_vertex_event_handler(EVENT *event, void *processor)
 
             POINT point;
 
-            vertix->setPoint(vertix, set_point(&point, (long)x, (long)y));
+            set_point(&point, (long)x, (long)y);
+
+            adjust_point(&point, 4);
+
+            vertix->setPoint(vertix, &point);
 
         }
 

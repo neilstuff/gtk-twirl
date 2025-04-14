@@ -690,7 +690,7 @@ void net_select_node_processor(NET *net, EVENT *event)
 
             set_point(&point, event->events.create_node.x, event->events.create_node.y);
 
-            adjust_point(&point, 16);
+            adjust_point(&point, 8);
 
             node->setPosition(node, point.x, point.y);
 
