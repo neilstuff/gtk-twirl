@@ -182,11 +182,11 @@ void draw_place(DRAWER *drawer, PAINTER *painter)
     cairo_set_line_width(drawer->canvas, 2);
     cairo_set_source_rgb(drawer->canvas, 0.75, 0.75, 0.75);
 
-    cairo_arc(drawer->canvas, node->position.x, node->position.y, 9, 0, 2 * M_PI);
+    cairo_arc(drawer->canvas, node->position.x, node->position.y, 10, 0, 2 * M_PI);
     cairo_fill(drawer->canvas);
 
     cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
-    cairo_arc(drawer->canvas, node->position.x, node->position.y, 9, 0, 2 * M_PI);
+    cairo_arc(drawer->canvas, node->position.x, node->position.y, 10, 0, 2 * M_PI);
     cairo_stroke(drawer->canvas);
 
     // Draw the marking
@@ -280,7 +280,7 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
     }
     else
     {
-        cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 1.0);
+        cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.4);
         cairo_set_line_width(drawer->canvas, 1);
     }
 
@@ -308,7 +308,7 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
             }
             else 
             {
-                cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 1.0);
+                cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.4);
             }
             cairo_arc(drawer->canvas, (int)target->x, (int)target->y, 3, 0, 2 * M_PI);
             cairo_fill(drawer->canvas);

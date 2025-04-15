@@ -19,6 +19,7 @@ enum FIELD
 {
     TEXT_FIELD,
     SPIN_BUTTON,
+    ALIGNMENT_BOX,
     END_FIELD
 };
 
