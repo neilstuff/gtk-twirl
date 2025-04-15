@@ -53,6 +53,16 @@ void edit_on_value_changed(GtkSpinButton* self, gpointer user_data)
     
 }
 
+void edit_on_alignment_changed(GtkDropDown *self, GParamSpec *pspec, gpointer user_data)
+{
+    LISTENER *listener = (LISTENER *)user_data;
+    
+    int value = (int) gtk_drop_down_get_selected(self);
+
+    listener->handler(listener->id, (void*)&value, listener->object);
+    
+}
+
 /**
  * @brief initialise the field editor
  *
@@ -144,6 +154,8 @@ void editor_init(EDITOR *editor, void *object, Handler handler, enum FIELD field
             int id = va_arg(args, int);
 
             GtkWidget *label = gtk_label_new(va_arg(args, char *));
+            gtk_drop_down_set_selected (GTK_DROP_DOWN(comboBox), va_arg(args, int)); 
+
             gtk_widget_set_size_request (label, 40, 32);
 
             gtk_label_set_xalign(GTK_LABEL(label), 0);
@@ -152,17 +164,21 @@ void editor_init(EDITOR *editor, void *object, Handler handler, enum FIELD field
 
             gtk_box_append(GTK_BOX(box), label);
             gtk_box_append(GTK_BOX(box), comboBox);
+            
+            gtk_list_box_row_set_child(GTK_LIST_BOX_ROW(listBoxRow), box);
 
             gtk_list_box_append(editor->listBox, listBoxRow);
            
             {
                 LISTENER *listener = g_malloc(sizeof(LISTENER));
 
+  
                 listener->id = id;
+
                 listener->object = object;
                 listener->handler = handler;
 
-                g_signal_connect(GTK_DROP_DOWN(comboBox), "value_changed", G_CALLBACK(edit_on_value_changed), listener);
+                g_signal_connect(GTK_DROP_DOWN(comboBox), "notify::selected-item", G_CALLBACK(edit_on_alignment_changed), listener);
             }
 
         }

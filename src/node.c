@@ -55,6 +55,14 @@ void node_edit_handler(int id, void *value, void *object)
         TO_NODE(object)->net->redraw(TO_NODE(object)->net);
     }
     break;
+
+    case 2:
+    {
+        int *alignment = (int *)value;
+        TO_NODE(object)->alignment = *alignment;
+        TO_NODE(object)->net->redraw(TO_NODE(object)->net);
+    }
+    break;
     }
 }
 
@@ -141,7 +149,6 @@ char *node_generate(NODE *node, int length, char *buffer)
 
     snprintf(buffer, length, "%d-%d", node->type, node->id);
 
-
     return buffer;
 }
 
@@ -210,6 +217,8 @@ NODE *new_node()
     node->setName = set_name;
     node->setDefaultName = set_default_name;
 
+    node->alignment = BOTTOM;
+
     return node;
 }
 
@@ -224,6 +233,7 @@ void node_place_editor(NODE *node, EDITOR *editor)
     editor->init(editor, node, node_edit_handler,
                  TEXT_FIELD, 0, "Name", node->name->str,
                  SPIN_BUTTON, 1, "Tokens", node->place.marked,
+                 ALIGNMENT_BOX, 2, "Align", 1,
                  END_FIELD);
 }
 
@@ -256,7 +266,10 @@ NODE *new_place(NODE *node)
 
 void node_transition_editor(NODE *node, EDITOR *editor)
 {
-    editor->init(editor, node, node_edit_handler, TEXT_FIELD, 0, "Name", node->name->str, END_FIELD);
+    editor->init(editor, node, node_edit_handler,
+                 TEXT_FIELD, 0, "Name", node->name->str,
+                 ALIGNMENT_BOX, 2, "Align", 1,
+                 END_FIELD);
 }
 
 /**

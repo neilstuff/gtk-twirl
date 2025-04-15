@@ -41,7 +41,20 @@ enum TYPE
     END_NODE_TYPES
 
 };
- 
+
+/**
+ * @brief node name alignment
+ *
+ */
+enum ALIGNMENT
+{
+    TOP = 0,
+    BOTTOM,
+    LEFT,
+    RIGHT,
+    END_NODE_ALIGNMENT
+};
+
 /**
  * @brief a place node (state container)
  * 
@@ -164,6 +177,12 @@ typedef struct _NODE
      */
     GString *name;
 
+    /**
+     * @brief private (the node's name alignment)
+     * 
+     */
+    enum ALIGNMENT alignment;
+    
     /**
      * @brief the node's text length in pixels
      * 

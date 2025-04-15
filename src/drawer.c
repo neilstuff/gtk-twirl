@@ -74,7 +74,7 @@ void draw_arrow_head(ARC *arc, POINT *source, POINT *target, cairo_t *cr)
                   position.y + (int)(-par * siny + (par / 2.0 * cosy)));
 
     cairo_line_to(cr, position.x + (int)(-par * cosy + (par / 2.0 * siny)),
-                      position.y - (int)(par / 2.0 * cosy + par * siny));
+                  position.y - (int)(par / 2.0 * cosy + par * siny));
 
     cairo_line_to(cr, position.x, position.y);
 
@@ -97,18 +97,18 @@ void draw_arc_tokens(DRAWER *drawer, ARC *arc, POINT *source, POINT *target, cai
 
     gdouble slopy = atan2(target->y - source->y, target->x - source->x);
     gdouble cosy = cos(slopy);
-    gdouble siny = sin(slopy); 
+    gdouble siny = sin(slopy);
     int par = 20;
 
     cairo_set_line_width(drawer->canvas, 1);
     cairo_set_source_rgb(drawer->canvas, 0.2, 0.2, 0.2);
     cairo_arc(drawer->canvas, position.x + (int)(-par * cosy + (par / 2.0 * siny)),
-                              position.y + (int)(-par * siny - (par / 2.0 * cosy)), 6, 0, 2 * M_PI);
+              position.y + (int)(-par * siny - (par / 2.0 * cosy)), 6, 0, 2 * M_PI);
     cairo_stroke(drawer->canvas);
 
     cairo_set_source_rgb(drawer->canvas, 1.0, 1.0, 1.0);
     cairo_fill(drawer->canvas);
-   
+
     GString *tokens = g_string_new("");
 
     g_string_printf(tokens, "%d", arc->weight);
@@ -119,20 +119,18 @@ void draw_arc_tokens(DRAWER *drawer, ARC *arc, POINT *source, POINT *target, cai
     cairo_set_source_rgb(drawer->canvas, 0, 0, 0);
     cairo_text_extents(drawer->canvas, tokens->str, &extents);
 
-    int adjustment = atoi(tokens->str) > 9  && atoi(tokens->str) < 20 || atoi(tokens->str) == 1 ? 1 : 0;
-    
+    int adjustment = atoi(tokens->str) > 9 && atoi(tokens->str) < 20 || atoi(tokens->str) == 1 ? 1 : 0;
+
     cairo_move_to(drawer->canvas, position.x + (int)(-par * cosy + (par / 2.0 * siny) - (int)extents.width / 2 - adjustment),
-                                  position.y + (int)(-par * siny - (par / 2.0 * cosy) + 3));
+                  position.y + (int)(-par * siny - (par / 2.0 * cosy) + 3));
     cairo_show_text(drawer->canvas, tokens->str);
 
     g_string_free(tokens, TRUE);
-
 }
-
 
 /**
  * @brief draw the node's text
- *
+ *twirl
  */
 void draw_text(DRAWER *drawer, NODE *node)
 {
@@ -145,7 +143,21 @@ void draw_text(DRAWER *drawer, NODE *node)
     cairo_set_font_size(drawer->canvas, 12);
     cairo_text_extents(drawer->canvas, node->name->str, &extents);
 
-    cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 26);
+    switch (node->alignment)
+    {
+    case TOP:
+        cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y - 26);
+        break;
+    case BOTTOM:
+        cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 26);
+        break;
+    case LEFT:
+        cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 26);
+        break;
+    case RIGHT:
+        cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 26);
+        break;
+    }
     cairo_show_text(drawer->canvas, node->name->str);
     cairo_get_current_point(drawer->canvas, &x, &y);
 
@@ -268,7 +280,7 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
     ARC *arc = painter->painters.arc_painter.arc;
     int iVertex = 0;
     const double dashes[] = {1.0, 1.0, 1.0};
-    
+
     POINT *source = NULL;
     POINT *target = NULL;
 
@@ -287,7 +299,8 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
     for (iVertex = 0; iVertex < arc->vertices->len; iVertex++)
     {
 
-        if (source) {
+        if (source)
+        {
 
             target = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
 
@@ -295,30 +308,28 @@ void draw_arc(DRAWER *drawer, PAINTER *painter)
 
             cairo_stroke(drawer->canvas);
 
-            draw_arrow_head(arc, source, target, drawer->canvas);   
+            draw_arrow_head(arc, source, target, drawer->canvas);
             draw_arc_tokens(drawer, arc, source, target, drawer->canvas);
+        }
 
-        } 
+        if (target && iVertex < arc->vertices->len - 1)
+        {
 
-        if (target && iVertex < arc->vertices->len - 1) {
-
-            if (TO_VERTEX(arc->vertices->pdata[iVertex])->artifact.selected) 
+            if (TO_VERTEX(arc->vertices->pdata[iVertex])->artifact.selected)
             {
                 cairo_set_source_rgba(drawer->canvas, 0, 0, 255, 1.0);
             }
-            else 
+            else
             {
                 cairo_set_source_rgba(drawer->canvas, 0, 0, 0, 0.4);
             }
             cairo_arc(drawer->canvas, (int)target->x, (int)target->y, 3, 0, 2 * M_PI);
             cairo_fill(drawer->canvas);
- 
         }
 
         source = &TO_VERTEX(arc->vertices->pdata[iVertex])->point;
 
         cairo_move_to(drawer->canvas, (int)source->x, (int)source->y);
-    
     }
 
     cairo_set_dash(drawer->canvas, dashes, 0, 0);
@@ -352,18 +363,18 @@ void draw_connector(DRAWER *drawer, PAINTER *painter)
  */
 void draw_selection(DRAWER *drawer, PAINTER *painter)
 {
-    const double dashes[] = {1.0, 1.0, 1.0}; 
+    const double dashes[] = {1.0, 1.0, 1.0};
 
     cairo_set_source_rgba(drawer->canvas, 0, 0, 1.0, 0.2);
- 
-    int width = (int)(painter->painters.selector_painter.selector->offset.x - 
+
+    int width = (int)(painter->painters.selector_painter.selector->offset.x -
                       painter->painters.selector_painter.selector->position.x);
 
-    int height = (int)(painter->painters.selector_painter.selector->offset.y - 
-                        painter->painters.selector_painter.selector->position.y);
+    int height = (int)(painter->painters.selector_painter.selector->offset.y -
+                       painter->painters.selector_painter.selector->position.y);
 
     cairo_set_dash(drawer->canvas, dashes, sizeof(dashes) / sizeof(dashes[0]), 0);
-    cairo_rectangle(drawer->canvas, (int)(painter->painters.selector_painter.selector->position.x), 
+    cairo_rectangle(drawer->canvas, (int)(painter->painters.selector_painter.selector->position.x),
                     (int)(painter->painters.selector_painter.selector->position.y),
                     width, height);
     cairo_stroke(drawer->canvas);
