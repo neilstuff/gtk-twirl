@@ -183,7 +183,7 @@ void controller_save(GObject *source_object, GAsyncResult *res, gpointer data)
     if (file != NULL)
     {
         char *path = g_file_get_path(file);
-        WRITER *writer = create_writer_from_file(path);
+        WRITER *writer = create_writer();
 
         EVENT *event = create_event(WRITE_NET, writer, path);
 

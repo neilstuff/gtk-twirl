@@ -41,6 +41,7 @@ mover.c  \
 selector.c \
 net.c \
 controller.c \
+tracker.c \
 main.c \
 resource.c
 

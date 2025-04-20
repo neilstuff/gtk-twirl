@@ -25,6 +25,7 @@
 #define VERTEX_ELEMENT "vertex"
 
 #define NODE_NAME_ATTRIBUTE "name"
+#define NODE_ALIGNMENT_ATTRIBUTE "alignment"
 
 #define SOURCE_ATTRIBUTE "source"
 #define TARGET_ATTRIBUTE "target"
@@ -41,15 +42,16 @@
 typedef struct _WRITER {
 
     void (*write)(struct _WRITER * writer, struct _NET * net);
+    void (*save)(struct _WRITER * writer, char * filename);
     void (*release)(struct _WRITER * writer);
 
     xmlDocPtr document;
+    xmlBufferPtr buffer;
     xmlTextWriterPtr writer;
-
-    char* filename;
 
 } WRITER, * WRITER_P;
 
+extern WRITER * create_writer();
 extern WRITER * create_writer_from_file(char * file);
 
 #endif // WRITER_H_INCLUDED

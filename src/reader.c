@@ -239,6 +239,11 @@ void reader_process_transition(READER *reader, NET *net, xmlNode *node)
             transition->id = atoi(value);
         }
 
+        if (strcmp(attribute->name, "alignment") == 0)
+        {
+            transition->alignment = atoi(value);
+        }
+
         xmlFree(value);
 
         attribute = attribute->next;
@@ -275,6 +280,11 @@ void reader_process_place(READER *reader, NET *net, xmlNode *node)
         if (strcmp(attribute->name, "id") == 0)
         {
             place->id = atoi(value);
+        }
+
+        if (strcmp(attribute->name, "alignment") == 0)
+        {
+            place->alignment = atoi(value);
         }
 
         if (strcmp(attribute->name, "tokens") == 0)

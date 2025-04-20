@@ -50,9 +50,8 @@ void writer_vertex_iterator(gpointer arc, gpointer writer)
 
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, X_ATTRIBUTE, "%d", (int)TO_VERTEX(arc)->point.x);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, Y_ATTRIBUTE, "%d", (int)TO_VERTEX(arc)->point.y);
- 
+
     xmlTextWriterEndElement(TO_WRITER(writer)->writer);
-    
 }
 
 /**
@@ -64,17 +63,16 @@ void writer_arc_iterator(gpointer arc, gpointer writer)
     char buffer[36];
 
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST ARC_ELEMENT);
-    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, SOURCE_ATTRIBUTE, "%s", 
-                                        TO_ARC(arc)->source->generate(TO_ARC(arc)->source, sizeof(buffer), buffer));                
-    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TARGET_ATTRIBUTE, "%s", 
-                                        TO_ARC(arc)->target->generate(TO_ARC(arc)->target, sizeof(buffer), buffer));
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, SOURCE_ATTRIBUTE, "%s",
+                                      TO_ARC(arc)->source->generate(TO_ARC(arc)->source, sizeof(buffer), buffer));
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TARGET_ATTRIBUTE, "%s",
+                                      TO_ARC(arc)->target->generate(TO_ARC(arc)->target, sizeof(buffer), buffer));
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, WEIGHT_ATTRIBUTE, "%d", (int)TO_ARC(arc)->weight);
-    
+
     g_ptr_array_foreach(TO_ARC(arc)->vertices,
-        writer_vertex_iterator, writer);
+                        writer_vertex_iterator, writer);
 
     xmlTextWriterEndElement(TO_WRITER(writer)->writer);
-
 }
 
 /**
@@ -87,6 +85,7 @@ void writer_place_iterator(gpointer node, gpointer writer)
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST PLACE_ELEMENT);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_ID_ATTRIBUTE, "%d", (int)TO_NODE(node)->id);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_NAME_ATTRIBUTE, "%s", TO_NODE(node)->name->str);
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_ALIGNMENT_ATTRIBUTE, "%d", TO_NODE(node)->alignment);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, TOKENS_ATTRIBUTE, "%d", (int)TO_PLACE(node).marked);
 
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST GRAPHICS_ELEMENT);
@@ -94,7 +93,6 @@ void writer_place_iterator(gpointer node, gpointer writer)
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, X_ATTRIBUTE, "%d", (int)TO_NODE(node)->position.x);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, Y_ATTRIBUTE, "%d", (int)TO_NODE(node)->position.y);
 
- 
     xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Graphics
     xmlTextWriterEndElement(TO_WRITER(writer)->writer); // Place
 }
@@ -109,6 +107,7 @@ void writer_transition_iterator(gpointer node, gpointer writer)
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST TRANSITION_ELEMENT);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_ID_ATTRIBUTE, "%d", (int)TO_NODE(node)->id);
     xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_NAME_ATTRIBUTE, "%s", TO_NODE(node)->name->str);
+    xmlTextWriterWriteFormatAttribute(TO_WRITER(writer)->writer, NODE_ALIGNMENT_ATTRIBUTE, "%d", TO_NODE(node)->alignment);
 
     xmlTextWriterStartElement(TO_WRITER(writer)->writer, BAD_CAST GRAPHICS_ELEMENT);
 
@@ -134,7 +133,6 @@ void writer_generate_nodes(WRITER *writer, NET *net)
 
     g_ptr_array_foreach(net->arcs,
                         writer_arc_iterator, writer);
-
 }
 
 /**
@@ -154,13 +152,46 @@ void writer_write(WRITER *writer, NET *net)
     xmlTextWriterEndDocument(writer->writer);
 
     xmlFreeTextWriter(writer->writer);
+}
 
-    xmlBufferPtr buf = xmlBufferCreate();
+/**
+ * @brief save to a file
+ *
+ */
+char *writer_dump(WRITER *writer, char *filename)
+{
+    if (writer->buffer != NULL) 
+    {
+        xmlBufferFree(writer->buffer);
+    }
 
-    xmlNodeDump(buf, NULL, xmlDocGetRootElement(writer->document), 1, 1);
-    printf("%s", (char *)buf->content);
+    writer->buffer = xmlBufferCreate();
 
-    xmlSaveFileEnc(writer->filename, writer->document, ENCODING);
+    xmlNodeDump(writer->buffer, NULL, xmlDocGetRootElement(writer->document), 1, 1);
+    printf("%s", (char *)writer->buffer->content);
+
+    return writer->buffer->content;
+
+}
+
+/**
+ * @brief save to a file
+ *
+ */
+void writer_save(WRITER *writer, char *filename)
+{
+
+    if (writer->buffer != NULL) 
+    {
+        xmlBufferFree(writer->buffer);
+    }
+
+    writer->buffer = xmlBufferCreate();
+
+    xmlNodeDump(writer->buffer, NULL, xmlDocGetRootElement(writer->document), 1, 1);
+    printf("%s", (char *)writer->buffer->content);
+
+    xmlSaveFileEnc(filename, writer->document, ENCODING);
 }
 
 /**
@@ -172,23 +203,28 @@ void release_writer(WRITER *writer)
 
     xmlFreeDoc(writer->document);
 
+    if (writer->buffer != NULL) 
+    {
+        xmlBufferFree(writer->buffer);
+    }
+
     g_free(writer);
 }
 
 /**
- * Create a Writer
+ * create and initalise a writer
  *
  */
-WRITER *create_writer_from_file(char *filename)
+WRITER *create_writer()
 {
     WRITER *writer = g_malloc(sizeof(WRITER));
 
     writer->release = release_writer;
     writer->write = writer_write;
-
-    writer->filename = filename;
+    writer->save = writer_save;
 
     writer->writer = xmlNewTextWriterDoc(&writer->document, 0);
+    writer->buffer = NULL;
 
     return writer;
 }

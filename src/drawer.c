@@ -152,10 +152,10 @@ void draw_text(DRAWER *drawer, NODE *node)
         cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 26);
         break;
     case LEFT:
-        cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 26);
+        cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width - 16, (int)node->position.y + 6);
         break;
     case RIGHT:
-        cairo_move_to(drawer->canvas, (int)node->position.x - (int)extents.width / 2, (int)node->position.y + 26);
+        cairo_move_to(drawer->canvas, (int)node->position.x + 18, (int)node->position.y + 4);
         break;
     }
     cairo_show_text(drawer->canvas, node->name->str);

@@ -329,10 +329,10 @@ void net_get_selected_nodes(gpointer artifact, gpointer context)
 void net_get_selected_arcs(gpointer artifact, gpointer context)
 {
 
-    if (TO_ARC(artifact)->artifact.selected == TRUE) {
+    if (TO_ARC(artifact)->artifact.selected == TRUE)
+    {
         g_ptr_array_add(TO_CONTEXT(context)->arc_selector.arcs, TO_ARC(artifact));
     }
-
 }
 
 /**
@@ -503,13 +503,12 @@ void net_draw_event_processor(NET *net, EVENT *event)
                             actions[context.action], &context);
 
         context.draw_context.drawer->release(context.draw_context.drawer);
-
     }
 }
 
 /**
  * @brief activate the net
- * 
+ *
  */
 void net_reset(NET *net)
 {
@@ -521,7 +520,6 @@ void net_reset(NET *net)
         g_ptr_array_remove(net->places, node);
 
         node->release(node);
-
     }
 
     for (int iNode = 0; net->transitions->len != 0;)
@@ -541,12 +539,11 @@ void net_reset(NET *net)
 
         arc->release(arc);
     }
-
 }
 
 /**
  * @brief activate the net
- * 
+ *
  */
 void net_activate(NET *net, enum NOTIFICATION notification, int status)
 {
@@ -867,7 +864,6 @@ void net_delete_selected(NET *net, EVENT *event)
 
             g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.targets, iArc));
         }
-   
     }
     {
         CONTEXT context;
@@ -881,9 +877,8 @@ void net_delete_selected(NET *net, EVENT *event)
         {
             g_ptr_array_remove(net->arcs, g_ptr_array_index(context.arc_selector.arcs, iArc));
         }
- 
     }
-    
+
     net->controller->message(net->controller, CLEAR_EDITOR);
 
     net_activate(net, ACTIVATE_DELETE, FALSE);
@@ -914,7 +909,6 @@ void net_read_net(NET *net, EVENT *event)
     net->controller->send(net->controller, activate);
 
     activate->release(activate);
-    
 }
 
 /**
@@ -928,7 +922,6 @@ void net_clear(NET *net, EVENT *event)
 
     net->resize(net);
     net->redraw(net);
-
 }
 
 /**
@@ -941,6 +934,9 @@ void net_write_net(NET *net, EVENT *event)
     printf("net_write_net: %s\n", event->events.write_net.filename);
 
     event->events.write_net.writer->write(event->events.write_net.writer, net);
+
+    event->events.write_net.writer->save(event->events.write_net.writer, 
+                                         event->events.write_net.filename);
 }
 
 /**
@@ -1083,7 +1079,7 @@ NET *net_create(CONTROLLER *controller)
     actions[GET_ARCS_FOR_NODE] = net_get_arcs_for_node;
     actions[SELECT_NODE_BY_BOUNDS] = net_select_node_by_bounds;
     actions[GET_SELECTED_NODES] = net_get_selected_nodes;
-    actions[GET_SELECTED_ARCS] = net_get_selected_arcs; 
+    actions[GET_SELECTED_ARCS] = net_get_selected_arcs;
 
     return net;
 }
