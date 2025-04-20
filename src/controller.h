@@ -69,6 +69,8 @@ typedef struct _CONTROLLER
 
   enum MODES mode;
 
+  struct _TRACKER * tracker;
+
   /**
    * @brief this adds the handler(s) array to include the handler
    *

@@ -31,6 +31,7 @@
 #include "editor.h"
 #include "reader.h"
 #include "writer.h"
+#include "tracker.h"
 #include "controller.h"
 
 #include "net.h"

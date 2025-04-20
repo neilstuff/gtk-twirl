@@ -21,7 +21,7 @@
  typedef struct _TRACKER {
  
     void (*release)(struct _TRACKER * tracker);
-    void (*snapshot)(struct _TRACKER * tracker, NET * net);
+    void (*snapshot)(struct _TRACKER * tracker, struct _NET * net);
 
     GPtrArray * history;
   

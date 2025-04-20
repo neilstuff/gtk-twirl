@@ -888,6 +888,26 @@ void net_delete_selected(NET *net, EVENT *event)
 }
 
 /**
+ * @brief cut all the selected nodes
+ *
+ */
+void net_cut(NET *net, EVENT *event)
+{
+    CONTEXT context;
+
+    printf("IM HERE A\n");
+    context.action = GET_SELECTED_NODES;
+    context.node_arc_selector.net = net;
+    context.node_arc_selector.nodes = g_ptr_array_new();
+    context.node_arc_selector.sources = g_ptr_array_new();
+    context.node_arc_selector.targets = g_ptr_array_new();
+
+    net_apply_context_all_nodes(net, &context);
+
+    
+}
+
+/**
  * @brief create a net from a file
  *
  */
@@ -1060,6 +1080,7 @@ NET *net_create(CONTROLLER *controller)
     net->processors[WRITE_NET] = net_write_net;
     net->processors[END_DRAG] = NULL;
     net->processors[CLEAR_NET] = net_clear;
+    net->processors[CUT_SELECTED] = net_cut;
 
     net->release = net_release;
 
