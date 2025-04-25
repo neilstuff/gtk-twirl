@@ -113,10 +113,7 @@ typedef struct _CONTEXT
         {
             NET *net;
 
-            GPtrArray *places;
-            GPtrArray *transitions;
-            GPtrArray *sources;
-            GPtrArray *targets;
+            CONTAINER *container;
         } node_arc_selector;
     };
 
@@ -309,16 +306,16 @@ void net_get_selected_nodes(gpointer artifact, gpointer context)
     if (TO_NODE(artifact)->artifact.selected == TRUE)
     {
         g_ptr_array_add(TO_NODE(artifact)->isPlace(TO_NODE(artifact)) ? 
-                        TO_CONTEXT(context)->node_arc_selector.places : 
-                        TO_CONTEXT(context)->node_arc_selector.transitions,  
+                        TO_CONTEXT(context)->node_arc_selector.container->places : 
+                        TO_CONTEXT(context)->node_arc_selector.container->transitions,  
                         TO_NODE(artifact));
         {
             CONTEXT selector;
 
             selector.action = GET_ARCS_FOR_NODE;
             selector.node_arcs.node = TO_NODE(artifact);
-            selector.node_arcs.sources = TO_CONTEXT(context)->node_arc_selector.sources;
-            selector.node_arcs.targets = TO_CONTEXT(context)->node_arc_selector.targets;
+            selector.node_arcs.sources = TO_CONTEXT(context)->node_arc_selector.container->sources;
+            selector.node_arcs.targets = TO_CONTEXT(context)->node_arc_selector.container->targets;
 
             g_ptr_array_foreach(TO_CONTEXT(context)->node_arc_selector.net->arcs,
                                 actions[GET_ARCS_FOR_NODE], &selector);
@@ -840,40 +837,40 @@ void net_delete_selected(NET *net, EVENT *event)
 {
     {
         CONTEXT context;
+        CONTAINER * container = create_container();
 
         context.action = GET_SELECTED_NODES;
         context.node_arc_selector.net = net;
-        context.node_arc_selector.places = g_ptr_array_new();
-        context.node_arc_selector.transitions = g_ptr_array_new();
-        context.node_arc_selector.sources = g_ptr_array_new();
-        context.node_arc_selector.targets = g_ptr_array_new();
+
+        context.node_arc_selector.container = container;
+        ;
 
         net_apply_context_all_nodes(net, &context);
 
-        for (int iPlace = 0; iPlace < context.node_arc_selector.places->len; iPlace++)
+        for (int iPlace = 0; iPlace < container->places->len; iPlace++)
         {
-            NODE *place = g_ptr_array_index(context.node_arc_selector.places, iPlace);
+            NODE *place = g_ptr_array_index(container->places, iPlace);
 
             g_ptr_array_remove(net->places, place);
         }
 
-        for (int iTransition = 0; iTransition < context.node_arc_selector.transitions->len; iTransition++)
+        for (int iTransition = 0; iTransition < container->transitions->len; iTransition++)
         {
-            NODE *transition = g_ptr_array_index(context.node_arc_selector.transitions, iTransition);
+            NODE *transition = g_ptr_array_index(container->transitions, iTransition);
 
             g_ptr_array_remove(net->transitions, transition);
         }
 
-        for (int iArc = 0; iArc < context.node_arc_selector.sources->len; iArc++)
+        for (int iArc = 0; iArc < container->sources->len; iArc++)
         {
 
-            g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.sources, iArc));
+            g_ptr_array_remove(net->arcs, g_ptr_array_index(container->sources, iArc));
         }
 
-        for (int iArc = 0; iArc < context.node_arc_selector.targets->len; iArc++)
+        for (int iArc = 0; iArc < container->targets->len; iArc++)
         {
 
-            g_ptr_array_remove(net->arcs, g_ptr_array_index(context.node_arc_selector.targets, iArc));
+            g_ptr_array_remove(net->arcs, g_ptr_array_index(container->targets, iArc));
         }
     }
     {
@@ -909,11 +906,7 @@ void net_cut(NET *net, EVENT *event)
 
     context.action = GET_SELECTED_NODES;
     context.node_arc_selector.net = net;
-    context.node_arc_selector.places = container->places;
-    context.node_arc_selector.transitions = container->transitions;
-
-    context.node_arc_selector.sources = container->sources;
-    context.node_arc_selector.targets = container->targets;
+    context.node_arc_selector.container = container;
 
     net_apply_context_all_nodes(net, &context);
     
