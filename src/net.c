@@ -861,7 +861,7 @@ void net_delete_selected(NET *net, EVENT *event)
         {
             NODE *transition = g_ptr_array_index(context.node_arc_selector.transitions, iTransition);
 
-            g_ptr_array_remove(net->places, transition);
+            g_ptr_array_remove(net->transitions, transition);
         }
 
         for (int iArc = 0; iArc < context.node_arc_selector.sources->len; iArc++)
