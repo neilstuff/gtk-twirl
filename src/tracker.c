@@ -7,6 +7,7 @@
 #include <libxml/xmlwriter.h>
 
 #include "artifact.h"
+#include "container.h"
 
 #include "editor.h"
 #include "drawer.h"
@@ -30,18 +31,6 @@
 #include "selector.h"
 
 #include "tracker.h"
-
-
-/**
- * Free the writer resources
- *
- */
-char * copy_to_clipboard(TRACKER *tracker, enum TYPE type, GPtrArray * artifacts)
-{
-    WRITER * writer = create_writer();
-
-
-}
 
 /**
  * Free the writer resources

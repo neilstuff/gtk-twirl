@@ -17,14 +17,16 @@
 #include <libxml/encoding.h>
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
+
 #include "geometry.h"
+
+#include "artifact.h"
+#include "container.h"
 
 #include "editor.h"
 #include "drawer.h"
 #include "reader.h"
 #include "writer.h"
-
-#include "artifact.h"
 
 #include "vertex.h"
 

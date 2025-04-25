@@ -20,7 +20,9 @@
 #include <libxml/xmlwriter.h>
 
 #include "geometry.h"
+
 #include "artifact.h"
+#include "container.h"
 
 #include "drawer.h"
 #include "editor.h"

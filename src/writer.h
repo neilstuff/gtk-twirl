@@ -17,6 +17,7 @@
 #define ENCODING "ISO-8859-1"
 
 #define NET_ELEMENT "net"
+#define SNIPPET_ELEMENT "snippet"
 
 #define PLACE_ELEMENT "place"
 #define TRANSITION_ELEMENT "transition"
@@ -42,7 +43,8 @@
 typedef struct _WRITER {
 
     void (*write)(struct _WRITER * writer, struct _NET * net);
-    void (*save)(struct _WRITER * writer, char * filename);
+    char* (*snap)(struct _WRITER * writer, struct _CONTAINER *container);
+    void (*save)(struct _WRITER * writer, char *filename);
     void (*release)(struct _WRITER * writer);
 
     xmlDocPtr document;

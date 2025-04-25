@@ -26,6 +26,7 @@ SRCDIR = src
 OBJDIR = obj
 
 SRC = handler.c \
+container.c \
 writer.c \
 reader.c \
 geometry.c \

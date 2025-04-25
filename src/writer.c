@@ -18,6 +18,8 @@
 #include <libxml/xmlwriter.h>
 
 #include "artifact.h"
+#include "container.h"
+
 #include "editor.h"
 #include "drawer.h"
 
@@ -159,7 +161,7 @@ void writer_write(WRITER *writer, NET *net)
  * @brief save to a file
  *
  */
-char *writer_dump(WRITER *writer, char *filename)
+char *writer_dump(WRITER *writer)
 {
     if (writer->buffer != NULL) 
     {
@@ -174,6 +176,35 @@ char *writer_dump(WRITER *writer, char *filename)
     return writer->buffer->content;
 
 }
+
+
+/**
+ * @brief write a container to a buffer
+ *
+ */
+char *writer_snap(WRITER *writer, CONTAINER * container)
+{
+
+    if (writer->buffer != NULL) 
+    {
+        xmlBufferFree(writer->buffer);
+    }
+
+    writer->buffer = xmlBufferCreate();
+
+    g_ptr_array_foreach(container->places,
+                        writer_place_iterator, writer);
+
+    g_ptr_array_foreach(container->transitions,
+                        writer_transition_iterator, writer);
+                        
+    xmlNodeDump(writer->buffer, NULL, xmlDocGetRootElement(writer->document), 1, 1);
+    printf("%s", (char *)writer->buffer->content);
+
+    return (char *)writer->buffer->content;
+
+}
+
 
 /**
  * @brief save to a file
@@ -223,6 +254,7 @@ WRITER *create_writer()
     writer->release = release_writer;
     writer->write = writer_write;
     writer->save = writer_save;
+    writer->snap = writer_snap;
 
     writer->writer = xmlNewTextWriterDoc(&writer->document, 0);
     writer->buffer = NULL;

@@ -24,6 +24,8 @@
     void (*snapshot)(struct _TRACKER * tracker, struct _NET * net);
 
     GPtrArray * history;
+
+    GPtrArray * nodes;
   
  } TRACKER, *TRACKER_P;
  

@@ -19,6 +19,7 @@
 #include <libxml/xmlwriter.h>
 
 #include "artifact.h"
+#include "container.h"
 
 #include "editor.h"
 #include "drawer.h"
@@ -112,7 +113,8 @@ typedef struct _CONTEXT
         {
             NET *net;
 
-            GPtrArray *nodes;
+            GPtrArray *places;
+            GPtrArray *transitions;
             GPtrArray *sources;
             GPtrArray *targets;
         } node_arc_selector;
@@ -306,8 +308,10 @@ void net_get_selected_nodes(gpointer artifact, gpointer context)
 
     if (TO_NODE(artifact)->artifact.selected == TRUE)
     {
-        g_ptr_array_add(TO_CONTEXT(context)->node_arc_selector.nodes, TO_NODE(artifact));
-
+        g_ptr_array_add(TO_NODE(artifact)->isPlace(TO_NODE(artifact)) ? 
+                        TO_CONTEXT(context)->node_arc_selector.places : 
+                        TO_CONTEXT(context)->node_arc_selector.transitions,  
+                        TO_NODE(artifact));
         {
             CONTEXT selector;
 
@@ -839,18 +843,25 @@ void net_delete_selected(NET *net, EVENT *event)
 
         context.action = GET_SELECTED_NODES;
         context.node_arc_selector.net = net;
-        context.node_arc_selector.nodes = g_ptr_array_new();
+        context.node_arc_selector.places = g_ptr_array_new();
+        context.node_arc_selector.transitions = g_ptr_array_new();
         context.node_arc_selector.sources = g_ptr_array_new();
         context.node_arc_selector.targets = g_ptr_array_new();
 
         net_apply_context_all_nodes(net, &context);
 
-        for (int iNode = 0; iNode < context.node_arc_selector.nodes->len; iNode++)
+        for (int iPlace = 0; iPlace < context.node_arc_selector.places->len; iPlace++)
         {
-            NODE *node = g_ptr_array_index(context.node_arc_selector.nodes, iNode);
+            NODE *place = g_ptr_array_index(context.node_arc_selector.places, iPlace);
 
-            g_ptr_array_remove(net->places, node);
-            g_ptr_array_remove(net->transitions, node);
+            g_ptr_array_remove(net->places, place);
+        }
+
+        for (int iTransition = 0; iTransition < context.node_arc_selector.transitions->len; iTransition++)
+        {
+            NODE *transition = g_ptr_array_index(context.node_arc_selector.transitions, iTransition);
+
+            g_ptr_array_remove(net->places, transition);
         }
 
         for (int iArc = 0; iArc < context.node_arc_selector.sources->len; iArc++)
@@ -894,16 +905,17 @@ void net_delete_selected(NET *net, EVENT *event)
 void net_cut(NET *net, EVENT *event)
 {
     CONTEXT context;
+    CONTAINER * container = create_container();
 
-    printf("IM HERE A\n");
     context.action = GET_SELECTED_NODES;
     context.node_arc_selector.net = net;
-    context.node_arc_selector.nodes = g_ptr_array_new();
-    context.node_arc_selector.sources = g_ptr_array_new();
-    context.node_arc_selector.targets = g_ptr_array_new();
+    context.node_arc_selector.places = container->places;
+    context.node_arc_selector.transitions = container->transitions;
+
+    context.node_arc_selector.sources = container->sources;
+    context.node_arc_selector.targets = container->targets;
 
     net_apply_context_all_nodes(net, &context);
-
     
 }
 
