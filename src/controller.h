@@ -90,7 +90,7 @@ typedef struct _CONTROLLER
   void (*notify)(struct _CONTROLLER *controller, EVENT *event);
 
   /**
-   * @brief this is send message
+   * @brief send the message
    *
    */
   void (*send)(struct _CONTROLLER *controller, EVENT *event);

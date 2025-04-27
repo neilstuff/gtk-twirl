@@ -62,9 +62,12 @@ enum TOOL
 typedef struct _EVENT
 {
 
+    struct _EVENT * (*dispose)(struct _EVENT *event, int diposal);
     void (*release)(struct _EVENT *event);
 
     enum NOTIFICATION notification;
+
+    int disposal;
 
     union
     {

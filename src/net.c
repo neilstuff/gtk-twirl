@@ -903,12 +903,17 @@ void net_cut(NET *net, EVENT *event)
 {
     CONTEXT context;
     CONTAINER * container = create_container();
+    WRITER  * writer = create_writer();
 
     context.action = GET_SELECTED_NODES;
     context.node_arc_selector.net = net;
     context.node_arc_selector.container = container;
 
     net_apply_context_all_nodes(net, &context);
+
+    writer->snap(writer, container);
+
+    net_delete_selected(net, NULL);
     
 }
 

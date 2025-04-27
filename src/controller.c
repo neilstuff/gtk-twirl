@@ -86,6 +86,11 @@ void controller_send(CONTROLLER *controller, EVENT *event)
     }
     break;
     };
+
+    if (event->disposal)
+    {
+        event->release(event);
+    }
 }
 
 /**

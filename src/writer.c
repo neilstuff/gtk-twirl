@@ -185,20 +185,31 @@ char *writer_dump(WRITER *writer)
 char *writer_snap(WRITER *writer, CONTAINER * container)
 {
 
+    printf("Write SNAP\n");
+
     if (writer->buffer != NULL) 
     {
         xmlBufferFree(writer->buffer);
     }
 
-    writer->buffer = xmlBufferCreate();
+    xmlTextWriterStartDocument(writer->writer, NULL, ENCODING, NULL);
 
+    xmlTextWriterStartElement(writer->writer, BAD_CAST SNIPPET_ELEMENT);
+
+ 
     g_ptr_array_foreach(container->places,
                         writer_place_iterator, writer);
 
     g_ptr_array_foreach(container->transitions,
                         writer_transition_iterator, writer);
-                        
-    xmlNodeDump(writer->buffer, NULL, xmlDocGetRootElement(writer->document), 1, 1);
+
+    xmlTextWriterEndElement(writer->writer);
+
+    xmlTextWriterEndDocument(writer->writer);
+    
+    writer->buffer = xmlBufferCreate();
+                   
+    xmlNodeDump(writer->buffer, NULL, xmlDocGetRootElement(writer->document), 1, 1);     
     printf("%s", (char *)writer->buffer->content);
 
     return (char *)writer->buffer->content;

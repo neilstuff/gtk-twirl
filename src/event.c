@@ -30,6 +30,19 @@
 
 
 /**
+ * @brief indicate that event can be freed and no longer required
+ *
+ */
+EVENT *event_dispose(EVENT *event, int disposal)
+{
+  
+    event->disposal = disposal;
+
+    return event;
+
+}
+
+/**
  * @brief deallocate an event's storage
  *
  */
@@ -45,12 +58,17 @@ void event_release(EVENT *event)
 EVENT *create_event(enum NOTIFICATION notification, ...)
 {
     EVENT *event = g_malloc(sizeof(EVENT));
+
+    event->disposal = FALSE;
+
+    event->release = event_release;
+    event->dispose = event_dispose;
+
     va_list args;
 
     va_start(args, notification);
 
     event->notification = notification;
-    event->release = event_release;
 
     switch (notification)
     {
@@ -135,7 +153,6 @@ EVENT *create_event(enum NOTIFICATION notification, ...)
         break;
         case CLEAR_NET:
         break;
-
         
     }
 

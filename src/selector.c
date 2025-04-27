@@ -86,6 +86,12 @@ void selector_event_handler(EVENT *event, void *processor)
             TO_SELECTOR(processor)->controller->mode = FINALISE;
         }
 
+        EVENT *activate = create_event(ACTIVATE_DELETE, TRUE);
+
+        TO_SELECTOR(processor)->controller->send(TO_SELECTOR(processor)->controller, activate);
+    
+        activate->release(activate);
+        
         TO_SELECTOR(processor)->controller->redraw(TO_SELECTOR(processor)->controller);
 
         TO_SELECTOR(processor)->release(TO_SELECTOR(processor));
