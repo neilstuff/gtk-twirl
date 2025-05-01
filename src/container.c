@@ -31,19 +31,8 @@
 #include "selector.h"
 
 /**
- * Free the writer resources
- *
- */
-char * container_copy_to_clipboard(CONTAINER *container, enum TYPE type, GPtrArray * artifacts)
-{
-    WRITER * writer = create_writer();
-
-}
-
-
-/**
- * Free a container to the clipboard
- *
+ * Cleanuo the container
+ * 
  */
 void container_clean(CONTAINER *container)
 {
@@ -52,6 +41,7 @@ void container_clean(CONTAINER *container)
     for (int iArc = 0; iArc < container->sources->len; iArc++)
     {
         ARC *arc = g_ptr_array_index(container->sources, iArc);
+
         int iSource;
         int iTarget;
 
@@ -104,17 +94,6 @@ void container_clean(CONTAINER *container)
 }
 
 /**
- * Free a container to the clipboard
- *
- */
-void container_snap(CONTAINER *container)
-{
-    WRITER * writer = create_writer();
-
-    writer->snap(writer, container);
-}
-
-/**
  * Free the writer resources
  *
  */
@@ -133,13 +112,15 @@ CONTAINER *create_container()
     CONTAINER *container = g_malloc(sizeof(CONTAINER));
 
     container->release = container_release;
-    container->snap = container_snap;
+    container->clean = container_clean;
 
     container->places = g_ptr_array_new();
     container->transitions = g_ptr_array_new();
 
     container->sources = g_ptr_array_new();
     container->targets = g_ptr_array_new();
+
+    container->arcs = g_ptr_array_new();
 
     return container;
 }

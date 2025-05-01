@@ -911,6 +911,7 @@ void net_cut(NET *net, EVENT *event)
 
     net_apply_context_all_nodes(net, &context);
 
+    container->clean(container);
     writer->snap(writer, container);
 
     net_delete_selected(net, NULL);

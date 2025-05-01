@@ -203,6 +203,9 @@ char *writer_snap(WRITER *writer, CONTAINER * container)
     g_ptr_array_foreach(container->transitions,
                         writer_transition_iterator, writer);
 
+    g_ptr_array_foreach(container->arcs,
+                        writer_arc_iterator, writer);
+    
     xmlTextWriterEndElement(writer->writer);
 
     xmlTextWriterEndDocument(writer->writer);

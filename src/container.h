@@ -9,32 +9,33 @@
  *
  */
 
- #ifndef CONTAINER_H_INCLUDED
- #define CONTAINER_H_INCLUDED
+#ifndef CONTAINER_H_INCLUDED
+#define CONTAINER_H_INCLUDED
 
- /**
-  * @brief casts an object to a container
-  *
-  */
- #define TO_CONTAINER(container) ((CONTAINER *)(container))
- 
- typedef struct _CONTAINER {
- 
-    void (*snap)(struct _CONTAINER * container);
-    void (*release)(struct _CONTAINER * container);
- 
-    GPtrArray * history;
+/**
+ * @brief casts an object to a container
+ *
+ */
+#define TO_CONTAINER(container) ((CONTAINER *)(container))
 
-    GPtrArray * places;
-    GPtrArray * transitions;
+typedef struct _CONTAINER
+{
 
-    GPtrArray * sources;
-    GPtrArray * targets;
+   void (*clean)(struct _CONTAINER *container);
+   void (*release)(struct _CONTAINER *container);
 
-    GPtrArray * arcs;
-  
- } CONTAINER, *CONTAINER_P;
- 
- extern CONTAINER * create_container();
- 
- #endif // CONTAINER_H_INCLUDED
+   GPtrArray *history;
+
+   GPtrArray *places;
+   GPtrArray *transitions;
+
+   GPtrArray *sources;
+   GPtrArray *targets;
+
+   GPtrArray *arcs;
+
+} CONTAINER, *CONTAINER_P;
+
+extern CONTAINER *create_container();
+
+#endif // CONTAINER_H_INCLUDED
