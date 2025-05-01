@@ -40,6 +40,69 @@ char * container_copy_to_clipboard(CONTAINER *container, enum TYPE type, GPtrArr
 
 }
 
+
+/**
+ * Free a container to the clipboard
+ *
+ */
+void container_clean(CONTAINER *container)
+{
+    WRITER * writer = create_writer();
+
+    for (int iArc = 0; iArc < container->sources->len; iArc++)
+    {
+        ARC *arc = g_ptr_array_index(container->sources, iArc);
+        int iSource;
+        int iTarget;
+
+        int bSource = g_ptr_array_find (
+            container->places,
+            arc->source,
+            &iSource
+        );
+
+        int bTarget = g_ptr_array_find (
+            container->transitions,
+            arc->target,
+            &iTarget
+        );
+
+        if (bSource && bTarget)
+        {
+
+            g_ptr_array_add(container->arcs, arc);
+
+        }
+    }
+    
+    for (int iArc = 0; iArc < container->targets->len; iArc++)
+    {
+        ARC *arc = g_ptr_array_index(container->targets, iArc);
+        int iSource;
+        int iTarget;
+
+        int bSource = g_ptr_array_find (
+            container->places,
+            arc->source,
+            &iSource
+        );
+
+        int bTarget = g_ptr_array_find (
+            container->transitions,
+            arc->target,
+            &iTarget
+        );
+
+        if (bSource && bTarget)
+        {
+
+            g_ptr_array_add(container->arcs, arc);
+
+        }
+    }
+
+}
+
 /**
  * Free a container to the clipboard
  *

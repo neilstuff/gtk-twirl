@@ -30,6 +30,8 @@
 
     GPtrArray * sources;
     GPtrArray * targets;
+
+    GPtrArray * arcs;
   
  } CONTAINER, *CONTAINER_P;
  
